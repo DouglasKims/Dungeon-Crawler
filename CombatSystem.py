@@ -6,7 +6,7 @@ import time
 import random
 
 class Character:
-    def __init__(self,name,cclass,maxhp,hp,maxfp,fp,atk,tec,dfn,spd,lck,slist,acted,defending,weak):
+    def __init__(self,name,cclass,maxhp,hp,maxfp,fp,atk,tec,dfn,spd,lck,slist,acted,defending,weak,init):
         self.name = name
         self.cclass = cclass
         self.maxhp = maxhp
@@ -22,9 +22,10 @@ class Character:
         self.acted = acted
         self.defending = defending
         self.weak = weak
+        self.init = init
 
 class Enemy:
-    def __init__(self,name,maxhp,hp,atk,dfn,spd,lck,defending,weak):
+    def __init__(self,name,maxhp,hp,atk,dfn,spd,lck,defending,weak,init):
         self.name = name
         self.maxhp = maxhp
         self.hp = hp
@@ -34,6 +35,7 @@ class Enemy:
         self.lck = lck
         self.defending = defending
         self.weak = weak
+        self.init = init
 
 h1spells = ["dia","media","maragi","agi"]
 h2spells = ["dia","garu"]
@@ -49,10 +51,10 @@ h2spells = ["dia","garu"]
 
 elements = ["phys","fire","wind","earth","ice","thunder","toxin"]
 
-hero1 = Character("Deaughe","Bard",40,40,30,30,4,8,0,5,5,h1spells,False,False,[])
-hero2 = Character("Duncan","Tank",60,60,10,10,6,3,0,3,3,h2spells,False,False,[])
-enemy1 = Enemy("Thug",60,60,5,2,0,0,False,[elements[1],elements[2]])
-enemy2 = Enemy("Bandit",40,40,5,0,5,0,False,[elements[0],elements[2]])
+hero1 = Character("Dravroth","Bard",40,40,30,30,4,8,0,5,5,h1spells,False,False,[],0)
+hero2 = Character("Mars","Tank",60,60,10,10,6,3,0,3,3,h2spells,False,False,[],0)
+enemy1 = Enemy("Thug",60,60,5,2,0,0,False,[elements[1],elements[2]],0)
+enemy2 = Enemy("Bandit",40,40,5,0,5,0,False,[elements[0],elements[2]],0)
 party = [hero1,hero2]
 opposition = [enemy1,enemy2]
 
@@ -117,6 +119,7 @@ def attackfunc(attacker,target):
 
     if target.hp <= 0 and target in opposition:
         opposition.remove(target)
+        initiative.remove(target)
         print (f"{attacker.name} defeated {target.name}!")
 
 def command(char):
@@ -269,6 +272,7 @@ def usespell(char,starget,dmgtype,fpcost,spelltype):
         dealspelldamage(starget,dmgtype,spelldamage)
         if starget.hp <= 0:
             opposition.remove(starget)
+            initiative.remove(starget)
             print (f"{char.name} defeated {starget.name}!")
     elif spelltype == "multi":
         for n in opposition:
@@ -279,6 +283,7 @@ def usespell(char,starget,dmgtype,fpcost,spelltype):
         for n in defeatedopp:
             print (f"{char.name} defeated {n.name}!")
             opposition.remove(n)
+            initiative.remove(n)
             pass
 
 def dealspelldamage(starget,dmgtype,spelldamage):
@@ -293,16 +298,38 @@ def dealspelldamage(starget,dmgtype,spelldamage):
 ## Game
 rounds = 0
 
+initiative = []
 ## initiative system
-initvalue = {}
-for n in party:
-    initvalue.update({n:random.randint(1,10)+n.spd})
-for n in opposition:
-    initvalue.update({n:random.randint(1,10)+n.spd})
+def rollinitiative():
+    global initiative
+    initvalue = []
+    initchar = []
+    initiative = []
 
-initiative = sorted(initvalue.items(),key=lambda x:x[1], reverse=True)
-initturn = 0
+    for n in party:
+        initchar.append(n)
+        initroll = random.randint(1,10)+n.spd
+        n.init = initroll
+        initvalue.append(initroll)
+    for n in opposition:
+        initchar.append(n)
+        initroll = random.randint(1,10)+n.spd
+        n.init = initroll
+        initvalue.append(initroll)
 
+    initvalue.sort(reverse=True)
+
+    initorder= 0
+
+    while len(initiative) < len(initvalue):
+        initcompare = initvalue[initorder]
+        for char in initchar:
+            if char.init == initcompare:
+                initiative.append(char)
+        initorder += 1
+        print(initiative)
+
+rollinitiative()
 testing = True
 while testing:
 
@@ -310,7 +337,7 @@ while testing:
 
     if not opposition:
         testing = False
-        print(f"You win the combat in {rounds} rounds!")
+        print(f"You won the combat in {rounds} rounds!")
         break
 
     rounds += 1
@@ -322,9 +349,34 @@ while testing:
         print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
 
     print ("")
-    print(initiative)
-    print (f"{initiative[initturn.name]}'s turn")
+    
 
+    for n in initiative:
+        print(f"It's {initiative[initiative.index(n)].name}'s turn!")
+
+        if n in opposition:
+            enemytarget = random.choice(party)
+            attackfunc(n,enemytarget)
+
+            print ("")
+            time.sleep(0.4)
+        
+        elif n in party:
+            n.acted = False
+            n.defending = False
+            if not opposition:
+                pass
+            elif n.hp <= 0:
+                pass
+            else:
+                while n.acted == False:
+                    command(n)
+
+                print ("")
+                time.sleep(0.4)
+
+
+    """
     for n in party:
         n.acted = False
         n.defending = False
@@ -346,7 +398,30 @@ while testing:
 
             print ("")
             time.sleep(0.4)
+            """
 
     input("Type anything to continue: ")
 
     
+    # stop enemies from target 0hp heroes
+    # cap low hp to 0 instead of negative
+    # add function to remove enemies from opposition/initiative
+    # implement a random encounter generator
+
+    # create function for all spells
+    # firea / fireba / firecao / mufirea / mufireba / mufirecao
+    # icea / iceba / icecao / mulicea / muliceba / mulicecao
+    # winda / windeba / windecao / muwinda / muwindeba / muwindecao
+    # rocka / rockba / rockcao / murocka / murockba / murockcao
+    # shocka / shockba / shockcao / mushocka / mushockba / mushockcao
+    # toxina / toxiba / toxicao / mutoxina / mutoxiba / mutoxicao
+
+    # mu/fire > mu/fireza > mu/firezaon
+    # mul/ice > mul/iceza > mul/icezaon
+    # mul/air > mul/airza > mul/airzaon
+    # mu/rock > mu/rockza > mu/rockzaon
+    # mu/zap > mu/zapza > mu/zapzaon
+    # mu/tox > mu/toxza > mu/toxzaon
+
+    # haste / slow
+    # shield / barrier
