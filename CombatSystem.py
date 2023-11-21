@@ -37,7 +37,7 @@ class Enemy:
         self.weak = weak
         self.init = init
 
-h1spells = ["dia","media","maragi","agi"]
+h1spells = ["dia","media","pas"]
 h2spells = ["dia","garu"]
 
 """ 0: Phys
@@ -49,12 +49,12 @@ h2spells = ["dia","garu"]
     6: toxin
 """
 
-elements = ["phys","fire","wind","earth","ice","thunder","toxin"]
+elem = ["phys","fire","wind","earth","ice","thunder","toxic","decay","chaos","death"]
 
 hero1 = Character("Dravroth","Bard",40,40,30,30,4,8,0,5,5,h1spells,False,False,[],0)
 hero2 = Character("Mars","Tank",60,60,10,10,6,3,0,3,3,h2spells,False,False,[],0)
-enemy1 = Enemy("Thug",60,60,5,2,0,0,False,[elements[1],elements[2]],0)
-enemy2 = Enemy("Bandit",40,40,5,0,5,0,False,[elements[0],elements[2]],0)
+enemy1 = Enemy("Thug",60,60,5,2,0,0,False,[elem[1],elem[2]],0)
+enemy2 = Enemy("Bandit",40,40,5,0,5,0,False,[elem[0],elem[2]],0)
 party = [hero1,hero2]
 opposition = [enemy1,enemy2]
 
@@ -62,7 +62,6 @@ atkmod = 0
 d100 = 0
 dmgdice = 0
 damage = 0
-finaldamage = 0
 enemytarget = None
 chartarget = None
 charcommand = None
@@ -90,11 +89,10 @@ def rollattack(char):
 def rolldamage(char):
     rolleddamage = 0
     for _ in range(char.atk):
-        rolleddamage += random.randint(1,5)
+        rolleddamage += random.randint(1,4)
     return rolleddamage
 
 def attackfunc(attacker,target):
-    global finaldamage
 
     rollattack(attacker)
 
@@ -102,11 +100,11 @@ def attackfunc(attacker,target):
     
     if finaldamage > 0:
         if "phys" in target.weak:
-            finaldamage * 2
+            finaldamage = finaldamage * 2
             print (f"{attacker.name} attacks {target.name}, who's weak to Physical attacks for {finaldamage} damage!")
 
         elif target.defending == True:
-            finaldamage // 2
+            finaldamage = finaldamage // 2
             print (f"{n.name} attacks {enemytarget.name}, but they defended and suffered only {finaldamage} damage.")
 
         else:
@@ -125,11 +123,10 @@ def attackfunc(attacker,target):
 def command(char):
     global chartarget
     global opposition
-    global finaldamage
     global charcommand
 
     charcommand = input(f"What is {char.name} doing? ")
-    
+
     if charcommand == "attack":
 
         chartarget = targetenemy()
@@ -139,6 +136,13 @@ def command(char):
         char.acted = True
         pass
     
+    elif charcommand == "defend":
+        char.defending = True
+        print (f"{char.name} is defending.")
+
+        char.acted = True
+        pass
+
     elif charcommand == "media":
         if char.fp <10:
             print(f"{char.name} doesn't have enough FP.")
@@ -225,12 +229,93 @@ def command(char):
             char.acted = True
         pass
 
-    elif charcommand == "defend":
-        char.defending = True
-        print (f"{char.name} is defending.")
+    elif "pas" in charcommand:
+        if "pas" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"fire")
 
+
+def usefp(char,fp):
+    if char.fp < fp:
+        print(f"{char.name} doesn't have enough FP.")
+        cancast = False
+    else:
+        char.fp -= fp
         char.acted = True
+        cancast = True
+    return cancast
+
+def calcspelldamage(char,spelllevel):
+    global spelldamage
+    spelldamage = 0
+    if spelllevel == "weak":
+        for _ in range(char.tec):
+            spelldamage += random.randint(2,4)
+    elif spelllevel == "medium":
+        for _ in range(char.tec):
+            spelldamage += random.randint(4,8)
+    elif spelllevel == "heavy":
+        for _ in range(char.tec):
+            spelldamage += random.randint(6,12)
+
+def spellversion(char,spell,dmgtype):
+    starget = None
+    if "lag" in spell:
+        if "grun" in spell and "grun" in char.slist:
+            if usefp(char,10) == True:
+                calcspelldamage(char,"weak")
+                usespell(char,starget,dmgtype,"multi")
+
+        elif "grun" in spell and "grun" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+
+        else:
+            if usefp(char,4) == True and "grun" not in char.slist:
+                starget = targetenemy()
+                calcspelldamage(char,"weak")
+                usespell(char,starget,dmgtype,"single")
         pass
+
+    elif "comas" in spell and "comas" in char.slist:
+        if "grun" in spell and "grun" in char.slist:
+            if usefp(char,16) == True:
+                calcspelldamage(char,"medium")
+                usespell(char,starget,dmgtype,"multi")
+
+        elif "grun" in spell and "grun" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+
+        else:
+            if usefp(char,8) == True and "grun" not in char.slist:
+                starget = targetenemy()
+                calcspelldamage(char,"medium")
+                usespell(char,starget,dmgtype,"single")
+
+        pass
+
+    elif "asmatha" in spell and "asmatha" in char.slist:
+        if "grun" in spell and "grun" in char.slist:
+            if usefp(char,22) == True:
+                calcspelldamage(char,"heavy")
+                usespell(char,starget,dmgtype,"multi")
+
+        elif "grun" in spell and "grun" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+
+        else:
+            if usefp(char,12) == True and "grun" not in char.slist:
+                starget = targetenemy()
+                calcspelldamage(char,"heavy")
+                usespell(char,starget,dmgtype,"single")
+
+        #cast hvy
+        pass
+
+    else:
+        print(f"{char.name} can't use this skill.")
+
+
 
 ## Logic
 
@@ -258,15 +343,15 @@ def targetally():
     target = starget
     return target
 
-def usespell(char,starget,dmgtype,fpcost,spelltype):
+def usespell(char,starget,dmgtype,spelltype):
     global spelldamage
     defeatedopp = []
 
     # Use FP and roll damage
-    char.fp -= fpcost
-    spelldamage = 0
-    for _ in range(char.tec):
-        spelldamage += random.randint(1,6)
+    # char.fp -= fpcost
+    # spelldamage = 0
+    # for _ in range(char.tec):
+    #     spelldamage += random.randint(1,6)
 
     if spelltype == "single":
         dealspelldamage(starget,dmgtype,spelldamage)
@@ -299,9 +384,12 @@ def dealspelldamage(starget,dmgtype,spelldamage):
 rounds = 0
 
 initiative = []
+initnames = []
 ## initiative system
 def rollinitiative():
     global initiative
+    global initnames
+
     initvalue = []
     initchar = []
     initiative = []
@@ -329,6 +417,10 @@ def rollinitiative():
         initorder += 1
         print(initiative)
 
+    initnames = ", ".join(str(n.name) for n in initiative)
+    # for n in initiative:
+    #     initnames.append(n.name)
+
 rollinitiative()
 testing = True
 while testing:
@@ -347,8 +439,9 @@ while testing:
         print (f"({party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")    
     for n in opposition:
         print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
+    print ("Turn order: ")
 
-    print ("")
+    print (f"Turn order: {initnames}")
     
 
     for n in initiative:
@@ -409,12 +502,6 @@ while testing:
     # implement a random encounter generator
 
     # create function for all spells
-    # firea / fireba / firecao / mufirea / mufireba / mufirecao
-    # icea / iceba / icecao / mulicea / muliceba / mulicecao
-    # winda / windeba / windecao / muwinda / muwindeba / muwindecao
-    # rocka / rockba / rockcao / murocka / murockba / murockcao
-    # shocka / shockba / shockcao / mushocka / mushockba / mushockcao
-    # toxina / toxiba / toxicao / mutoxina / mutoxiba / mutoxicao
 
     # mu/fire > mu/fireza > mu/firezaon
     # mul/ice > mul/iceza > mul/icezaon
@@ -423,5 +510,36 @@ while testing:
     # mu/zap > mu/zapza > mu/zapzaon
     # mu/tox > mu/toxza > mu/toxzaon
 
+    # fire / fire-sta / fire-sta-za
+    # fire-mor (big) / fire-mortha (biggest)
+
+    # cure / curemor / curemortha
+    # revive / revivemor
+
     # haste / slow
     # shield / barrier
+
+    # Almighty        buff / debuff / damage / Heal
+    # yabarag         atk + / atk - / thunder / rage-
+    # haka pf'hagan   haste / slow / decay / regen
+    # igglebeth       resist death + / kill / toxic / revive
+    # irgh d'ebram    mdef + / mdef -/ ice / poison-
+    # famphegor       reflect / sleep / air / confuse -
+    # gaaphadur       pdef + / pdef - / earth / condition -
+    # pasperon        lck + / lck- / fire / heal
+    # khosme          - / - / chaos / 
+
+    # Grun > Several targets
+    # Lag > weak damage / negative (weak / lag)
+    # Comas > medium damage / negative (capable / comasach)
+    # Asmatha > heavy damage / negative (biggest/motha)
+    # Tin > weak heal / positive (ill / tinn)
+    # Cruai > medium heal / positive (tough / cruaidh)
+    # Fallain > heavy heal / positive (fallain / healthy)
+    # Leas > buff (improve / leasaich)
+    # Mios > debuff (worse / nas miosa)
+
+    # fire > Grun/Pas/mor // /Pas/matha
+    # water > Grun/Irg/mor // Irg/matha
+    # earth > Grun/Gaa/mor // Gaa/matha
+    # air > Grun/Fam/mor // Fam/matha
