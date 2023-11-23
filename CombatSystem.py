@@ -8,15 +8,17 @@ import random
 import copy
 
 class Character:
-    def __init__(self,name,cclass,level,maxhp,hp,maxfp,fp,atk,tec,dfn,spd,lck,slist,acted,defending,weak,init):
+    def __init__(self,name,char_class,level,plevel,maxhp,hp,maxfp,fp,atk,dmg,tec,dfn,spd,lck,slist,acted,defending,weak,equip,exp,init):
         self.name = name
-        self.cclass = cclass
+        self.char_class = char_class
         self.level = level
+        self.plevel = plevel
         self.maxhp = maxhp
         self.hp = hp
         self.maxfp = maxfp
         self.fp = fp
         self.atk = atk
+        self.dmg = dmg
         self.tec = tec
         self.dfn = dfn
         self.spd = spd
@@ -25,22 +27,47 @@ class Character:
         self.acted = acted
         self.defending = defending
         self.weak = weak
+        self.equip = equip
+        self.exp = exp
         self.init = init
 
 class Enemy:
-    def __init__(self,name,level,maxhp,hp,atk,dfn,spd,lck,defending,weak,init):
+    def __init__(self,name,level,maxhp,hp,atk,dmg,dfn,spd,lck,defending,weak,exp,money,init):
         self.name = name
         self.level = level
         self.maxhp = maxhp
         self.hp = hp
         self.atk = atk
+        self.dmg = dmg
         self.dfn = dfn
         self.spd = spd
         self.lck = lck
         self.defending = defending
         self.weak = weak
+        self.exp = exp
+        self.money = money
         self.init = init
 
+class CClass:
+    def __init__(self,name,hp,fp,fpinc,atk,dmg,tec,dfn,spd,lck,special):
+        self.name = name
+        self.hp = hp
+        self.fp = fp
+        self.fpinc = fpinc
+        self.atk = atk
+        self.dmg = dmg
+        self.tec = tec
+        self.dfn = dfn
+        self.spd = spd
+        self.lck = lck
+        self.special = special
+
+# Character Classes
+warrior = CClass("Warrior",10,20,3,6,1,3,4,3,3,None)
+druid = CClass("Druid",8,50,6,6,1,8,2,3,3,None)
+bard = CClass("Bard",8,40,5,6,1,6,2,5,6,None)
+
+cclasses = [warrior,druid,bard]
 
 """ 0: Phys
     1: fire
@@ -53,23 +80,43 @@ class Enemy:
 
 elem = ["phys","fire","wind","earth","ice","thunder","toxic","decay","chaos","death"]
 
+drav_equip = {
+    "Weapon":None,
+    "Armor":None,
+    "Accessory 1":None,
+    "Accessory 2":None
+}
+dan_equip = {
+    "Weapon":None,
+    "Armor":None,
+    "Accessory 1":None,
+    "Accessory 2":None
+}
+mars_equip = {
+    "Weapon":None,
+    "Armor":None,
+    "Accessory 1":None,
+    "Accessory 2":None
+}
+
 dravspells = ["leas","pas","igg","grun"]
 danspells = ["leas","cruai","igg","gaa","grun","comas"]
 marsspells = ["leas","yab","grun"]
 
 
-drav = Character("Dravroth","Bard",1,80,80,40,40,6,6,2,5,6,dravspells,False,False,[],0)
-dan = Character("Thorudan","Druid",1,80,80,50,50,4,10,2,3,3,danspells,False,False,[],0)
-mars = Character("Mars","Warrior",1,100,100,20,20,8,3,4,3,3,marsspells,False,False,[],0)
+drav = Character("Dravroth","Bard",1,1,80,80,40,40,6,1,6,2,5,6,dravspells,False,False,[],drav_equip,0,0)
+dan = Character("Thorudan","Druid",1,1,80,80,50,50,4,1,10,2,3,3,danspells,False,False,[],dan_equip,0,0)
+mars = Character("Mars","Warrior",1,1,100,100,20,20,8,2,3,4,3,3,marsspells,False,False,[],mars_equip,0,0)
 
-enemy1 = Enemy("Evil Soul",1,60,60,5,2,0,0,False,[elem[1],elem[2]],0)
-enemy2 = Enemy("Malignant Spirit",2,40,40,5,0,5,0,False,[elem[0],elem[2]],0)
-enemy3 = Enemy("Despicable Shade",3,30,30,4,2,6,0,False,[elem[1],elem[3]],0)
-enemy4 = Enemy("Troublesome Ghost",1,80,80,5,3,2,0,False,[elem[1],elem[2],elem[3],elem[4],elem[5],elem[6]],0)
+enemy1 = Enemy("Evil Soul",1,60,60,5,1,2,0,0,False,[elem[1],elem[2]],5,5,0)
+enemy2 = Enemy("Malignant Spirit",2,40,40,5,1,0,5,0,False,[elem[0],elem[2]],10,10,0)
+enemy3 = Enemy("Despicable Shade",3,30,30,4,1,2,6,0,False,[elem[1],elem[3]],15,20,0)
+enemy4 = Enemy("Troublesome Ghost",1,80,80,5,1,3,2,0,False,[elem[1],elem[2],elem[3],elem[4],elem[5],elem[6]],5,5,0)
 
 enemies_1 = [enemy1,enemy2,enemy3,enemy4]
 
 party = [drav,dan,mars]
+party_money = 0
 opposition = []
 
 atkmod = 0
@@ -105,7 +152,15 @@ def rollattack(char):
 def rolldamage(char):
     rolleddamage = 0
     for _ in range(char.atk):
-        rolleddamage += random.randint(1,4)
+        if char.dmg == 1:
+            rolleddamage += random.randint(1,4)
+        elif char.dmg == 2:
+            rolleddamage += random.randint(2,6)
+        elif char.dmg == 3:
+            rolleddamage += random.randint(3,8)
+        elif char.dmg >= 4:
+            rolleddamage += random.randint(4,10)
+
     rolleddamage = rolleddamage * char.level + char.atk
     return rolleddamage
 
@@ -123,7 +178,7 @@ def attackfunc(attacker,target):
 
         elif target.defending == True:
             finaldamage = finaldamage // 2
-            print (f"{n.name} attacks {enemytarget.name}, but they defended and suffered only {finaldamage} damage.")
+            print (f"{attacker.name} attacks {target.name}, but they defended and suffered only {finaldamage} damage.")
 
         else:
             print (f"{attacker.name} attacks {target.name} for {finaldamage} damage.")
@@ -156,6 +211,7 @@ def command(char):
         chartarget = targetenemy()
 
         if chartarget is not None:
+
             attackfunc(char,chartarget)
             
             char.acted = True
@@ -163,6 +219,23 @@ def command(char):
             
         pass
     
+    elif charcommand == "charge" and char.char_class == "Warrior":
+        chartarget = targetenemy()
+
+        if chartarget is not None:
+
+            char.hp -= round(char.maxhp*0.15)
+            attacktimes = random.randint(1,3)
+
+            for _ in range (1,attacktimes+1):
+
+                attackfunc(char,chartarget)
+
+                if chartarget.hp <= 0:
+                    break
+
+            char.acted = True
+
     elif charcommand == "defend":
         char.defending = True
         print (f"{char.name} is defending.")
@@ -326,6 +399,9 @@ def command(char):
         print(f"{char.name} feel dead.")
         char.acted = True
 
+    else:
+        print("Invalid command.")
+
 def usefp(char,fp):
     if char.fp < fp:
         print(f"{char.name} doesn't have enough FP.")
@@ -421,7 +497,7 @@ def spellversion(char,spell,dmgtype):
                 heal = calcspellheal(char,"weak")
                 for n in party:
                     # healally function
-                    healally(n,heal)
+                    healally(char,n,heal)
 
         elif "grun" in spell and "grun" not in char.slist:
             print(f"{char.name} can't use this skill.")
@@ -431,7 +507,7 @@ def spellversion(char,spell,dmgtype):
                 starget = targetally()
                 if starget is not None:
                     heal = calcspellheal(char,"weak")
-                    healally(starget,heal)
+                    healally(char,starget,heal)
         pass
 
     elif "cruai" in spell and "cruai" in char.slist and not "igg" in spell:
@@ -440,7 +516,7 @@ def spellversion(char,spell,dmgtype):
                 heal = calcspellheal(char,"medium")
                 for n in party:
                     # healally function
-                    healally(n,heal)
+                    healally(char,n,heal)
 
         elif "grun" in spell and "grun" not in char.slist:
             print(f"{char.name} can't use this skill.")
@@ -450,7 +526,7 @@ def spellversion(char,spell,dmgtype):
                 starget = targetally()
                 if starget is not None:
                     heal = calcspellheal(char,"medium")
-                    healally(starget,heal)
+                    healally(char,starget,heal)
         pass
 
     elif "fallain" in spell and "fallain" in char.slist and not "igg" in spell:
@@ -459,7 +535,7 @@ def spellversion(char,spell,dmgtype):
                 heal = calcspellheal(char,"heavy")
                 for n in party:
                     # healally function
-                    healally(n,heal)
+                    healally(char,n,heal)
 
         elif "grun" in spell and "grun" not in char.slist:
             print(f"{char.name} can't use this skill.")
@@ -469,7 +545,7 @@ def spellversion(char,spell,dmgtype):
                 starget = targetally()
                 if starget is not None:
                     heal = calcspellheal(char,"heavy")
-                    healally(starget,heal)
+                    healally(char,starget,heal)
         pass
 
     elif "igg" in spell and "tin" in spell:
@@ -481,6 +557,7 @@ def spellversion(char,spell,dmgtype):
                     starget.hp += round((starget.maxhp*30/100))
 
                     print (f"{starget.name} has been revived with {round(starget.maxhp*30/100)} HP!")
+                    char.acted = True
 
     elif "igg" in spell and "cruai" in spell:
         if "igg" in char.slist and "cruai" in char.slist:
@@ -491,6 +568,7 @@ def spellversion(char,spell,dmgtype):
                     starget.hp += round((starget.maxhp*60/100))
 
                     print (f"{starget.name} has been revived with {round(starget.maxhp*60/100)} HP!")
+                    char.acted = True
 
     elif "igg" in spell and "fallain" in spell:
         if "igg" in char.slist and "fallain" in char.slist:
@@ -500,6 +578,7 @@ def spellversion(char,spell,dmgtype):
                     starget.hp += round((starget.maxhp))
 
                     print (f"{starget.name} has been revived with full HP!")
+                    char.acted = True
 
     else:
         print(f"{char.name} can't use this skill.")
@@ -518,10 +597,19 @@ def updatecombatlist():
 
 ## Logic
 
-cancelterms = ["no","back","cancel","return"]
+cancelterms = ["no","back","cancel","return","quit"]
 
 def targetenemy():
     stargetindex = None
+
+    if len(opposition) == 1:
+        target = opposition[0]
+        quickattack = input(f"Attack {target.name}? (\"No\" to cancel)").lower()
+        if quickattack in cancelterms:
+            return None
+        else:
+            return target
+
     while stargetindex == None:
         
         stargetindex = input("Who are you targeting? ")
@@ -589,7 +677,7 @@ def targetdeadally():
     target = starget
     return target
 
-def healally(n, heal):
+def healally(char, n, heal):
     if n.hp > 0:
         n.hp += round((n.maxhp*heal/100))
 
@@ -599,6 +687,8 @@ def healally(n, heal):
             n.hp = n.maxhp
     else:
         print(f"No effect on {n.name}")
+
+    char.acted = True
 
 def usespell(char,starget,dmgtype,spelltype):
     global spelldamage
@@ -611,7 +701,6 @@ def usespell(char,starget,dmgtype,spelltype):
     # for _ in range(char.tec):
     #     spelldamage += random.randint(1,6)
 
-    char.acted = True
     if spelltype == "single":
         dealspelldamage(starget,dmgtype,spelldamage)
         if starget.hp <= 0:
@@ -630,6 +719,8 @@ def usespell(char,starget,dmgtype,spelltype):
             opposition.remove(n)
             opptoremove.append(n)
             pass
+    
+    char.acted = True
 
 def dealspelldamage(starget,dmgtype,spelldamage):
     if dmgtype in starget.weak:
@@ -643,19 +734,41 @@ def gameover(party):
     return all(n.hp == 0 for n in party)
 
 opptoremove = []
+combat_money = 0
+combat_exp = 0
 
 def endofturncleanup():
     global initiative
     global opptoremove
+    global combat_exp
+    global combat_money
 
     for n in opptoremove:
+        combat_exp += n.exp
+        combat_money += n.money
+
         if n in initiative:
             initiative.remove(n)
 
     opptoremove = []
 
-## Game
-rounds = 0
+def calcRewards():
+    global combat_exp
+    global combat_money
+    global party_money
+
+    aliveparty = 0
+    for n in party:
+        if n.hp >0:
+            aliveparty += 1
+    
+    combat_exp = round(combat_exp // aliveparty)
+
+    for n in party:
+        if n.hp >0:
+            n.exp += combat_exp
+    
+    party_money += combat_money
 
 ## initiative system
 initiative = []
@@ -718,99 +831,268 @@ def randomenemies():
 
     # opposition = renamedopposition
 
-randomenemies()
-rollinitiative()
-initnames = ", ".join(str(n.name) for n in initiative)
-print (f"Turn order: {initnames}")
+plevel_exp = [0,10,30,60,100,250,300]
 
-testing = True
-while testing:
+def checkPLevel(char):
 
-    os.system('cls')
+    if char.exp >= plevel_exp[char.plevel]:
+        os.system("cls")
+        print(f"{char.name} has leveled up!")
+        levelUpChar(char)
 
-    if not opposition:
-        testing = False
-        print(f"You won the combat in {rounds} rounds!")
-        break
+def pickClass(cname):
+    for n in cclasses:
+        if n.name == cname:
+            return n
 
-    rounds += 1
-    print (f"Round {rounds}")
-    print ("") #spacer
-    print ("Party:") #spacer
-    for n in party:
-        print (f"({party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
-    print ("") #spacer
-    print ("Opposition") #spacer
-    for n in opposition:
-        print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
-    print ("") #spacer
+def levelUpChar(char):
+    class_choice = pickClass(char.char_class)
+    choice_made = False
+    char.plevel += 1
+    
+    while choice_made == False:
+    
+        choice = input(f"What do you want to improve?\n Max (H)P: {char.maxhp} >>> {char.maxhp+class_choice.hp}\n Max (F)P: {char.maxfp} >>> {char.maxfp+class_choice.fpinc}\n (T)ec: {char.tec} >>> {char.tec+1}\n (S)pd: {char.spd} >>> {char.spd+1}\n (L)ck: {char.lck} >>> {char.lck+1}\n\n")
 
+        if choice.lower() == "h":
+            final_choice = input(f"\nThis will increase your Max HP by {class_choice.hp}.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y":
+                char.maxhp += class_choice.hp
+                choice_made = True
+
+            if final_choice.lower() == "n":
+                pass
+    
+        elif choice.lower() == "f":
+            final_choice = input(f"\nThis will increase your Max FP by {class_choice.fpinc}.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y":
+                char.maxfp += class_choice.fpinc
+                choice_made = True
+
+            if final_choice.lower() == "n":
+                pass
+
+        elif choice.lower() == "t":
+            final_choice = input(f"\nThis will increase your Tec by 1.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y":
+                char.tec += 1
+                choice_made = True
+
+            if final_choice.lower() == "n":
+                pass
+
+        elif choice.lower() == "s":
+            final_choice = input(f"\nThis will increase your Spd by 1.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y":
+                char.spd += 1
+                choice_made = True
+
+            if final_choice.lower() == "n":
+                pass
+
+        elif choice.lower() == "l":
+            final_choice = input(f"\nThis will increase your Lck by 1.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y":
+                char.lck += 1
+                choice_made = True
+
+            if final_choice.lower() == "n":
+                pass
+
+
+
+
+        
+# GAME
+def runCombat():
+    global combat_money
+    global combat_exp
+
+    randomenemies()
+    rollinitiative()
     initnames = ", ".join(str(n.name) for n in initiative)
     print (f"Turn order: {initnames}")
-    
-    print ("") #spacer
 
-    for n in initiative:
-        if n not in party and n.hp <= 0:
-            pass
-        else:
-            print(f"It's {n.name}'s turn!")
-        if n in party and n.hp <= 0:
-            print (f"But they're down.")
-            print ("")
+    rounds = 0
+    testing_combat = True
+    while testing_combat:
 
-        if n in opposition and n.hp > 0:
-            enemytarget = None
-            while enemytarget == None or enemytarget.hp == 0:
-                enemytarget = random.choice(party)
-            attackfunc(n,enemytarget)
+        os.system('cls')
 
-            #game over function
-            if gameover(party):
-                print ("")
-                print ("All heroes have been defeated.")
-                break
+        if not opposition:
+            testing_combat = False
+            calcRewards()
+            print(f"You won the combat in {rounds} rounds!\nThe party gains {combat_money} and each party member receives {combat_exp} experience.")
+            combat_money = 0
+            combat_exp = 0
+            input("Type anything to continue: ")
+            for n in party:
+                checkPLevel(n)
+            
+            return
+            # break
 
-            print ("")
-            time.sleep(0.4)
+        rounds += 1
+        print (f"Round {rounds}")
+        print ("") #spacer
+        print ("Party:") #spacer
+        for n in party:
+            print (f"({party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+        print ("") #spacer
+        print ("Opposition") #spacer
+        for n in opposition:
+            print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
+        print ("") #spacer
+
+        initnames = ", ".join(str(n.name) for n in initiative)
+        print (f"Turn order: {initnames}")
         
-        elif n in party:
-            n.acted = False
-            n.defending = False
-            if not opposition:
-                pass
-            elif n.hp <= 0:
+        print ("") #spacer
+
+        for n in initiative:
+            if n not in party and n.hp <= 0:
                 pass
             else:
-                while n.acted == False:
-                    command(n)
+                print(f"It's {n.name}'s turn!")
+            if n in party and n.hp <= 0:
+                print (f"But they're down.")
+                print ("")
+
+            if n in opposition and n.hp > 0:
+                enemytarget = None
+                while enemytarget == None or enemytarget.hp == 0:
+                    enemytarget = random.choice(party)
+                attackfunc(n,enemytarget)
+
+                #game over function
+                if gameover(party):
+                    print ("")
+                    print ("All heroes have been defeated.")
+                    break
 
                 print ("")
                 time.sleep(0.4)
+            
+            elif n in party:
+                n.acted = False
+                n.defending = False
+                if not opposition:
+                    pass
+                elif n.hp <= 0:
+                    pass
+                else:
+                    while n.acted == False:
+                        command(n)
 
-    if gameover(party):
-        print ("")
-        print ("Game Over.")
-        break
+                    print ("")
+                    time.sleep(0.4)
 
-    endofturncleanup()
+        if gameover(party):
+            print ("")
+            print ("Game Over.")
+            break
 
-    input("Type anything to continue: ")
+        endofturncleanup()
+
+        input("Type anything to continue: ")
+
+# randomenemies()
+# rollinitiative()
+# initnames = ", ".join(str(n.name) for n in initiative)
+# print (f"Turn order: {initnames}")
+# rounds = 0
+
+# testing = True
+# while testing:
+
+#     os.system('cls')
+
+#     if not opposition:
+#         testing = False
+#         print(f"You won the combat in {rounds} rounds!")
+#         break
+
+#     rounds += 1
+#     print (f"Round {rounds}")
+#     print ("") #spacer
+#     print ("Party:") #spacer
+#     for n in party:
+#         print (f"({party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+#     print ("") #spacer
+#     print ("Opposition") #spacer
+#     for n in opposition:
+#         print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
+#     print ("") #spacer
+
+#     initnames = ", ".join(str(n.name) for n in initiative)
+#     print (f"Turn order: {initnames}")
+    
+#     print ("") #spacer
+
+#     for n in initiative:
+#         if n not in party and n.hp <= 0:
+#             pass
+#         else:
+#             print(f"It's {n.name}'s turn!")
+#         if n in party and n.hp <= 0:
+#             print (f"But they're down.")
+#             print ("")
+
+#         if n in opposition and n.hp > 0:
+#             enemytarget = None
+#             while enemytarget == None or enemytarget.hp == 0:
+#                 enemytarget = random.choice(party)
+#             attackfunc(n,enemytarget)
+
+#             #game over function
+#             if gameover(party):
+#                 print ("")
+#                 print ("All heroes have been defeated.")
+#                 break
+
+#             print ("")
+#             time.sleep(0.4)
+        
+#         elif n in party:
+#             n.acted = False
+#             n.defending = False
+#             if not opposition:
+#                 pass
+#             elif n.hp <= 0:
+#                 pass
+#             else:
+#                 while n.acted == False:
+#                     command(n)
+
+#                 print ("")
+#                 time.sleep(0.4)
+
+#     if gameover(party):
+#         print ("")
+#         print ("Game Over.")
+#         break
+
+#     endofturncleanup()
+
+#     input("Type anything to continue: ")
 
 
 # Create PHYS skills for non-casters (buffs, defense, physical attacks)
+    # Multi-hit variant for all enemies
+    # Medium/Heavy damage variants
+    # High crit rate attack
 
 # Create equipment system
-### equipping and unequipping equipment (shouldn't be done in combat)
-### equip. should increase heroes' ATK, DEF, (maybe change weak/resist)
+    # equipping and unequipping equipment (shouldn't be done in combat)
+    # equip. should increase heroes' ATK, DEF, (maybe change weak/resist)
 
 # Create Perks system
-### defeating enemies grant EXP, each EXP*perks+1 reached gives a new perk.
-### Perks can increase > base HP, FP, SPD, LCK, TEC
-### SPD/LCK/TEC can't be higher than 15
-### HP increases are based on class / 10% of class' max
-### FP increases are based on class / 10% of class' max
-### Every 10(?) perks, characters get access to new spell level/type
+    # defeating enemies grant EXP, each EXP*perks+1 reached gives a new perk.
+    # Perks can increase > base HP, FP, SPD, LCK, TEC
+    # SPD/LCK/TEC can't be higher than 15
+    # HP increases are based on class / 10% of class' max
+    # FP increases are based on class / 10% of class' max
+    # Every 10(?) perks, characters get access to new spell level/type
 
 
 # mu/fire > mu/fireza > mu/firezaon
