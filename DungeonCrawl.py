@@ -18,57 +18,57 @@
 import os
 
 #Dungeon Tiles
-t101 = """
+t101 = r"""
  \ _ _ _ /
   |     | 
   |     | 
   |     |
- /       \\
+ /       \
 """
-t011 = """
+t011 = r"""
  _ _ _ _ /
   |     | 
   |     | 
  _|_ _ _|
-         \\
+         \
 """
 
-t110 = """
+t110 = r"""
  \ _ _ _ _
   |     | 
   |     | 
   |_ _ _|_
  /        
 """
-t010 = """
+t010 = r"""
  _ _ _ _ _
   |     | 
   |     | 
  _|_ _ _|_
           
 """
-t000 = """
+t000 = r"""
  _ _ _ _ _
   |     | 
   |     | 
  _|     |_
           
 """
-t111 = """
+t111 = r"""
  \ _ _ _ /
   |     | 
   |     | 
   |_ _ _|
- /       \\
+ /       \
 """
-t001 = """
+t001 = r"""
  _ _ _ _ /
   |     | 
   |     | 
  _|     |
-         \\
+         \
 """
-t100 = """
+t100 = r"""
  \ _ _ _ _
   |     | 
   |     | 
@@ -80,22 +80,110 @@ t100 = """
 
 # Subtypes Open(0),Wall(1),Door(2)
 class Tile:
-    def __init__(self,N,S,W,E):
+    def __init__(self,name,N,W,E,S):
+        self.name = name
         self.N = N
-        self.S = S
-        self.E = E
         self.W = W
+        self.E = E
+        self.S = S
 
-dungeon01 = [[Tile(0,1,1,1),Tile(0,0,1,1),Tile(1,0,1,0)],
 
-             [Tile(0,1,1,0),Tile(0,0,1,1),Tile(1,0,0,1)],
-
-             [Tile(0,1,0,1),Tile(0,0,1,1),Tile(1,0,1,1)],
+dungeon01 = [[Tile('1100',1,1,0,0),Tile('1010',1,0,1,0),Tile('1110',1,1,1,0)],
+             [Tile('0110',0,1,1,0),Tile('0110',0,1,1,0),Tile('0110',0,1,1,0)],
+             [Tile('0111',0,1,1,1),Tile('0101',0,1,0,1),Tile('0011',0,0,1,1)],
              ]
 
-party_coord = [0,0]
-party_facing = 8
-check = dungeon01[party_coord[0]][party_coord[1]]
+# dungeon01 = [[Tile(0,1,1,1),Tile(0,0,1,1),Tile(1,0,1,0)],
+#              [Tile(0,1,1,0),Tile(0,0,1,1),Tile(1,0,0,1)],
+#              [Tile(0,1,0,1),Tile(0,0,1,1),Tile(1,0,1,1)],
+#              ]
+
+
+testdungeon = [
+    [1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,1,0,0,0,1],
+    [1,0,1,1,0,1,0,1,0,1],
+    [1,0,1,0,0,1,0,1,0,1],
+    [1,0,1,0,1,1,0,0,0,1],
+    [1,0,1,0,1,0,0,0,0,1],
+    [1,0,1,0,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1,1,0,1],
+    [1,0,0,0,0,0,1,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1]
+]
+
+def tileLookup(tiley, tilex, dungeon_bp):
+
+    tile = dungeon_bp[tiley][tilex]
+
+    
+    try:
+        tn = dungeon_bp[tiley-1][tilex]
+    except IndexError:
+        tn = 1
+    
+    try:
+        tw = dungeon_bp[tiley][tilex-1]
+    except IndexError:
+        tw = 1
+
+    try:
+        te = dungeon_bp[tiley][tilex+1]
+    except IndexError:
+        te = 1
+
+    try:
+        ts = dungeon_bp[tiley+1][tilex]
+    except IndexError:
+        ts = 1
+
+    # ts = dungeon_bp[tiley+1][tilex]
+
+    ttype = [tn,tw,te,ts]
+    
+    if tile == 0:
+        for i in range(len(ttype)):
+            if ttype[i] != 1:
+                ttype[i] = 0
+            else:
+                ttype[i] = 1
+
+    if tile == 1:
+        for i in range(len(ttype)):
+            ttype[i] = 1
+
+    tiletitle = f"{ttype[0]}{ttype[1]}{ttype[2]}{ttype[3]}"
+    finaltile = Tile(tiletitle,ttype[0],ttype[1],ttype[2],ttype[3])
+    
+    return finaltile
+
+dungeon_blueprint = []
+def buildDungeon(dungeon_bp):
+    global dungeon_blueprint
+
+    dungeon_blueprint = dungeon_bp
+    newdungeon = []
+    nny = 0
+    for ny in range(0, len(dungeon_bp)):
+        horizontal = []
+        nnx = 0
+        for nx in dungeon_bp[ny]:
+            # print(f"{nny}, {nnx}")
+            horizontal.append(tileLookup(nny,nnx,dungeon_bp))
+            nnx += 1
+        newdungeon.append(horizontal)
+        nny += 1
+    
+    return newdungeon
+
+
+dungeon_current = buildDungeon(testdungeon)
+# dungeon_current = dungeon01
+# print(dungeon_current)
+
+party_coord = [1,1]
+party_facing = 2
+check = dungeon_current[party_coord[0]][party_coord[1]]
 vision = None
 #Facings; N=8, S=2, W=4, E=6
 
@@ -103,9 +191,9 @@ vision = None
 def update_coord(x,y):
     global party_coord
     global check
-    party_coord[0] += x
-    party_coord[1] += y
-    check = dungeon01[party_coord[0]][party_coord[1]]
+    party_coord[0] -= y
+    party_coord[1] += x
+    check = dungeon_current[party_coord[0]][party_coord[1]]
 
 def update_vision():
     global vision
@@ -273,24 +361,104 @@ def update_picture():
         elif check.N == 0 and check.E == 0 and check.S == 1:
             print(t001)
 
+def getMap():
+
+    global dungeon_blueprint
+    localmap = [
+        [' ','5',' '],
+        ['5','0','5'],
+        [' ','5',' '],
+        ]
     
+    NE = dungeon_blueprint[party_coord[0]-1][party_coord[1]+1]
+    NW = dungeon_blueprint[party_coord[0]-1][party_coord[1]-1]
+    SE = dungeon_blueprint[party_coord[0]+1][party_coord[1]+1]
+    SW = dungeon_blueprint[party_coord[0]+1][party_coord[1]-1]
+
+    if party_facing == 8:
+        localmap[1][1] = "^"
+    elif party_facing == 2:
+        localmap[1][1] = "v"
+    elif party_facing == 4:
+        localmap[1][1] = "<"
+    elif party_facing == 6:
+        localmap[1][1] = ">"
+    
+    if NW == 0:
+        localmap[0][0] = '0'
+    elif NW == 1:
+        localmap[0][0] = '1'
+
+    if NE == 0:
+        localmap[0][2] = '0'
+    elif NE == 1:
+        localmap[0][2] = '1'
+
+    if SE == 0:
+        localmap[2][2] = '0'
+    elif SE == 1:
+        localmap[2][2] = '1'
+
+    if SW == 0:
+        localmap[2][0] = '0'
+    elif SW == 1:
+        localmap[2][0] = '1'
+
+    if check.N == 0:
+        localmap[0][1] = '0'
+    elif check.N == 1:
+        localmap[0][1] = '1'
+
+    if check.W == 0:
+        localmap[1][0] = '0'
+    elif check.W == 1:
+        localmap[1][0] = '1'
+
+    if check.E == 0:
+        localmap[1][2] = '0'
+    elif check.E == 1:
+        localmap[1][2] = '1'
+
+    if check.S == 0:
+        localmap[2][1] = '0'
+    elif check.S == 1:
+        localmap[2][1] = '1'
+
+    for n in range(0,len(localmap)):
+        # print(f"{localmap[n]}")
+        print(' '.join(localmap[n]))
+
+def dungeonMap():
+    dungeonmap = ''
+    for n in range(0,len(dungeon_current)):
+        for y in dungeon_current[n]:
+            dungeonmap += f" {y.name}"
+        dungeonmap += "\n"
+    
+    print(dungeonmap)
+    pass
+
 #Game Loop
 exploring = True
+# dungeon_current = buildDungeon(testdungeon)
+
 while exploring == True:
     
-    if party_coord == [2,2]:
+    if party_coord == [50,50]:
         
         print ("Congratulations, you reached the end of the dungeon!")
         exploring = False
-        print("""
+        print(r"""
                 \ _ _ _ /
                  |  _  | 
                  | | | | 
                  | | | |
-                /       \\
+                /       \
                 """)
 
     if exploring == True:
+        getMap()
+        # print(party_coord)
         update_picture()
         update_vision()
         
@@ -351,3 +519,11 @@ while exploring == True:
             elif check.W == 2:
                 print ("You see a door in front of you.")
 
+    if command == "map":
+        # getMap(party_coord)
+        dungeonMap()
+
+        input("Type anything to continue:")
+
+
+# TEST

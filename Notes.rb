@@ -1,4 +1,7 @@
-    
+
+# PROJECT OVERALL
+    # Create a file just for characters and classes
+
 
     
     # Create equipment system
@@ -13,7 +16,14 @@
     # FP increases are based on class / 10% of class' max
     # Every 10(?) perks, characters get access to new spell level/type
     
+# DUNGEON CRAWLER PART
+    # Create a full level
+    # Make it easier to write/code a level (DONE)
+        # Implement Doors and Objects (chests/treasure)
+    # Improve navigation
+        # Draw better ASCII
 
+    # create random encounters within dungeon and a system for that
 
 
     
