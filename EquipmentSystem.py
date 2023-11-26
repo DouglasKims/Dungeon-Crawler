@@ -1,6 +1,6 @@
-import CombatSystem
 import os
 import copy
+import CombatSystem
 
 
 # LOGIC
@@ -27,9 +27,10 @@ class Consumable():
 
 # Equip types: Armor, Weapon, Accessory
 
-armor1 = Equipment("Leather Armor","Armor",1,None,0,0,1,[CombatSystem.elem[1]],None,100)
+armor1 = Equipment("Leather Armor","Armor",1,None,0,0,1,None,None,100)
 armor2 = Equipment("Chain Mail","Armor",1,None,0,0,3,None,None,250)
 weapon1 = Equipment("Battle Axe","Weapon",1,None,1,1,0,None,None,100)
+weapon2 = Equipment("Vicious Blade","Weapon",1,None,0,2,0,None,None,500)
 weapon5 = Equipment("Longsword +1","Weapon",2,"Dmg +",2,2,0,None,None,1500)
 weapon6 = Equipment("Longsword +2","Weapon",3,"Dmg ++",3,3,0,None,None,5000)
 access1 = Equipment("Shield","Accessory",1,None,-1,0,5,None,None,300)
@@ -41,22 +42,24 @@ item3 = Consumable("Charged Memento","Reviving","Revives with 25% HP", 200)
 
 # EQUIPMENT
 inventory = []
-inventory.append(copy.deepcopy(armor1))
-inventory.append(copy.deepcopy(armor2))
-inventory.append(copy.deepcopy(weapon1))
-inventory.append(copy.deepcopy(access1))
+# inventory.append(copy.deepcopy(armor1))
+# inventory.append(copy.deepcopy(armor2))
+# inventory.append(copy.deepcopy(weapon1))
+# inventory.append(copy.deepcopy(access1))
 
 # CONSUMABLES
 consumables = []
-for n in range(3):
-    consumables.append(copy.deepcopy(item1))
-consumables.append(copy.deepcopy(item2))
-consumables.append(copy.deepcopy(item3))
+# for n in range(3):
+#     consumables.append(copy.deepcopy(item1))
+# consumables.append(copy.deepcopy(item2))
+# consumables.append(copy.deepcopy(item3))
+
+party = CombatSystem.party
 
 def chooseCharacter():
     print("Which Character are you managing?")
-    for n in CombatSystem.party:
-        print (f"({CombatSystem.party.index(n)}) {n.name}")
+    for n in party:
+        print (f"({party.index(n)}) {n.name}")
     char = input()
     
     if char in cancelterms:
@@ -70,8 +73,8 @@ def chooseCharacter():
 
     
 
-    if char in range(0,len(CombatSystem.party)):
-        char = CombatSystem.party[char]
+    if char in range(0,len(party)):
+        char = party[char]
         return char
 
     elif char == None:
@@ -142,12 +145,12 @@ def partyRecovery():
     fpcost = 0
     totalfp = 0
     
-    for n in CombatSystem.party:
+    for n in party:
         if n.hp <= 0:
             fpcost += 5
             totalfp += n.fp 
         else:
-            fpcost += round((n.hp - n.maxhp)*-1/25)
+            fpcost += (n.hp - n.maxhp)*-1/20
             totalfp += n.fp 
 
 
@@ -155,15 +158,15 @@ def partyRecovery():
 
     if totalfp >= fpcost:
 
-        fpcost = round(fpcost//len(CombatSystem.party))
-        choice = input(f"This will use {fpcost} per party member to revive fallen allies and fully heal the party.\nDo you want to continue? (No to cancel)\n").lower()
+        fpcost = round(fpcost//len(party))
+        choice = input(f"This will use {fpcost} FP per party member to revive fallen allies and fully heal the wounded.\nDo you want to continue? (No to cancel)\n").lower()
 
         if choice in cancelterms:
                 print("")
                 return None
         else:
 
-            for n in CombatSystem.party:
+            for n in party:
                 n.hp = n.maxhp
                 n.fp -= fpcost
     
@@ -200,7 +203,6 @@ def getInventory():
 
 def useItem(item):
 
-    party = CombatSystem.party
 
     if item.type == "Healing":
         iname, ipower, ieffect = item.effect.split()
@@ -566,7 +568,8 @@ def runEquipment():
             getStatus()
 
         if equip_command == "q":
-            return
+            os.system("cls")
+            testing_equip = False
         
         if equip_command == "s":
             getSkills()
@@ -574,14 +577,12 @@ def runEquipment():
         if equip_command == "r":
             partyRecovery()
 
-        # for n in CombatSystem.party:
-        #     print(f"{n.name} is part of the party.")
 
         input("\nType anything to continue: ")
 
 
 # GAME TEST
-runEquipment()
+# runEquipment()
     
 
 

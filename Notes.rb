@@ -17,13 +17,13 @@
     # Every 10(?) perks, characters get access to new spell level/type
     
 # DUNGEON CRAWLER PART
-    # Create a full level
-    # Make it easier to write/code a level (DONE)
+    # Create a full level //DONE
+    # Make it easier to write/code a level //DONE
         # Implement Doors and Objects (chests/treasure)
-    # Improve navigation
-        # Draw better ASCII
+    # Improve navigation //DONE
+        # Draw better ASCII //CANCEL
 
-    # create random encounters within dungeon and a system for that
+    # create random encounters within dungeon and a system for that //DONE
 
 
     

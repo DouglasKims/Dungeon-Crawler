@@ -12,101 +12,109 @@ gamerunning = True
 
 while gamerunning == True:
 
+    # GAME BOOTS DIRECTLY INTO DUNGEON CRAWL
+    # HERE THE STORY AND OTHER THINGS WILL GO TOWARDS AFTER.    
+
     os.system("cls")
-    gamecommand = input(f"What do you want to do?\n (C)ombat\n (E)quipment\n (D)ungeon\n")
+    DungeonCrawl.exploreDungeon()
+    
+    
+    # gamecommand = input(f"What do you want to do?\n (C)ombat\n (E)quipment\n (D)ungeon\n")
 
-    if gamecommand.lower() == "c":
+    # if gamecommand.lower() == "c":
 
-        CombatSystem.runCombat()
+    #     CombatSystem.runCombat()
 
-        # runCombat() Func
-            # CombatSystem.randomenemies()
-            # CombatSystem.rollinitiative()
-            # initnames = ", ".join(str(n.name) for n in CombatSystem.initiative)
-            # print (f"Turn order: {initnames}")
+    #     # runCombat() Func
+    #         # CombatSystem.randomenemies()
+    #         # CombatSystem.rollinitiative()
+    #         # initnames = ", ".join(str(n.name) for n in CombatSystem.initiative)
+    #         # print (f"Turn order: {initnames}")
 
-            # rounds = 0
-            # testing_combat = True
-            # while testing_combat:
+    #         # rounds = 0
+    #         # testing_combat = True
+    #         # while testing_combat:
 
-            #     os.system('cls')
+    #         #     os.system('cls')
 
-            #     if not CombatSystem.opposition:
-            #         testing = False
-            #         print(f"You won the combat in {rounds} rounds!")
-            #         break
+    #         #     if not CombatSystem.opposition:
+    #         #         testing = False
+    #         #         print(f"You won the combat in {rounds} rounds!")
+    #         #         break
 
-            #     rounds += 1
-            #     print (f"Round {rounds}")
-            #     print ("") #spacer
-            #     print ("Party:") #spacer
-            #     for n in CombatSystem.party:
-            #         print (f"({CombatSystem.party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
-            #     print ("") #spacer
-            #     print ("Opposition") #spacer
-            #     for n in CombatSystem.opposition:
-            #         print (f"({CombatSystem.opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
-            #     print ("") #spacer
+    #         #     rounds += 1
+    #         #     print (f"Round {rounds}")
+    #         #     print ("") #spacer
+    #         #     print ("Party:") #spacer
+    #         #     for n in CombatSystem.party:
+    #         #         print (f"({CombatSystem.party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+    #         #     print ("") #spacer
+    #         #     print ("Opposition") #spacer
+    #         #     for n in CombatSystem.opposition:
+    #         #         print (f"({CombatSystem.opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
+    #         #     print ("") #spacer
 
-            #     initnames = ", ".join(str(n.name) for n in CombatSystem.initiative)
-            #     print (f"Turn order: {initnames}")
+    #         #     initnames = ", ".join(str(n.name) for n in CombatSystem.initiative)
+    #         #     print (f"Turn order: {initnames}")
                 
-            #     print ("") #spacer
+    #         #     print ("") #spacer
 
-            #     for n in CombatSystem.initiative:
-            #         if n not in CombatSystem.party and n.hp <= 0:
-            #             pass
-            #         else:
-            #             print(f"It's {n.name}'s turn!")
-            #         if n in CombatSystem.party and n.hp <= 0:
-            #             print (f"But they're down.")
-            #             print ("")
+    #         #     for n in CombatSystem.initiative:
+    #         #         if n not in CombatSystem.party and n.hp <= 0:
+    #         #             pass
+    #         #         else:
+    #         #             print(f"It's {n.name}'s turn!")
+    #         #         if n in CombatSystem.party and n.hp <= 0:
+    #         #             print (f"But they're down.")
+    #         #             print ("")
 
-            #         if n in CombatSystem.opposition and n.hp > 0:
-            #             enemytarget = None
-            #             while enemytarget == None or enemytarget.hp == 0:
-            #                 enemytarget = random.choice(CombatSystem.party)
-            #             CombatSystem.attackfunc(n,enemytarget)
+    #         #         if n in CombatSystem.opposition and n.hp > 0:
+    #         #             enemytarget = None
+    #         #             while enemytarget == None or enemytarget.hp == 0:
+    #         #                 enemytarget = random.choice(CombatSystem.party)
+    #         #             CombatSystem.attackfunc(n,enemytarget)
 
-            #             #game over function
-            #             if CombatSystem.gameover(CombatSystem.party):
-            #                 print ("")
-            #                 print ("All heroes have been defeated.")
-            #                 break
+    #         #             #game over function
+    #         #             if CombatSystem.gameover(CombatSystem.party):
+    #         #                 print ("")
+    #         #                 print ("All heroes have been defeated.")
+    #         #                 break
 
-            #             print ("")
-            #             time.sleep(0.4)
+    #         #             print ("")
+    #         #             time.sleep(0.4)
                     
-            #         elif n in CombatSystem.party:
-            #             n.acted = False
-            #             n.defending = False
-            #             if not CombatSystem.opposition:
-            #                 pass
-            #             elif n.hp <= 0:
-            #                 pass
-            #             else:
-            #                 while n.acted == False:
-            #                     CombatSystem.command(n)
+    #         #         elif n in CombatSystem.party:
+    #         #             n.acted = False
+    #         #             n.defending = False
+    #         #             if not CombatSystem.opposition:
+    #         #                 pass
+    #         #             elif n.hp <= 0:
+    #         #                 pass
+    #         #             else:
+    #         #                 while n.acted == False:
+    #         #                     CombatSystem.command(n)
 
-            #                 print ("")
-            #                 time.sleep(0.4)
+    #         #                 print ("")
+    #         #                 time.sleep(0.4)
 
-            #     if CombatSystem.gameover(CombatSystem.party):
-            #         print ("")
-            #         print ("Game Over.")
-            #         break
+    #         #     if CombatSystem.gameover(CombatSystem.party):
+    #         #         print ("")
+    #         #         print ("Game Over.")
+    #         #         break
 
-            #     CombatSystem.endofturncleanup()
+    #         #     CombatSystem.endofturncleanup()
 
-            #     input("Type anything to continue: ")
+    #         #     input("Type anything to continue: ")
 
-    elif gamecommand.lower() == "e":
+    # elif gamecommand.lower() == "e":
 
-        EquipmentSystem.runEquipment()
+    #     EquipmentSystem.runEquipment()
 
-    elif gamecommand.lower() == "d":
+    # elif gamecommand.lower() == "d":
 
-        DungeonCrawl.exploreDungeon()
+    #     DungeonCrawl.exploreDungeon()
+
+
 
     # Create PHYS skills for non-casters (buffs, defense, physical attacks)
         # Multi-hit variant for all enemies

@@ -13,6 +13,8 @@
 import os
 import random
 import time
+import copy
+import EquipmentSystem
 import CombatSystem
 
 # Dungeon Tiles
@@ -143,6 +145,9 @@ testdungeon = [
     [1,1,1,1,1,1,1,1,1,1]
 ]
 
+
+
+
 dungeon11 = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 
@@ -183,6 +188,38 @@ dungeon11 = [
     [1,0,0,0,0,1,0,0,0,0,0,2,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,D,1], #30
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ]
+
+item1 = EquipmentSystem.item1
+item2 = EquipmentSystem.item2
+item3 = EquipmentSystem.item3
+access2 = EquipmentSystem.access2
+armor1 = EquipmentSystem.armor1
+armor2 = EquipmentSystem.armor2
+weapon1 = EquipmentSystem.weapon1
+weapon2 = EquipmentSystem.weapon2
+
+dungeon11loot = {
+    "1,6": (item1, 1,6),
+    "2,8": (item1 ,2,8),
+    "13,2": (item2 ,13,2),
+    "26,4": (armor1 ,26,4),
+    "14,9": (armor2 ,14,9),
+    "28,8": (weapon2 ,28,8),
+    "14,14": (item3 ,14,14),
+    "20,14": (access2 ,20,14),
+    "11,16": (item1 ,11,16),
+    "12,15": (item2 ,12,15),
+    "13,16": (item2 ,13,16),
+    "7,19": (item1 ,7,19),
+    "12,28": (weapon1 ,12,28),
+    "15,26": (item2 ,15,26),
+    "16,26": (item3 ,16,26),
+    "17,26": (item1 ,17,26),
+    "22,26": (item2 ,22,26),
+    "24,25": (item2 ,24,25),
+    "25,24": (item2 ,25,24),
+}
+
 
 dungeon11test = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -272,12 +309,13 @@ def tileLookup(tiley, tilex, dungeon_bp):
     return finaltile
 
 dungeon_blueprint = []
-def buildDungeon(dungeon_bp,level):
+def buildDungeon(dungeon_bp,level,lootlist):
     global dungeon_blueprint
     global dungeon_level
+    global dungeon_current_loot
 
     dungeon_level = level
-
+    dungeon_current_loot = lootlist
     dungeon_blueprint = dungeon_bp
     newdungeon = []
     nny = 0
@@ -295,7 +333,8 @@ def buildDungeon(dungeon_bp,level):
 
 
 # dungeon_current = buildDungeon(testdungeon, 1)
-dungeon_current = buildDungeon(dungeon11test, 1)
+dungeon_current_loot = None
+dungeon_current = buildDungeon(dungeon11, 1, dungeon11loot)
 # dungeon_current = dungeon01
 # print(dungeon_current)
 
@@ -333,7 +372,7 @@ def update_time():
 
     steps += 1
 
-    if steps >= 90:
+    if steps >= 60:
         hour += 1
         steps = 0
 
@@ -373,98 +412,98 @@ def update_danger():
     else:
         danger_level = "None"
 
-def update_vision():
-    global vision
-    if party_facing == 8:
-        if check.N == 0:
-            front = "Corridor"
-        elif check.N == 1:
-            front = "Wall"
-        elif check.N == 2:
-            front = "Door"
+# def update_vision():
+#     global vision
+#     if party_facing == 8:
+#         if check.N == 0:
+#             front = "Corridor"
+#         elif check.N == 1:
+#             front = "Wall"
+#         elif check.N == 2:
+#             front = "Door"
 
-        if check.W == 0:
-            left = "Corridor"
-        elif check.W == 1:
-            left = "Wall"
-        elif check.W == 2:
-            left = "Door"
+#         if check.W == 0:
+#             left = "Corridor"
+#         elif check.W == 1:
+#             left = "Wall"
+#         elif check.W == 2:
+#             left = "Door"
 
-        if check.E == 0:
-            right = "Corridor"
-        elif check.E == 1:
-            right = "Wall"
-        elif check.E == 2:
-            right = "Door"
+#         if check.E == 0:
+#             right = "Corridor"
+#         elif check.E == 1:
+#             right = "Wall"
+#         elif check.E == 2:
+#             right = "Door"
 
-    if party_facing == 2:
-        if check.S == 0:
-            front = "Corridor"
-        elif check.S == 1:
-            front = "Wall"
-        elif check.S == 2:
-            front = "Door"
+#     if party_facing == 2:
+#         if check.S == 0:
+#             front = "Corridor"
+#         elif check.S == 1:
+#             front = "Wall"
+#         elif check.S == 2:
+#             front = "Door"
 
-        if check.E == 0:
-            left = "Corridor"
-        elif check.E == 1:
-            left = "Wall"
-        elif check.E == 2:
-            left = "Door"
+#         if check.E == 0:
+#             left = "Corridor"
+#         elif check.E == 1:
+#             left = "Wall"
+#         elif check.E == 2:
+#             left = "Door"
 
-        if check.W == 0:
-            right = "Corridor"
-        elif check.W == 1:
-            right = "Wall"
-        elif check.W == 2:
-            right = "Door"
+#         if check.W == 0:
+#             right = "Corridor"
+#         elif check.W == 1:
+#             right = "Wall"
+#         elif check.W == 2:
+#             right = "Door"
 
-    if party_facing == 4:
-        if check.W == 0:
-            front = "Corridor"
-        elif check.W == 1:
-            front = "Wall"
-        elif check.W == 2:
-            front = "Door"
+#     if party_facing == 4:
+#         if check.W == 0:
+#             front = "Corridor"
+#         elif check.W == 1:
+#             front = "Wall"
+#         elif check.W == 2:
+#             front = "Door"
 
-        if check.S == 0:
-            left = "Corridor"
-        elif check.S == 1:
-            left = "Wall"
-        elif check.S == 2:
-            left = "Door"
+#         if check.S == 0:
+#             left = "Corridor"
+#         elif check.S == 1:
+#             left = "Wall"
+#         elif check.S == 2:
+#             left = "Door"
 
-        if check.N == 0:
-            right = "Corridor"
-        elif check.N == 1:
-            right = "Wall"
-        elif check.N == 2:
-            right = "Door"
+#         if check.N == 0:
+#             right = "Corridor"
+#         elif check.N == 1:
+#             right = "Wall"
+#         elif check.N == 2:
+#             right = "Door"
 
-    if party_facing == 6:
-        if check.E == 0:
-            front = "Corridor"
-        elif check.E == 1:
-            front = "Wall"
-        elif check.E == 2:
-            front = "Door"
+#     if party_facing == 6:
+#         if check.E == 0:
+#             front = "Corridor"
+#         elif check.E == 1:
+#             front = "Wall"
+#         elif check.E == 2:
+#             front = "Door"
 
-        if check.N == 0:
-            left = "Corridor"
-        elif check.N == 1:
-            left = "Wall"
-        elif check.N == 2:
-            left = "Door"
+#         if check.N == 0:
+#             left = "Corridor"
+#         elif check.N == 1:
+#             left = "Wall"
+#         elif check.N == 2:
+#             left = "Door"
 
-        if check.S == 0:
-            right = "Corridor"
-        elif check.S == 1:
-            right = "Wall"
-        elif check.S == 2:
-            right = "Door"
+#         if check.S == 0:
+#             right = "Corridor"
+#         elif check.S == 1:
+#             right = "Wall"
+#         elif check.S == 2:
+#             right = "Door"
 
-    vision = f"you can see a {front} in front of you, a {left} to your left, and a {right} to your right."
-    print (vision)
+#     vision = f"you can see a {front} in front of you, a {left} to your left, and a {right} to your right."
+#     print (vision)
 
 # def update_picture():
 #     if party_facing == 8:
@@ -538,78 +577,6 @@ def update_vision():
 #             print(t100)
 #         elif check.N == 0 and check.E == 0 and check.S == 1:
 #             print(t001)
-
-def getMapOld():
-
-    global dungeon_blueprint
-    localmap = [
-        [' ','5',' '],
-        ['5','0','5'],
-        [' ','5',' '],
-        ]
-    
-    NE = dungeon_blueprint[party_coord[0]-1][party_coord[1]+1]
-    NW = dungeon_blueprint[party_coord[0]-1][party_coord[1]-1]
-    SE = dungeon_blueprint[party_coord[0]+1][party_coord[1]+1]
-    SW = dungeon_blueprint[party_coord[0]+1][party_coord[1]-1]
-
-    if party_facing == 8:
-        localmap[1][1] = "^"
-    elif party_facing == 2:
-        localmap[1][1] = "v"
-    elif party_facing == 4:
-        localmap[1][1] = "<"
-    elif party_facing == 6:
-        localmap[1][1] = ">"
-    
-    if NW == 0:
-        localmap[0][0] = ' '
-    elif NW == 1:
-        localmap[0][0] = '■'
-
-    if NE == 0:
-        localmap[0][2] = ' '
-    elif NE == 1:
-        localmap[0][2] = '■'
-
-    if SE == 0:
-        localmap[2][2] = ' '
-    elif SE == 1:
-        localmap[2][2] = '■'
-
-    if SW == 0:
-        localmap[2][0] = ' '
-    elif SW == 1:
-        localmap[2][0] = '■'
-
-    if check.N == 0:
-        localmap[0][1] = ' '
-    elif check.N == 1:
-        localmap[0][1] = '■'
-
-    if check.W == 0:
-        localmap[1][0] = ' '
-    elif check.W == 1:
-        localmap[1][0] = '■'
-
-    if check.E == 0:
-        localmap[1][2] = ' '
-    elif check.E == 1:
-        localmap[1][2] = '■'
-
-    if check.S == 0:
-        localmap[2][1] = ' '
-    elif check.S == 1:
-        localmap[2][1] = '■'
-
-    # if check.S == 0:
-    #     localmap[2][1] = '0'
-    # elif check.S == 1:
-    #     localmap[2][1] = '1'
-
-    for n in range(0,len(localmap)):
-        # print(f"{localmap[n]}")
-        print(' '.join(localmap[n]))
 
 def getMap():
 
@@ -896,7 +863,7 @@ def openDoor():
     elif door == D:
         print("The door seems to be locked.")
     elif door == 9:
-        choice = input("You find a secret passage in the wall! Go through it? (Y/N).\n")
+        choice = input("You find a secret passage in the wall! Go through it? (Y/N) \n")
         if choice.lower() == "y":
             print("You go across the passage.")
             if party_facing == 8:
@@ -910,13 +877,57 @@ def openDoor():
         else:
             print("Nevermind.")
 
+def interact():
+
+    if party_facing == 8:
+        object = party_coord[0]-1, party_coord[1]
+    elif party_facing == 4:
+        object = party_coord[0], party_coord[1]-1
+    elif party_facing == 2:
+        object = party_coord[0]+1, party_coord[1]
+    elif party_facing == 6:
+        object = party_coord[0], party_coord[1]+1
+
+    objecttype = dungeon_blueprint[object[0]][object[1]]
+
+    if objecttype == "U":
+        input("Do you want to climb back up?")
+    
+    if objecttype == "D":
+        input("Do you want to climb down?")
+
+    if objecttype == "C":
+        getLoot(object[0],object[1])
+
+    if objecttype == "O":
+        print("There's nothing else here.")
+
+def getLoot(looty,lootx):
+
+    print ("You scavenge for loot.")
+
+    lootcoord = f"{looty},{lootx}"
+    
+    if lootcoord in dungeon_current_loot:
+        lootitem = dungeon_current_loot[lootcoord][0]
+
+
+    if len(EquipmentSystem.consumables) >10:
+        print(f"Found a {lootitem.name}. But the party stash is full.")    
+    else:
+
+        EquipmentSystem.consumables.append(copy.deepcopy(lootitem))
+        dungeon_blueprint[looty][lootx] = "O"
+        dungeon_current_loot.pop(lootcoord)
+        print(f"Found a {lootitem.name}. Added to party's stash.")
+
+
 directions = {
     8: ("N", (0, -1)),
     4: ("W", (-1, 0)),
     6: ("E", (1, 0)),
     2: ("S", (0, 1))
 }
-
 
 #Game Loop
 def exploreDungeon():
@@ -954,12 +965,12 @@ def exploreDungeon():
 
         
         print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]}")
-        command = input(f"\nType W/8 to go Forwards, Q/7 to turn left, and E/9 to turn right:\nYou can also check the (Map), Open Doors(F), or (O)pen party menu.\n")
+        command = input(f"\nType W/8 to go Forwards, Q/7 to turn left, and E/9 to turn right:\nYou can also check the (M)ap, (I)nteract (or F), or (O)pen party menu.\n").lower()
 
         os.system('cls')
         
 
-        if command == "7" or command.lower() == "q":
+        if command == "7" or command == "q":
             if party_facing == 8:
                 party_facing = 4
             elif party_facing == 4:
@@ -969,7 +980,7 @@ def exploreDungeon():
             elif party_facing ==6:
                 party_facing = 8
 
-        if command == "9" or command.lower() == "e":
+        if command == "9" or command == "e":
             if party_facing == 8:
                 party_facing = 6
             elif party_facing == 6:
@@ -979,7 +990,7 @@ def exploreDungeon():
             elif party_facing == 4:
                 party_facing = 8
 
-        if command == "8" or command.lower() == "w":
+        if command == "8" or command == "w":
 
             # facing = directions.get(party_facing)
             if party_facing == 8:
@@ -1008,6 +1019,8 @@ def exploreDungeon():
                     print ("There is a door in front of you.\n")
                 elif getattr(check, facing) == C:
                     print ("There is a closed chest in front of you.\n")
+                elif getattr(check, facing) == O:
+                    print ("There is a looted chest in front of you.\n")
                 elif getattr(check, facing) == U:
                     print ("These are the stairs upwards.\n")
                 elif getattr(check, facing) == D:
@@ -1072,8 +1085,9 @@ def exploreDungeon():
             #     elif check.W == 2:
             #         print ("There is a door in front of you.")
 
-        if command == "5" or command.lower() == "f":
+        if command == "5" or command == "f" or command == "i":
             openDoor()
+            interact()
 
         if command.lower() == "debugmap":
             # getMap(party_coord)
@@ -1081,14 +1095,14 @@ def exploreDungeon():
 
             input("Type anything to continue:")
 
-        if command.lower() == "map":
+        if command.lower() == "map" or command.lower() == "m":
             dungeonMap()
 
             input("Type anything to continue:")
 
         if command.lower() == "o":
-            exploring = False
-            break
+            EquipmentSystem.runEquipment()
+            
 
 # TEST
 exploreDungeon()

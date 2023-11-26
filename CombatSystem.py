@@ -205,7 +205,7 @@ def command(char):
     global opposition
     global charcommand
 
-    availablecommands = "(A)ttack, (D)efend, (S)kills"
+    availablecommands = "(A)ttack, (D)efend, (S)kills, (U)pdate list"
 
     if char.char_class == "Warrior":
         availablecommands += ", (C)harge"
@@ -334,7 +334,7 @@ def command(char):
         else:
             spellversion(char,charcommand,"chaos")
 
-    elif "update" in charcommand:
+    elif "update" in charcommand or "u" in charcommand:
         # print ("Updating Opposition list")
         # print ("Opposition") #spacer
         # for n in opposition:
@@ -399,7 +399,7 @@ def spellversion(char,spell,dmgtype):
 
         else:
             if usefp(char,4) == True:
-                starget = targetally()
+                starget = targetenemy()
                 if starget is not None:
                     calcspelldamage(char,"weak")
                     usespell(char,starget,dmgtype,"single")
@@ -416,7 +416,7 @@ def spellversion(char,spell,dmgtype):
 
         else:
             if usefp(char,8) == True:
-                starget = targetally()
+                starget = targetenemy()
                 if starget is not None:
                     calcspelldamage(char,"medium")
                     usespell(char,starget,dmgtype,"single")
@@ -434,7 +434,7 @@ def spellversion(char,spell,dmgtype):
 
         else:
             if usefp(char,12) == True:
-                starget = targetally()
+                starget = targetenemy()
                 if starget is not None:
                     calcspelldamage(char,"heavy")
                     usespell(char,starget,dmgtype,"single")
@@ -884,7 +884,7 @@ def runCombat():
         if not opposition:
             testing_combat = False
             calcRewards()
-            print(f"You won the combat in {rounds} rounds!\nThe party gains {combat_money} and each party member receives {combat_exp} experience.")
+            print(f"You won the combat in {rounds} rounds!\nThe party gains {combat_money} Cr and each party member receives {combat_exp} experience.")
             combat_money = 0
             combat_exp = 0
             input("Type anything to continue: ")
