@@ -99,7 +99,7 @@ mars_equip = {
     "Accessory 2":None
 }
 
-dravspells = ["leas","pas","igg","grun"]
+dravspells = ["leas","pas","comas","grun"]
 danspells = ["leas","cruai","igg","gaa","grun","comas"]
 marsspells = ["leas","yab","grun"]
 
@@ -126,6 +126,7 @@ damage = 0
 enemytarget = None
 chartarget = None
 charcommand = None
+rounds = 0
 
 
 
@@ -204,9 +205,16 @@ def command(char):
     global opposition
     global charcommand
 
-    charcommand = input(f"What is {char.name} doing? ")
+    availablecommands = "(A)ttack, (D)efend, (S)kills"
 
-    if charcommand == "attack":
+    if char.char_class == "Warrior":
+        availablecommands += ", (C)harge"
+
+    availablecommands += ", (or type a combination of skills to use them)"
+
+    charcommand = input(f"What is {char.name} doing?\n {availablecommands}\n").lower()
+
+    if charcommand == "attack" or charcommand == "a":
 
         chartarget = targetenemy()
 
@@ -219,115 +227,58 @@ def command(char):
             
         pass
     
-    elif charcommand == "charge" and char.char_class == "Warrior":
-        chartarget = targetenemy()
+    elif charcommand == "charge" or charcommand == "c":
+        if char.char_class == "Warrior":
+            chartarget = targetenemy()
 
-        if chartarget is not None:
+            if chartarget is not None:
 
-            char.hp -= round(char.maxhp*0.15)
-            attacktimes = random.randint(1,3)
+                char.hp -= round(char.maxhp*0.15)
+                attacktimes = random.randint(1,3)
 
-            for _ in range (1,attacktimes+1):
+                for _ in range (1,attacktimes+1):
 
-                attackfunc(char,chartarget)
+                    attackfunc(char,chartarget)
 
-                if chartarget.hp <= 0:
-                    break
+                    if chartarget.hp <= 0:
+                        break
 
-            char.acted = True
+                char.acted = True
 
-    elif charcommand == "defend":
+    elif charcommand == "defend" or charcommand == "d":
         char.defending = True
         print (f"{char.name} is defending.")
 
         char.acted = True
         pass
 
-    elif charcommand == "media":
-        if char.fp <10:
-            print(f"{char.name} doesn't have enough FP.")
-        else:
-            char.fp -= 10
-            spelldamage = 0
-            for _ in range(char.tec//2):
-                spelldamage += random.randint(1,6)
-            spelldamage += 10
-            for n in party:
-                print (f"{n.name} has been healed for {spelldamage}")
-                n.hp += spelldamage
+    elif charcommand == "skill" or charcommand == "skills" or charcommand == "s":
+        availableskills = f"{char.name} knows"
+        if "grun" in char.slist:
+            availableskills += ", GRUN (target multiple creatures)"
 
-                if n.hp > n.maxhp:
-                    n.hp = n.maxhp
+        availableskills += ", LAG (weak damage)"
+        if "comas" in char.slist:
+            availableskills += ", COMAS (moderate damage)"
+        if "pas" in char.slist:
+            availableskills += ", PAS (fire)"
+        if "yab" in char.slist:
+            availableskills += ", YAB (thunder)"
+        if "gaa" in char.slist:
+            availableskills += ", GAA (earth)"
+        if "igg" in char.slist:
+            availableskills += ", IGG (death)"
+        
+        
+        if "leas" in char.slist:
+            availableskills += ", LEAS (healing)"
+            availableskills += ", TIN (weak restoration)"    
+        if "cruai" in char.slist:
+            availableskills += ", CRUAI (moderate restoration)"
 
-            char.acted = True
-        pass
-
-    elif charcommand == "dia":
-        if "dia" not in char.slist:
-            print(f"{char.name} can't cast Dia.")
-            pass
-        if char.fp <4:
-            print(f"{char.name} doesn't have enough FP.")
-        else:
-            char.fp -= 4
-            spelldamage = 0
-            for _ in range(char.tec//2):
-                spelldamage += random.randint(1,6)
-            spelldamage += 10
+        print (availableskills)
+        
             
-            starget = targetally()
-
-            print (f"{starget.name} has been healed for {spelldamage}")
-            starget.hp += spelldamage
-
-            if starget.hp > starget.maxhp:
-                starget.hp = starget.maxhp
-
-            char.acted = True
-        pass
-
-    elif charcommand == "maragi":
-        if "maragi" not in char.slist:
-            print(f"{char.name} can't cast Maragi.")
-            pass
-        else:
-            if char.fp <15:
-                print(f"{char.name} doesn't have enough FP.")
-            else:
-                usespell(char,None,"fire",15,"multi")
-
-            char.acted = True
-        pass
-
-    elif charcommand == "agi":
-        if "agi" not in char.slist:
-            print(f"{char.name} can't cast Agi.")
-            pass
-        else:
-            if char.fp <6:
-                print(f"{char.name} doesn't have enough FP.")
-            else:
-                starget = targetenemy()
-
-                usespell(char,starget,"fire",6,"single")
-
-            char.acted = True
-        pass
-
-    elif charcommand == "garu":
-        if "garu" not in char.slist:
-            print(f"{char.name} can't cast Garu.")
-            pass
-        else:
-            if char.fp <6:
-                print(f"{char.name} doesn't have enough FP.")
-            else:
-                starget = targetenemy()
-                
-                usespell(char,starget,"wind",6,"single")
-
-            char.acted = True
-        pass
 
     elif "leas" in charcommand:
         if "leas" not in char.slist:
@@ -584,6 +535,9 @@ def spellversion(char,spell,dmgtype):
         print(f"{char.name} can't use this skill.")
 
 def updatecombatlist():
+    global rounds
+    os.system("cls")
+    print (f"Round {rounds}")
     print ("") #spacer
     print ("Party:") #spacer
     for n in party:
@@ -593,6 +547,8 @@ def updatecombatlist():
     for n in opposition:
         print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
     print ("") #spacer
+    initnames = ", ".join(str(n.name) for n in initiative)
+    print (f"Turn order: {initnames}")
 
 
 ## Logic
@@ -600,6 +556,7 @@ def updatecombatlist():
 cancelterms = ["no","back","cancel","return","quit"]
 
 def targetenemy():
+    starget = None
     stargetindex = None
 
     if len(opposition) == 1:
@@ -627,7 +584,8 @@ def targetenemy():
             starget = opposition[int(stargetindex)]
         else:
             print("Invalid target.")
-            stargetindex = None
+            stargetindex = None    
+
     target = starget
     return target
 
@@ -801,13 +759,14 @@ def renameduplicates(initlist):
     ids = ["A","B","C","D","E","F"]
     name_counts = {}
     for n in initlist:
-        name_count = name_counts.get(n.name, 0)
-        name_counts[n.name] = name_count + 1
-        
-        # if name_count == 0:
-        #     n.name += f" {ids[name_count]}"
-        if name_count > 0:
-            n.name += f" {ids[name_count]}"
+        if n not in party:
+            name_count = name_counts.get(n.name, 0)
+            name_counts[n.name] = name_count + 1
+            
+            if name_count == 0:
+                n.name += f" {ids[name_count]}"
+            if name_count > 0:
+                n.name += f" {ids[name_count]}"
 
     # for n in initlist:
     #     uniqueidindex = 0
@@ -831,7 +790,7 @@ def randomenemies():
 
     # opposition = renamedopposition
 
-plevel_exp = [0,10,30,60,100,250,300]
+plevel_exp = [0,50,200,500,1500,5000,12000]
 
 def checkPLevel(char):
 
@@ -858,6 +817,7 @@ def levelUpChar(char):
             final_choice = input(f"\nThis will increase your Max HP by {class_choice.hp}.\n Proceed? (Y/N)\n")
             if final_choice.lower() == "y":
                 char.maxhp += class_choice.hp
+                char.hp += class_choice.hp
                 choice_made = True
 
             if final_choice.lower() == "n":
@@ -866,6 +826,7 @@ def levelUpChar(char):
         elif choice.lower() == "f":
             final_choice = input(f"\nThis will increase your Max FP by {class_choice.fpinc}.\n Proceed? (Y/N)\n")
             if final_choice.lower() == "y":
+                char.maxfp += class_choice.fpinc
                 char.maxfp += class_choice.fpinc
                 choice_made = True
 
@@ -907,6 +868,7 @@ def levelUpChar(char):
 def runCombat():
     global combat_money
     global combat_exp
+    global rounds
 
     randomenemies()
     rollinitiative()

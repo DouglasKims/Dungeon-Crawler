@@ -1,5 +1,6 @@
 import CombatSystem
 import EquipmentSystem
+import DungeonCrawl
 from math import e
 import os
 import time
@@ -10,7 +11,7 @@ import copy
 gamerunning = True
 
 while gamerunning == True:
-    
+
     os.system("cls")
     gamecommand = input(f"What do you want to do?\n (C)ombat\n (E)quipment\n (D)ungeon\n")
 
@@ -103,6 +104,9 @@ while gamerunning == True:
 
         EquipmentSystem.runEquipment()
 
+    elif gamecommand.lower() == "d":
+
+        DungeonCrawl.exploreDungeon()
 
     # Create PHYS skills for non-casters (buffs, defense, physical attacks)
         # Multi-hit variant for all enemies

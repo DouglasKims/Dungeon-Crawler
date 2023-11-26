@@ -1,12 +1,12 @@
 import CombatSystem
 import os
-
+import copy
 
 
 # LOGIC
 
 class Equipment():
-    def __init__(self,name,type,level,special,atk,dmg,dfn,weak,resist):
+    def __init__(self,name,type,level,special,atk,dmg,dfn,weak,resist, value):
         self.name = name
         self.type = type
         self.level = level
@@ -16,19 +16,42 @@ class Equipment():
         self.dfn = dfn
         self.weak = weak
         self.resist = resist
+        self.value = value
+
+class Consumable():
+    def __init__(self, name, type, effect, value):
+        self.name = name
+        self.type = type
+        self.effect = effect
+        self.value = value
 
 # Equip types: Armor, Weapon, Accessory
 
-loot1 = Equipment("Leather Armor","Armor",1,None,0,0,1,[CombatSystem.elem[1]],None)
-loot2 = Equipment("Longsword +1","Weapon",2,"Dmg +",2,2,0,None,None)
-loot2a = Equipment("Longsword +2","Weapon",3,"Dmg ++",3,3,0,None,None)
-loot3 = Equipment("Shield","Accessory",1,None,-1,0,5,None,None)
-loot4 = Equipment("Magic Ring","Accessory",1,"tec+",0,0,1,None,None)
+armor1 = Equipment("Leather Armor","Armor",1,None,0,0,1,[CombatSystem.elem[1]],None,100)
+armor2 = Equipment("Chain Mail","Armor",1,None,0,0,3,None,None,250)
+weapon1 = Equipment("Battle Axe","Weapon",1,None,1,1,0,None,None,100)
+weapon5 = Equipment("Longsword +1","Weapon",2,"Dmg +",2,2,0,None,None,1500)
+weapon6 = Equipment("Longsword +2","Weapon",3,"Dmg ++",3,3,0,None,None,5000)
+access1 = Equipment("Shield","Accessory",1,None,-1,0,5,None,None,300)
+access2 = Equipment("Magic Ring","Accessory",1,"tec+",0,0,1,None,None,700)
 
+item1 = Consumable("Healing Draught","Healing","Heal 30 HP",50)
+item2 = Consumable("Invigorating Tonic","Healing","Heal 15 FP",200)
+item3 = Consumable("Charged Memento","Reviving","Revives with 25% HP", 200)
 
+# EQUIPMENT
+inventory = []
+inventory.append(copy.deepcopy(armor1))
+inventory.append(copy.deepcopy(armor2))
+inventory.append(copy.deepcopy(weapon1))
+inventory.append(copy.deepcopy(access1))
 
-
-inventory = [loot1,loot2,loot2a,loot3,loot4]
+# CONSUMABLES
+consumables = []
+for n in range(3):
+    consumables.append(copy.deepcopy(item1))
+consumables.append(copy.deepcopy(item2))
+consumables.append(copy.deepcopy(item3))
 
 def chooseCharacter():
     print("Which Character are you managing?")
@@ -75,13 +98,192 @@ def getStatus():
     # getEquip func
     getEquip(char)
 
+def getSkills():
+    char = chooseCharacter()
+    if char == None:
+            print("")
+            return
+    availableskills = ""
+
+    if char.char_class == "Warrior":
+        availableskills += f"{char.name} knows these ATK-based skills:\n"
+        availableskills += "    CHARGE: Attacks one opponent up to three times (costs 15% HP)\n"
+        availableskills += "    HUNT: Attacks one opponent with increased crit chance (costs 15% HP)\n"
+        availableskills += "    FRENZY: Attacks random opponents up to five times (costs 25% HP)\n"
+        availableskills += "\n"
+    
+    availableskills += f"{char.name} knows these TEC-based skills:\n"
+    if "grun" in char.slist:
+        availableskills += "    GRUN: Target multiple creatures(ally or opponents)\n"
+
+    availableskills += "    LAG: Causes Light amount of damage (4FP, 10FP if used with Grun)\n"
+    if "comas" in char.slist:
+        availableskills += "    COMAS: Causes moderate amount of damage (8FP, 16FP if used with Grun)\n"
+    if "pas" in char.slist:
+        availableskills += "    PAS: Blessings of Pasperon commands FIRE.\n"
+    if "yab" in char.slist:
+        availableskills += "    YAB: Blessings of Yabarag commands THUNDER.\n"
+    if "gaa" in char.slist:
+        availableskills += "    GAA: Blessings of Gaaphadur commands EARTH.\n"
+    if "igg" in char.slist:
+        availableskills += "    IGG: Blessings of Igglebeth commands DEATH.\n"
+    
+    availableskills += "\n"
+    availableskills += f"{char.name} knows these TEC-based Support skills:\n"
+    if "leas" in char.slist:
+        availableskills += "    LEAS: Heals an ally who's still alive.\n"
+        availableskills += "    TIN: Weak degree of restoration (3FP, 7FP if used with Grun or Igg to revive)\n"    
+    if "cruai" in char.slist:
+        availableskills += "    CRUAI: Moderate degree of restoration (7FP, 12FP if used with Grun or Igg to revive)\n"
+
+    print (availableskills)
+
+def partyRecovery():
+    fpcost = 0
+    totalfp = 0
+    
+    for n in CombatSystem.party:
+        if n.hp <= 0:
+            fpcost += 5
+            totalfp += n.fp 
+        else:
+            fpcost += round((n.hp - n.maxhp)*-1/25)
+            totalfp += n.fp 
+
+
+    # fpcost = round(fpcost//len(CombatSystem.party))
+
+    if totalfp >= fpcost:
+
+        fpcost = round(fpcost//len(CombatSystem.party))
+        choice = input(f"This will use {fpcost} per party member to revive fallen allies and fully heal the party.\nDo you want to continue? (No to cancel)\n").lower()
+
+        if choice in cancelterms:
+                print("")
+                return None
+        else:
+
+            for n in CombatSystem.party:
+                n.hp = n.maxhp
+                n.fp -= fpcost
+    
+    else:
+        print("The party doesn't have enough FP to fully recover.")
+
+
 def getInventory():
 
-    for n in inventory:
-        print (f"({inventory.index(n)}) {n.name} // Type: {n.type} // Atk: {n.atk} (Dmg: {n.dmg}) // Dfn: {n.dfn} // Weak: {n.weak} // Resist: {n.resist} // Special: {n.special}")
+    print("Consumables:")
+    for n in consumables:
+        print (f"    ({consumables.index(n)}) {n.name} // Type: {n.type} // Effect: {n.effect} // Value: {n.value} Cr")
 
-    # for index, item in enumerate(inventory):
-    #     print(f"({index}) {item.name} // Type: {item.type} // Atk: {item.atk} (Dmg: {item.dmg}) // Dfn: {item.dfn} // Weak: {item.weak} // Resist: {item.resist} // Special: {item.special}")
+    print("\nEquipment:")
+    for n in inventory:
+        # print (f"    ({inventory.index(n)}) {n.name} // Type: {n.type} // Atk: {n.atk} (Dmg: {n.dmg}) // Dfn: {n.dfn} // Weak: {n.weak} // Resist: {n.resist} // Special: {n.special} // Value: {n.value} Cr")
+        print (f"    ({inventory.index(n)}) {n.name} // Type: {n.type} // Atk: {n.atk} (Dmg: {n.dmg}) // Dfn: {n.dfn} // Value: {n.value} Cr")
+
+
+    useitem = input(f"\nAre you using any item? If so, type the consumable number, otherwise press anything.\n")
+
+    try:
+        useitem = int(useitem)
+    except ValueError:
+        useitem = None
+
+    if useitem in range(0,len(consumables)):
+        print("using item")
+        print("")
+        useItem(consumables[useitem])
+    else:
+        return
+    
+
+def useItem(item):
+
+    party = CombatSystem.party
+
+    if item.type == "Healing":
+        iname, ipower, ieffect = item.effect.split()
+        ipower = int(ipower)
+        
+        if ieffect == "HP":
+
+            print("Party:")
+            for char in party:
+                print(f"  ({party.index(char)}) {char.name} // HP: {char.hp} / {char.maxhp}")
+            choice = input(f"This {item.name} will heal {ipower} HP. Who's using it?\n")
+
+            if choice in cancelterms:
+                print("")
+                return None
+            
+            try:
+                choice = int(choice)
+                choice = party[choice]
+            except (ValueError, IndexError):
+                print("Invalid input. Please enter a valid character.")
+                return None
+
+            if choice.hp <= 0:
+                print("Can't be used on dead character.")
+                return
+
+            choice.hp += ipower
+            consumables.remove(item)
+            print(f"{choice.name} recovered {ipower} HP.")
+
+        elif ieffect == "FP":
+
+            print("Party:")
+            for char in party:
+                print(f"  ({party.index(char)}) {char.name} // FP: {char.fp} / {char.maxfp}")
+            choice = input(f"This {iname} will heal {ipower} FP. Who's using it?\n")
+
+            if choice in cancelterms:
+                print("")
+                return None
+            
+            try:
+                choice = int(choice)
+                choice = party[choice]
+            except (ValueError, IndexError):
+                print("Invalid input. Please enter a valid character.")
+                return None
+            
+            choice.fp += ipower
+            consumables.remove(item)
+            print(f"{choice.name} recovered {ipower} FP.")
+
+    if item.type == "Reviving":
+        ieffect, i1, ipower, i2 = item.effect.split()
+
+        print("Party:")
+        for char in party:
+                print(f"  ({party.index(char)}) {char.name} // HP: {char.hp} / {char.maxhp}")
+        choice = input(f"This {item.name} will revive with {ipower} HP. Who's using it?\n")
+
+        if choice in cancelterms:
+            print("")
+            return None
+        
+        try:
+            choice = int(choice)
+            choice = party[choice]
+        except (ValueError, IndexError):
+            print("Invalid input. Please enter a valid character.")
+            return None
+
+        if choice.hp > 0:
+            print("Can't be used on a living character.")
+            return
+
+        if ipower == "50%":
+            choice.hp += round(choice.maxhp//2)
+        elif ipower == "25%":
+            choice.hp += round(choice.maxhp//4)
+
+        consumables.remove(item)
+        print(f"{choice.name} was revived with {ipower} HP.")
 
 def changeEquip():
     
@@ -342,29 +544,35 @@ def runEquipment():
 
         os.system("cls")
 
-        equip_command = input("What do you want to do? \n (E)quip \n (U)nequip \n (C)heck Inventory\n Check Character (S)tatus \n (V)isit the Shop\n or (Q)uit management\n")
+        equip_command = input("What do you want to do? \n (E)quip \n (U)nequip \n Check (I)nventory\n Check (C)haracter's Status \n Check (S)kills \n (R)ecover HP \n or (Q)uit management\n").lower()
 
 
 
-        if equip_command.lower() == "e":
+        if equip_command == "e":
             
             changeEquip()
 
             pass
 
-        if equip_command.lower() == "c":
+        if equip_command == "i":
             getInventory()
 
-        if equip_command.lower() == "u":
+        if equip_command == "u":
             
             removeEquip()
 
-        if equip_command.lower() == "s":
+        if equip_command == "c":
 
             getStatus()
 
-        if equip_command.lower() == "q":
+        if equip_command == "q":
             return
+        
+        if equip_command == "s":
+            getSkills()
+
+        if equip_command == "r":
+            partyRecovery()
 
         # for n in CombatSystem.party:
         #     print(f"{n.name} is part of the party.")
@@ -373,7 +581,7 @@ def runEquipment():
 
 
 # GAME TEST
-# runEquipment()
+runEquipment()
     
 
 
