@@ -1,176 +1,85 @@
 import CombatSystem
 import EquipmentSystem
 import DungeonCrawl
-from math import e
+import Texts
 import os
 import time
 import random
 import copy
+from tkinter import *
 
-
-gamerunning = True
-
-while gamerunning == True:
-
-    # GAME BOOTS DIRECTLY INTO DUNGEON CRAWL
-    # HERE THE STORY AND OTHER THINGS WILL GO TOWARDS AFTER.    
-
-    os.system("cls")
-    DungeonCrawl.exploreDungeon()
     
-    
-    # gamecommand = input(f"What do you want to do?\n (C)ombat\n (E)quipment\n (D)ungeon\n")
+# Create the main window
+root = Tk()
+root.title("Dungeon Crawl Game")
 
-    # if gamecommand.lower() == "c":
 
-    #     CombatSystem.runCombat()
+root.iconbitmap('./pythontutorial-1.ico')
 
-    #     # runCombat() Func
-    #         # CombatSystem.randomenemies()
-    #         # CombatSystem.rollinitiative()
-    #         # initnames = ", ".join(str(n.name) for n in CombatSystem.initiative)
-    #         # print (f"Turn order: {initnames}")
+window_height = 400
+window_width = 600
+#get display/screen dimension
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
 
-    #         # rounds = 0
-    #         # testing_combat = True
-    #         # while testing_combat:
+#find center point
+center_x = int(screen_width/2 - window_width / 2)
+center_y = int(screen_height/2 - window_height / 2)
 
-    #         #     os.system('cls')
+root.geometry(f"{window_width}x{window_height}+{center_x}+{center_y}")
 
-    #         #     if not CombatSystem.opposition:
-    #         #         testing = False
-    #         #         print(f"You won the combat in {rounds} rounds!")
-    #         #         break
+frametop = Frame(root,padx=10,pady=10)
+frametop.pack()
 
-    #         #     rounds += 1
-    #         #     print (f"Round {rounds}")
-    #         #     print ("") #spacer
-    #         #     print ("Party:") #spacer
-    #         #     for n in CombatSystem.party:
-    #         #         print (f"({CombatSystem.party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
-    #         #     print ("") #spacer
-    #         #     print ("Opposition") #spacer
-    #         #     for n in CombatSystem.opposition:
-    #         #         print (f"({CombatSystem.opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
-    #         #     print ("") #spacer
+texttop = "Things to display and show,\nso long as they are relevant."
 
-    #         #     initnames = ", ".join(str(n.name) for n in CombatSystem.initiative)
-    #         #     print (f"Turn order: {initnames}")
-                
-    #         #     print ("") #spacer
+toptext = Label(frametop,text= texttop, fg="white", bg="black",font=(14))
+toptext.pack(ipadx=10,ipady=10)
 
-    #         #     for n in CombatSystem.initiative:
-    #         #         if n not in CombatSystem.party and n.hp <= 0:
-    #         #             pass
-    #         #         else:
-    #         #             print(f"It's {n.name}'s turn!")
-    #         #         if n in CombatSystem.party and n.hp <= 0:
-    #         #             print (f"But they're down.")
-    #         #             print ("")
+bottomframe = Frame()
+bottomframe.pack(side=BOTTOM)
 
-    #         #         if n in CombatSystem.opposition and n.hp > 0:
-    #         #             enemytarget = None
-    #         #             while enemytarget == None or enemytarget.hp == 0:
-    #         #                 enemytarget = random.choice(CombatSystem.party)
-    #         #             CombatSystem.attackfunc(n,enemytarget)
+def startGame():
+    gamerunning = True
 
-    #         #             #game over function
-    #         #             if CombatSystem.gameover(CombatSystem.party):
-    #         #                 print ("")
-    #         #                 print ("All heroes have been defeated.")
-    #         #                 break
+    while gamerunning == True:
+        os.system("cls")
+        startbutton.pack_forget()
+        DungeonCrawl.exploreDungeon()
 
-    #         #             print ("")
-    #         #             time.sleep(0.4)
-                    
-    #         #         elif n in CombatSystem.party:
-    #         #             n.acted = False
-    #         #             n.defending = False
-    #         #             if not CombatSystem.opposition:
-    #         #                 pass
-    #         #             elif n.hp <= 0:
-    #         #                 pass
-    #         #             else:
-    #         #                 while n.acted == False:
-    #         #                     CombatSystem.command(n)
+def updateText (label,newtext):
+    label.configure(text = newtext)
 
-    #         #                 print ("")
-    #         #                 time.sleep(0.4)
+startbutton = Button(bottomframe, text = "Start", command = startGame)
+startbutton.pack(pady=30)
 
-    #         #     if CombatSystem.gameover(CombatSystem.party):
-    #         #         print ("")
-    #         #         print ("Game Over.")
-    #         #         break
+# leftframe = Frame(bg="orange")
+# leftframe.pack(side=LEFT)
 
-    #         #     CombatSystem.endofturncleanup()
+# rightframe = Frame(bg="orange")
+# rightframe.pack(side=RIGHT)
 
-    #         #     input("Type anything to continue: ")
+# button1 = Button(leftframe, text = "Button 1")
+# button1.pack(padx = 3, pady = 3)
 
-    # elif gamecommand.lower() == "e":
+# button2 = Button(rightframe, text = "Button 2")
+# button2.pack(padx = 3, pady = 3 )
 
-    #     EquipmentSystem.runEquipment()
 
-    # elif gamecommand.lower() == "d":
 
+
+
+
+if __name__ == "__main__":
+    # Start the GUI event loop  
+    root.mainloop()
+
+    # gamerunning = True
+
+    # while gamerunning == True:
+
+    #     # GAME BOOTS DIRECTLY INTO DUNGEON CRAWL
+    #     # HERE THE STORY AND OTHER THINGS WILL GO TOWARDS AFTER.    
+
+    #     os.system("cls")
     #     DungeonCrawl.exploreDungeon()
-
-
-
-    # Create PHYS skills for non-casters (buffs, defense, physical attacks)
-        # Multi-hit variant for all enemies
-        # Medium/Heavy damage variants
-        # High crit rate attack
-
-    # Create equipment system
-        # equipping and unequipping equipment (shouldn't be done in combat)
-        # equip. should increase heroes' ATK, DEF, (maybe change weak/resist)
-
-    # Create Perks system
-        # defeating enemies grant EXP, each EXP*perks+1 reached gives a new perk.
-        # Perks can increase > base HP, FP, SPD, LCK, TEC
-        # SPD/LCK/TEC can't be higher than 15
-        # HP increases are based on class / 10% of class' max
-        # FP increases are based on class / 10% of class' max
-        # Every 10(?) perks, characters get access to new spell level/type
-
-
-    # mu/fire > mu/fireza > mu/firezaon
-    # mul/ice > mul/iceza > mul/icezaon
-    # mul/air > mul/airza > mul/airzaon
-    # mu/rock > mu/rockza > mu/rockzaon
-    # mu/zap > mu/zapza > mu/zapzaon
-    # mu/tox > mu/toxza > mu/toxzaon
-
-    # fire / fire-sta / fire-sta-za
-    # fire-mor (big) / fire-mortha (biggest)
-
-    # cure / curemor / curemortha
-    # revive / revivemor
-
-    # haste / slow
-    # shield / barrier
-
-    # Almighty        buff / debuff / damage / Heal
-    # yabarag         atk + / atk - / thunder / rage-
-    # haka pf'hagan   haste / slow / decay / regen
-    # igglebeth       resist death + / kill / toxic / revive
-    # irgh d'ebram    mdef + / mdef -/ ice / poison-
-    # famphegor       reflect / sleep / air / confuse -
-    # gaaphadur       pdef + / pdef - / earth / condition -
-    # pasperon        lck + / lck- / fire / heal
-    # khosme          - / - / chaos / 
-
-    # Grun > Several targets
-    # Lag > weak damage / negative (weak / lag)
-    # Comas > medium damage / negative (capable / comasach)
-    # Asmatha > heavy damage / negative (biggest/motha)
-    # Tin > weak heal / positive (ill / tinn)
-    # Cruai > medium heal / positive (tough / cruaidh)
-    # Fallain > heavy heal / positive (fallain / healthy)
-    # Leas > buff (improve / leasaich)
-    # Mios > debuff (worse / nas miosa)
-
-    # fire > Grun/Pas/mor // /Pas/matha
-    # water > Grun/Irg/mor // Irg/matha
-    # earth > Grun/Gaa/mor // Gaa/matha
-    # air > Grun/Fam/mor // Fam/matha

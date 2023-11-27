@@ -5,6 +5,11 @@ import time
 import copy
 import EquipmentSystem
 import CombatSystem
+import Texts
+from Game import updateText
+
+# from Game import updateText, texttop
+
 
 # Subtypes Open(0),Wall(1),Door(2),L.Door(D),Secret Wall(9)
 # Subtypes2: (C)hest, (O)penChest, Stairs(U)p, Stairs (D)own, (R)esting Area, (M)erchant,
@@ -868,7 +873,7 @@ def exploreDungeon():
         # update_picture()
         # update_vision()
 
-        
+        # updateText(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
         print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
         command = input(f"\nType W/8 to go Forwards, Q/7 to turn left, and E/9 to turn right:\nYou can also check the (M)ap, (I)nteract (or F), or (O)pen party menu.\n").lower()
 

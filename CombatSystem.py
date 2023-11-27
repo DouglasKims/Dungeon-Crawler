@@ -1231,7 +1231,7 @@ def runCombat():
 
 
 # TESTING
-runCombat()
+# runCombat()
 
 
 # Create PHYS skills for non-casters (buffs, defense, physical attacks)
