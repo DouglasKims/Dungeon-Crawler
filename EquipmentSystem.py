@@ -108,11 +108,11 @@ def getSkills():
             return
     availableskills = ""
 
-    if char.char_class == "Warrior":
+    if char.char_class == "Knight":
         availableskills += f"{char.name} knows these ATK-based skills:\n"
         availableskills += "    CHARGE: Attacks one opponent up to three times (costs 15% HP)\n"
-        availableskills += "    HUNT: Attacks one opponent with increased crit chance (costs 15% HP)\n"
-        availableskills += "    FRENZY: Attacks random opponents up to five times (costs 25% HP)\n"
+        availableskills += "    HUNT: Attacks one opponent with increased strenght and crit chance (costs 15% HP and 3 FP)\n"
+        availableskills += "    CLEAVE: Attacks random opponents up to five times (costs 25% HP)\n"
         availableskills += "\n"
     
     availableskills += f"{char.name} knows these TEC-based skills:\n"
@@ -144,31 +144,34 @@ def getSkills():
 def partyRecovery():
     fpcost = 0
     totalfp = 0
-    
+    totalfpcost = 0
+
     for n in party:
         if n.hp <= 0:
             fpcost += 5
-            totalfp += n.fp 
+            totalfp += n.fp
         else:
-            fpcost += (n.hp - n.maxhp)*-1/20
-            totalfp += n.fp 
+            fpcost += (n.hp - n.maxhp)* -1/20 + 1
+            totalfp += n.fp
 
-
+    
     # fpcost = round(fpcost//len(CombatSystem.party))
 
     if totalfp >= fpcost:
 
-        fpcost = round(fpcost//len(party))
-        choice = input(f"This will use {fpcost} FP per party member to revive fallen allies and fully heal the wounded.\nDo you want to continue? (No to cancel)\n").lower()
+        fpcost = round(fpcost//len(party))+1
+        totalfpcost = totalfpcost * len(party)
+        choice = input(f"This will use {totalfpcost} FP split between party member to revive fallen allies and fully heal the wounded.\nDo you want to continue? (No to cancel)\n").lower()
 
         if choice in cancelterms:
                 print("")
                 return None
         else:
-
-            for n in party:
-                n.hp = n.maxhp
-                n.fp -= fpcost
+            while totalfpcost > 0:
+                for n in party:
+                    if n.fp >= fpcost:
+                        n.hp = n.maxhp
+                        n.fp -= fpcost
     
     else:
         print("The party doesn't have enough FP to fully recover.")
@@ -546,6 +549,12 @@ def runEquipment():
 
         os.system("cls")
 
+        # SHOW PARTY LIST
+        print ("Party:") #spacer
+        for n in party:
+            print (f"{n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+        print ("") #spacer
+
         equip_command = input("What do you want to do? \n (E)quip \n (U)nequip \n Check (I)nventory\n Check (C)haracter's Status \n Check (S)kills \n (R)ecover HP \n or (Q)uit management\n").lower()
 
 
@@ -583,19 +592,3 @@ def runEquipment():
 
 # GAME TEST
 # runEquipment()
-    
-
-
-
-
-# Create equipment system
-    # equipping and unequipping equipment (shouldn't be done in combat)
-    # equip. should increase heroes' ATK, DEF, (maybe change weak/resist)
-
-# Create Perks system
-    # defeating enemies grant EXP, each EXP*perks+1 reached gives a new perk.
-    # Perks can increase > base HP, FP, SPD, LCK, TEC
-    # SPD/LCK/TEC can't be higher than 15
-    # HP increases are based on class / 10% of class' max
-    # FP increases are based on class / 10% of class' max
-    # Every 10(?) perks, characters get access to new spell level/type

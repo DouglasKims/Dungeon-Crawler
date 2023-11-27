@@ -1,14 +1,3 @@
-# Coordinates X,Y for dungeon
-# Each coordinate has; "image" to display and allowed movement
-# Movement is based on facing; N/S/W/E/ Forwards/Backwards/Left/Right/Turn L/R
-
-# Define dungeon level 1
-# Define each coordinate with a type
-# Type N="subtype",S="",W="",E=""; subtypes (open,wall,door,etc.)
-# (open allows movement, wall forbids move, door allows w/ interaction)
-
-# Define commands (turning and facing)
-
 
 import os
 import random
@@ -16,92 +5,6 @@ import time
 import copy
 import EquipmentSystem
 import CombatSystem
-
-# Dungeon Tiles
-    # tt101 = r"""
-    # \         /
-    #  \ _ _ _ / 
-    # """
-
-    # tb101 = r"""
-    #  /       \
-    # /         \
-    # """
-
-    # tm101 = r"""
-    #   \ _ _ /
-    #    |   |
-    #    |_ _|
-    #   /_ _ _\
-    # """
-
-    # t101 = r"""
-    #  \ _ _ _ /
-    #   |     | 
-    #   |     | 
-    #   |     |
-    #  /       \
-    # """
-    # t011 = r"""
-    #  _ _ _ _ /
-    #   |     | 
-    #   |     | 
-    #  _|_ _ _|
-    #          \
-    # """
-
-    # t110 = r"""
-    #  \ _ _ _ _
-    #   |     | 
-    #   |     | 
-    #   |_ _ _|_
-    #  /        
-    # """
-    # t010 = r"""
-    #  _ _ _ _ _
-    #   |     | 
-    #   |     | 
-    #  _|_ _ _|_
-            
-    # """
-    # t000 = r"""
-    #  _ _ _ _ _
-    #   |     | 
-    #   |     | 
-    #  _|     |_
-            
-    # """
-    # t111 = r"""
-    #  \ _ _ _ /
-    #   |     | 
-    #   |     | 
-    #   |_ _ _|
-    #  /       \
-    # """
-    # t001 = r"""
-    #  _ _ _ _ /
-    #   |     | 
-    #   |     | 
-    #  _|     |
-    #          \
-    # """
-    # t100 = r"""
-    #  \ _ _ _ _
-    #   |     | 
-    #   |     | 
-    #   |     |_
-    #  /       
-    # """
-
-    # t121 = r"""
-    # \ _ _ _ /
-    #  |  _  | 
-    #  | | | | 
-    #  | | | |
-    # /       \
-    # """
-
-
 
 # Subtypes Open(0),Wall(1),Door(2),L.Door(D),Secret Wall(9)
 # Subtypes2: (C)hest, (O)penChest, Stairs(U)p, Stairs (D)own, (R)esting Area, (M)erchant,
@@ -144,8 +47,6 @@ testdungeon = [
     [1,0,0,0,0,0,1,0,0,1],
     [1,1,1,1,1,1,1,1,1,1]
 ]
-
-
 
 
 dungeon11 = [
@@ -348,7 +249,7 @@ check = dungeon_current[party_coord[0]][party_coord[1]]
 vision = None
 hour_names = ["Dawn","Morning","Noon","Afternoon","Twilight","Evening","Midnight","Witching Hour"]
 # Dark between time = 4*90 and time = 7*90 // Each 90 steps advances the clock
-hour = 0
+hour = 2
 steps = 0
 
 #Facings; N=8, S=2, W=4, E=6
@@ -401,7 +302,7 @@ def update_danger():
     global danger
     global danger_level
 
-    danger += random.randint(1,4)
+    danger += random.randint(1,6)
 
     if danger > 85:
         danger_level = "Red"
@@ -729,6 +630,8 @@ def getMap():
             localmap[y][x] = '→'
         elif t == "E":
             localmap[y][x] = '←'
+        elif t == None:
+            localmap[y][x] = 'X'
 
     for key, values in map_coords_bright.items():
         t, y, x = values
@@ -933,6 +836,7 @@ directions = {
 def exploreDungeon():
     global danger
     global party_facing
+    global steps
     exploring = True
     update_coord(0,0)
 
@@ -949,6 +853,7 @@ def exploreDungeon():
             input("Time to fight! (Press anything to begin)")
             danger = 0
             CombatSystem.runCombat()
+            steps += CombatSystem.rounds
             os.system("cls")
 
         # if exploring == True:
@@ -964,7 +869,7 @@ def exploreDungeon():
         # update_vision()
 
         
-        print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]}")
+        print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
         command = input(f"\nType W/8 to go Forwards, Q/7 to turn left, and E/9 to turn right:\nYou can also check the (M)ap, (I)nteract (or F), or (O)pen party menu.\n").lower()
 
         os.system('cls')
@@ -1105,4 +1010,4 @@ def exploreDungeon():
             
 
 # TEST
-exploreDungeon()
+# exploreDungeon()

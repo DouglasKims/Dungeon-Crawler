@@ -2,8 +2,6 @@
 # PROJECT OVERALL
     # Create a file just for characters and classes
 
-
-    
     # Create equipment system
     # equipping and unequipping equipment (shouldn't be done in combat)
     # equip. should increase heroes' ATK, DEF, (maybe change weak/resist)
@@ -17,16 +15,19 @@
     # Every 10(?) perks, characters get access to new spell level/type
     
 # DUNGEON CRAWLER PART
-    # Create a full level //DONE
-    # Make it easier to write/code a level //DONE
-        # Implement Doors and Objects (chests/treasure)
-    # Improve navigation //DONE
-        # Draw better ASCII //CANCEL
-
-    # create random encounters within dungeon and a system for that //DONE
+    # Implement Doors and Objects (chests/treasure)
 
 
-    
+# SKILLS
+    # create buff, debuff skills
+
+
+
+
+
+
+
+# DAMAGES AND ELEMENTS
     # Almighty        buff / debuff / damage / Heal
     # yabarag         atk + / atk - / thunder / rage-
     # haka pf'hagan   haste / slow / decay / regen
