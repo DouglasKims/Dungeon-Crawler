@@ -102,9 +102,9 @@ scout = CharacterClass(
     lck = 8,
     special = None,
     lore = "A stealthy combatant, somewhat weak and fragile, but capable of landing powerful critical attacks more frequently than others.")
-#   # SCHOLAR
-scholar = CharacterClass(
-    "Scholar",
+#   # SCHOLAR / EXPLORER / HERALD
+herald = CharacterClass(
+    "Herald",
     hp = 8,
     fp = 4,
     str = 5,
@@ -129,7 +129,7 @@ quartermaster = CharacterClass(
     special = None,
     lore = "A supportive combatant, not very powerful in combat, but able to make exploration easier with many support skills.")
 
-cclasses = [knight,thaumaturge,arcanist,scout,scholar,quartermaster]
+cclasses = [knight,thaumaturge,arcanist,scout,herald,quartermaster]
 
 """ 0: Phys
     1: fire
@@ -166,7 +166,7 @@ danspells = ["leas","cruai","igg","gaa","grun","comas"]
 marsspells = ["leas","yab","grun"]
 
 
-drav = Character("Dravroth","Bard",1,1,80,80,40,40,6,1,6,2,5,6,dravspells,False,False,[],drav_equip,0,0)
+drav = Character("Dravroth","Herald",1,1,80,80,40,40,6,1,6,2,5,6,dravspells,False,False,[],drav_equip,0,0)
 dan = Character("Thorudan","Thaumaturge",1,1,80,80,50,50,4,1,10,2,3,3,danspells,False,False,[],dan_equip,0,0)
 mars = Character("Mars","Knight",1,1,100,100,20,20,8,2,3,4,3,3,marsspells,False,False,[],mars_equip,0,0)
 eck = Character(
@@ -289,6 +289,9 @@ def command(char):
     if char.char_class == "Knight":
         availablecommands += ", (C)harge, Cleave, Hunt"
 
+    if char.char_class == "Scout":
+        availablecommands += ", Sneak"
+
     availablecommands += ", (or type a combination of skills to use them)"
 
     charcommand = input(f"What is {char.name} doing?\n {availablecommands}\n").lower()
@@ -407,10 +410,10 @@ def command(char):
                 char.fp -= 3
 
                 char.dmg += 1
-                char.lck += 10
+                char.lck += 20
                 attackfunc(char,chartarget)
                 char.dmg -= 1
-                char.lck -= 10
+                char.lck -= 20
 
                 char.acted = True
 
@@ -859,6 +862,9 @@ def dealspelldamage(char,starget,dmgtype,spelldamage):
             print (f"{starget.name} suffered {spelldamage} {dmgtype} damage.")
         starget.hp -= spelldamage
 
+    if starget in party and starget.hp <= 0:
+        starget.hp = 0
+
 def gameover(party):
     return all(n.hp == 0 for n in party)
 
@@ -1063,7 +1069,7 @@ plevel_exp = [0,500,1000,1500,2000,5000,12000]
 def checkPLevel(char):
 
     # if char.exp >= plevel_exp[char.plevel]:
-    if char.exp >= char.plevel*1000:
+    if char.exp >= char.plevel*500:
         os.system("cls")
         print(f"{char.name} has leveled up!")
         levelUpChar(char)

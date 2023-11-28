@@ -6,7 +6,8 @@ import copy
 import EquipmentSystem
 import CombatSystem
 import Texts
-from Game import updateText
+# from Game import updateText
+
 
 # from Game import updateText, texttop
 
@@ -278,7 +279,7 @@ def update_time():
 
     steps += 1
 
-    if steps >= 60:
+    if steps >= 10:
         hour += 1
         steps = 0
 
@@ -501,6 +502,16 @@ def getMap():
         [' ',' ',' ',' ',' ']
         ]
     
+    localmaplightmore = [
+        [' ',' ',' ',' ',' ',' ',' '],
+        [' ',' ',' ',' ',' ',' ',' '],
+        [' ',' ',' ','5',' ',' ',' '],
+        [' ',' ','5','0','5',' ',' '],
+        [' ',' ',' ','5',' ',' ',' '],
+        [' ',' ',' ',' ',' ',' ',' '],
+        [' ',' ',' ',' ',' ',' ',' ']
+        ]
+    
     map_coords = {
         "NW": (dungeon_blueprint[party_coord[0]-1][party_coord[1]-1], 0, 0),
         "N" : (dungeon_blueprint[party_coord[0]-1][party_coord[1]], 0, 1),
@@ -514,6 +525,8 @@ def getMap():
 
     map_coords_bright = {}
     
+    map_coords_lightmore = {}
+
     # Adding map coordinates to bright map
     try:
         for iy in range(-2, 3):
@@ -531,6 +544,17 @@ def getMap():
     map_coords_bright["SW"]=(dungeon_blueprint[party_coord[0]+1][party_coord[1]-1], 3, 1)
     map_coords_bright["S"]=(dungeon_blueprint[party_coord[0]+1][party_coord[1]], 3, 2)
     map_coords_bright["SE"]=(dungeon_blueprint[party_coord[0]+1][party_coord[1]+1], 3, 3)
+
+    # Adding map coordinates to bright MORE map
+    # try:
+    for iy in range(-3, 4):
+        for jx in range(-3, 4):
+            if iy != 0 or jx != 0:
+                try:
+                    map_coords_lightmore[f"{iy+3},{jx+3}"] = (dungeon_blueprint[party_coord[0]+iy][party_coord[1]+jx], iy+3, jx+3)
+                except IndexError:
+                    map_coords_lightmore[f"{iy+3},{jx+3}"] = (None, iy, jx)
+
 
     
     #Check visibility map bright
@@ -572,6 +596,8 @@ def getMap():
         map_coords_bright["4,2"]=(None, 4, 2)
         map_coords_bright["4,1"]=(None, 4, 1)
 
+        localmaplightmore[3][3] = "▲"
+
     elif party_facing == 2:
         localmap[1][1] = "▼"
         map_coords["NW"]=(None, 0, 0)
@@ -584,6 +610,8 @@ def getMap():
         map_coords_bright["0,2"]=(None, 0, 2)
         map_coords_bright["0,1"]=(None, 0, 1)
 
+        localmaplightmore[3][3] = "▼"
+
     elif party_facing == 4:
         localmap[1][1] = "◄"
         map_coords["NE"]=(None, 0, 2)
@@ -595,6 +623,8 @@ def getMap():
         map_coords_bright["1,4"]=(None, 1, 4)
         map_coords_bright["2,4"]=(None, 2, 4)
         map_coords_bright["3,4"]=(None, 3, 4)
+
+        localmaplightmore[3][3] = "◄"
     
     
     elif party_facing == 6:
@@ -608,6 +638,8 @@ def getMap():
         map_coords_bright["1,0"]=(None, 1, 0)
         map_coords_bright["2,0"]=(None, 2, 0)
         map_coords_bright["3,0"]=(None, 3, 0)
+
+        localmaplightmore[3][3] = "►"
     
     for key, values in map_coords.items():
         t, y, x = values
@@ -667,17 +699,51 @@ def getMap():
         elif t == None:
             localmaplight[y][x] = 'X'
 
+    for key, values in map_coords_lightmore.items():
+        t, y, x = values
+        if t == 0:
+            localmaplightmore[y][x] = ' '
+        elif t == 1 or t == 9:
+            localmaplightmore[y][x] = '■'
+        elif t == 2 or t == 3:
+            localmaplightmore[y][x] = '□'
+        elif t == "U" or t == "D":
+            localmaplightmore[y][x] = '♦'
+        elif t == "C":
+            localmaplightmore[y][x] = '●'
+        elif t == "O":
+            localmaplightmore[y][x] = '○'
+        elif t == "R":
+            localmaplightmore[y][x] = '♥'
+        elif t == "M":
+            localmaplightmore[y][x] = '☺'
+        elif t == "S":
+            localmaplightmore[y][x] = '↑'
+        elif t == "N":
+            localmaplightmore[y][x] = '↓'
+        elif t == "W":
+            localmaplightmore[y][x] = '→'
+        elif t == "E":
+            localmaplightmore[y][x] = '←'
+        elif t == None:
+            localmaplightmore[y][x] = 'X'
+
     
+    #                   0       1       2       3           4           5       6           7
+    # hour_names = ["Dawn","Morning","Noon","Afternoon","Twilight","Evening","Midnight","Witching Hour"]
 
-
-    if hour >= 4:
+    if hour == 6 or hour == 7:
         for n in range(0,len(localmap)):
             # print(f"{localmap[n]}")
             print(' '.join(localmap[n]))
-    else:
+    elif hour == 0 or hour == 4 or hour == 5:
         for n in range(0,len(localmaplight)):
             # print(f"{localmap[n]}")
             print(' '.join(localmaplight[n]))
+    elif hour == 1 or hour == 2 or hour == 3:
+        for n in range(0,len(localmaplightmore)):
+            # print(f"{localmap[n]}")
+            print(' '.join(localmaplightmore[n]))
 
 
 def debugDungeonMap():
@@ -838,6 +904,7 @@ directions = {
 }
 
 #Game Loop
+
 def exploreDungeon():
     global danger
     global party_facing
@@ -846,7 +913,7 @@ def exploreDungeon():
     update_coord(0,0)
 
     while exploring == True:
-        
+
         if party_coord == [50,50]:
             
             print ("Congratulations, you reached the end of the dungeon!")
@@ -876,9 +943,8 @@ def exploreDungeon():
         # updateText(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
         print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
         command = input(f"\nType W/8 to go Forwards, Q/7 to turn left, and E/9 to turn right:\nYou can also check the (M)ap, (I)nteract (or F), or (O)pen party menu.\n").lower()
-
-        os.system('cls')
         
+        os.system('cls')
 
         if command == "7" or command == "q":
             if party_facing == 8:
@@ -1013,6 +1079,9 @@ def exploreDungeon():
         if command.lower() == "o":
             EquipmentSystem.runEquipment()
             
+    
+    
+
 
 # TEST
 # exploreDungeon()

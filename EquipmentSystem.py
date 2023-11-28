@@ -97,7 +97,7 @@ def getStatus():
             print("")
             return
 
-    print(f"{char.name}'s Status\n Class: {char.char_class} // PLevel: {char.plevel}\n HP: {char.hp} / {char.maxhp}\n FP: {char.fp} / {char.maxfp}\n ATK: {char.atk} (DMG: {char.dmg})\n DEF: {char.dfn}\n TEC: {char.tec}\n SPD: {char.spd}\n LCK: {char.lck}\n")
+    print(f"{char.name}'s Status\n Class: {char.char_class} // PLevel: {char.plevel}\n HP: {char.hp} / {char.maxhp}\n FP: {char.fp} / {char.maxfp}\n STR: {char.str} (DMG: {char.dmg})\n DEF: {char.vit}\n TEC: {char.tec}\n AGI: {char.agi}\n LCK: {char.lck}\n")
     # getEquip func
     getEquip(char)
 
@@ -109,7 +109,7 @@ def getSkills():
     availableskills = ""
 
     if char.char_class == "Knight":
-        availableskills += f"{char.name} knows these ATK-based skills:\n"
+        availableskills += f"{char.name} knows these STR-based skills:\n"
         availableskills += "    CHARGE: Attacks one opponent up to three times (costs 15% HP)\n"
         availableskills += "    HUNT: Attacks one opponent with increased strenght and crit chance (costs 15% HP and 3 FP)\n"
         availableskills += "    CLEAVE: Attacks random opponents up to five times (costs 25% HP)\n"
@@ -150,8 +150,10 @@ def partyRecovery():
         if n.hp <= 0:
             fpcost += 5
             totalfp += n.fp
-        else:
+        elif n.hp < n.maxhp:
             fpcost += (n.hp - n.maxhp)* -1/20 + 1
+            totalfp += n.fp
+        else:
             totalfp += n.fp
 
     
@@ -159,19 +161,26 @@ def partyRecovery():
 
     if totalfp >= fpcost:
 
-        fpcost = round(fpcost//len(party))+1
-        totalfpcost = totalfpcost * len(party)
+        fpcost = round(fpcost//len(party))
+        totalfpcost = fpcost * len(party)
         choice = input(f"This will use {totalfpcost} FP split between party member to revive fallen allies and fully heal the wounded.\nDo you want to continue? (No to cancel)\n").lower()
 
         if choice in cancelterms:
                 print("")
                 return None
         else:
+            for n in party:
+                    n.hp = n.maxhp
+            
             while totalfpcost > 0:
                 for n in party:
                     if n.fp >= fpcost:
-                        n.hp = n.maxhp
-                        n.fp -= fpcost
+                        if fpcost > totalfpcost:
+                            totalfpcost -= fpcost
+                            n.fp -= totalfpcost    
+                        else:
+                            totalfpcost -= fpcost
+                            n.fp -= fpcost
     
     else:
         print("The party doesn't have enough FP to fully recover.")
@@ -185,8 +194,8 @@ def getInventory():
 
     print("\nEquipment:")
     for n in inventory:
-        # print (f"    ({inventory.index(n)}) {n.name} // Type: {n.type} // Atk: {n.atk} (Dmg: {n.dmg}) // Dfn: {n.dfn} // Weak: {n.weak} // Resist: {n.resist} // Special: {n.special} // Value: {n.value} Cr")
-        print (f"    ({inventory.index(n)}) {n.name} // Type: {n.type} // Atk: {n.atk} (Dmg: {n.dmg}) // Dfn: {n.dfn} // Value: {n.value} Cr")
+        # print (f"    ({inventory.index(n)}) {n.name} // Type: {n.type} // STR: {n.str} (Dmg: {n.dmg}) // VIT: {n.vit} // Weak: {n.weak} // Resist: {n.resist} // Special: {n.special} // Value: {n.value} Cr")
+        print (f"    ({inventory.index(n)}) {n.name} // Type: {n.type} // STR: {n.str} (Dmg: {n.dmg}) // VIT: {n.vit} // Value: {n.value} Cr")
 
 
     useitem = input(f"\nAre you using any item? If so, type the consumable number, otherwise press anything.\n")
@@ -321,7 +330,7 @@ def changeEquip():
 
                 print (f"What Weapon will {char.name} equip?")
                 for n in list_weapon:
-                    print (f"({list_weapon.index(n)}) {n.name} // Atk: {n.atk} // Special: {n.special}")
+                    print (f"({list_weapon.index(n)}) {n.name} // STR: {n.str} // Special: {n.special}")
 
                 try:
                     wpn = int(input())
@@ -334,7 +343,7 @@ def changeEquip():
                 char.equip["Weapon"] = wpn
                 inventory.remove(wpn)
 
-                char.atk += wpn.atk
+                char.str += wpn.atk
                 char.dmg += wpn.dmg
             
             else:
@@ -356,7 +365,7 @@ def changeEquip():
 
                 print (f"What Armor will {char.name} equip?")
                 for n in list_armor:
-                    print (f"({list_armor.index(n)}) {n.name} // Dfn: {n.dfn} // Special: {n.special} // Weak to: {n.weak} // Resists: {n.resist}")
+                    print (f"({list_armor.index(n)}) {n.name} // VIT: {n.vit} // Special: {n.special} // Weak to: {n.weak} // Resists: {n.resist}")
 
                 try:
                     arm = int(input())
@@ -369,7 +378,7 @@ def changeEquip():
                 char.equip["Armor"] = arm
                 inventory.remove(arm)
 
-                char.dfn += arm.dfn
+                char.vit += arm.dfn
                 for n in arm.weak:
                     char.weak.append(n)
             
@@ -392,7 +401,7 @@ def changeEquip():
 
                 print (f"What Accessory will {char.name} equip?")
                 for n in list_acc:
-                    print (f"({list_acc.index(n)}) {n.name} // Atk: {n.atk} // Dfn: {n.dfn} // Special: {n.special} // Weak to: {n.weak} // Resists: {n.resist}")
+                    print (f"({list_acc.index(n)}) {n.name} // STR: {n.str} // VIT: {n.vit} // Special: {n.special} // Weak to: {n.weak} // Resists: {n.resist}")
 
                 try:
                     acc = int(input())
@@ -405,8 +414,8 @@ def changeEquip():
                 char.equip["Accessory 1"] = acc
                 inventory.remove(acc)
 
-                char.atk += acc.atk
-                char.dfn += acc.dfn
+                char.str += acc.atk
+                char.vit += acc.dfn
                 for n in arm.weak:
                     char.weak.append(n)
                 char.dmg += wpn.dmg
@@ -429,7 +438,7 @@ def changeEquip():
 
             print (f"What Accessory will {char.name} equip?")
             for n in list_acc:
-                print (f"({list_acc.index(n)}) {n.name} // Atk: {n.atk} // Dfn: {n.dfn} // Special: {n.special} // Weak to: {n.weak} // Resists: {n.resist}")
+                print (f"({list_acc.index(n)}) {n.name} // STR: {n.str} // VIT: {n.vit} // Special: {n.special} // Weak to: {n.weak} // Resists: {n.resist}")
 
             try:
                 acc = int(input())
@@ -442,8 +451,8 @@ def changeEquip():
             char.equip["Accessory 2"] = acc
             inventory.remove(acc)
 
-            char.atk += acc.atk
-            char.dfn += acc.dfn
+            char.str += acc.atk
+            char.vit += acc.dfn
             for n in arm.weak:
                     char.weak.append(n)
             char.dmg += wpn.dmg
@@ -482,7 +491,7 @@ def removeEquip():
             inventory.append(wpn)
             char.equip["Weapon"] = None
 
-            char.atk -= wpn.atk
+            char.str -= wpn.atk
             char.dmg -= wpn.dmg
 
     elif slot.lower() == "a":
@@ -496,8 +505,8 @@ def removeEquip():
             inventory.append(arm)
             char.equip["Armor"] = None
 
-            char.atk -= arm.atk
-            char.dfn -= arm.dfn
+            char.str -= arm.atk
+            char.vit -= arm.dfn
             for n in arm.weak:
                 char.weak.remove(n)
 
@@ -512,8 +521,8 @@ def removeEquip():
             inventory.append(acc)
             char.equip["Accesory 1"] = None
 
-            char.atk -= acc.atk
-            char.dfn -= acc.dfn
+            char.str -= acc.atk
+            char.vit -= acc.dfn
             for n in arm.weak:
                 char.weak.remove(n)
 
@@ -530,8 +539,8 @@ def removeEquip():
             inventory.append(acc)
             char.equip["Accesory 2"] = None
 
-            char.atk -= acc.atk
-            char.dfn -= acc.dfn
+            char.str -= acc.atk
+            char.vit -= acc.dfn
             for n in arm.weak:
                 char.weak.remove(n)
 
