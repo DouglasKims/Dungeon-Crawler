@@ -1,18 +1,18 @@
 
+import math
 import os
 import random
 import time
 import copy
 import EquipmentSystem
 import CombatSystem
-import Texts
 # from Game import updateText
 
 
 # from Game import updateText, texttop
 
 
-# Subtypes Open(0),Wall(1),Door(2),L.Door(D),Secret Wall(9)
+# Subtypes Open(0),Wall(1),Door(2),L.Door(D),Secret Wall(9), NS Secret Wall (8), WE secret wall (6)
 # Subtypes2: (C)hest, (O)penChest, Stairs(U)p, Stairs (D)own, (R)esting Area, (M)erchant,
 # SubtypesD: Secret walls accessible only by (N)(S)(W)(E)
 class Tile:
@@ -29,9 +29,13 @@ O = "O" # Open Chest
 U = "U" # Stairs Up
 D = "D" # Stairs Down
 N = "N" # Secret passage north only
+NO = "NO" # Secret passage north only open
 S = "S" # Secret Passage South only
+SO = "SO" # Secret Passage South only open
 W = "W" # Secret Passage West only
+WO = "WO" # Secret Passage West only open
 E = "E" # Secret Passage East only
+EO = "EO" # Secret Passage East only open
 R = "R" # Resting Area
 M = "M" # Merchant
 
@@ -61,40 +65,40 @@ dungeon11 = [
     [1,U,0,0,1,0,C,1,1,1,0,E,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1], #1
     [1,0,0,0,2,0,0,1,C,0,0,1,0,1,0,1,0,1,0,1,1,1,0,0,0,0,0,1,0,0,0,1], #2
     [1,0,0,0,1,0,0,1,1,1,0,1,0,1,1,1,0,0,0,0,0,1,1,1,1,0,1,1,0,0,0,1], #3
-    [1,1,1,1,1,0,0,E,0,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,0,1,1,1], #4
+    [1,1,1,1,1,0,0,9,0,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,0,1,1,1], #4
     [1,0,0,0,0,0,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,0,1,0,0,0,1,0,0,1,C,1], #5
-
-    [1,0,1,1,0,1,1,1,0,0,0,1,0,0,0,0,0,1,0,0,1,0,1,0,1,1,1,0,1,1,0,1],
+#    0 1 2 3 4 5 6 7 8 9 101 2 3 4 5 6 7 8 9 201 2 3 4 5 6 7 8 9 301
+    [1,0,1,1,0,1,1,1,0,0,0,1,0,0,0,0,0,1,0,0,1,0,1,0,1,9,1,0,1,1,0,1],
     [1,0,0,1,0,0,0,1,0,1,1,1,1,2,1,1,1,1,0,C,1,0,1,1,1,0,1,0,1,1,0,1],
     [1,0,1,1,1,1,0,1,0,1,1,1,0,0,M,1,1,1,1,1,1,0,1,0,1,0,1,0,W,0,0,1],
     [1,0,0,0,0,1,0,0,0,0,0,2,0,R,0,2,0,0,0,0,0,0,1,0,0,0,1,0,1,1,1,1],
     [1,1,1,1,0,1,0,1,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,1,0,1,0,0,0,0,1], #10
-
+#    0 1 2 3 4 5 6 7 8 9 101 2 3 4 5 6 7 8 9 201 2 3 4 5 6 7 8 9 301
     [1,0,0,0,0,1,0,1,0,0,0,1,1,2,1,1,C,1,0,0,0,1,1,0,1,1,1,1,1,1,0,1],
     [1,0,1,1,0,1,0,1,1,1,0,1,0,0,1,C,0,0,0,0,0,1,0,0,0,0,0,0,C,1,0,1],
     [1,0,C,1,0,0,0,1,0,0,0,1,0,1,1,1,C,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1],
     [1,0,1,1,0,1,0,1,1,1,1,1,0,1,C,1,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1],
     [1,0,0,0,0,1,0,1,0,C,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,1,1,1,1,1,1,1], #15
-
+#    0 1 2 3 4 5 6 7 8 9 101 2 3 4 5 6 7 8 9 201 2 3 4 5 6 7 8 9 301
     [1,1,1,1,1,1,S,1,0,0,0,1,0,1,1,1,1,1,2,1,2,1,1,1,0,1,C,0,0,2,0,1],
     [1,0,0,0,0,0,0,1,1,0,1,1,0,1,0,0,0,2,0,0,0,2,0,0,0,1,C,0,0,1,0,1],
     [1,0,1,1,1,1,0,0,0,0,0,0,0,1,0,1,1,1,0,R,0,1,1,1,0,1,C,0,0,1,2,1],
     [1,0,0,0,0,1,1,1,1,0,1,1,0,1,0,1,0,2,0,0,0,2,0,1,0,1,1,1,1,1,0,1],
     [1,0,1,1,0,0,0,0,1,2,1,0,0,1,C,1,0,1,2,1,2,1,0,1,0,0,0,0,0,1,0,1], #20
-
+#    0 1 2 3 4 5 6 7 8 9 101 2 3 4 5 6 7 8 9 201 2 3 4 5 6 7 8 9 301
     [1,0,0,1,1,1,1,2,1,0,1,0,1,1,1,1,0,1,0,1,0,1,0,1,1,1,1,1,0,0,0,1],
     [1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,C,1,1,1,1,1],
     [1,1,0,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,0,1,0,1,0,0,0,1,1,1,0,0,0,1],
     [1,1,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,1,1,1,0,C,1,0,0,1,0,1],
     [1,0,0,1,1,1,1,1,S,0,1,1,0,1,0,1,1,S,1,1,0,0,0,1,C,1,1,0,1,1,0,1], #25
-
+#    0 1 2 3 4 5 6 7 8 9 101 2 3 4 5 6 7 8 9 201 2 3 4 5 6 7 8 9 301
     [1,0,0,1,C,1,0,0,0,0,0,1,0,1,0,1,M,0,0,1,1,1,0,1,1,1,0,0,1,0,0,1],
     [1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,R,0,2,0,1,0,1,0,0,0,1,1,2,1,1],
     [1,0,1,0,0,1,0,1,C,1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,1,1,0,0,0,1],
     [1,0,1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,2,1,1,0,1,1,1,1,1,0,2,0,0,0,1],
     [1,0,0,0,0,1,0,0,0,0,0,2,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,D,1], #30
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-]
+]#   0 1 2 3 4 5 6 7 8 9 101 2 3 4 5 6 7 8 9 201 2 3 4 5 6 7 8 9 301
 
 item1 = EquipmentSystem.item1
 item2 = EquipmentSystem.item2
@@ -119,9 +123,9 @@ dungeon11loot = {
     "13,16": (item2 ,13,16),
     "7,19": (item1 ,7,19),
     "12,28": (weapon1 ,12,28),
-    "15,26": (item2 ,15,26),
-    "16,26": (item3 ,16,26),
-    "17,26": (item1 ,17,26),
+    "16,26": (item2 ,16,26),
+    "17,26": (item3 ,17,26),
+    "18,26": (item1 ,18,26),
     "22,26": (item2 ,22,26),
     "24,25": (item2 ,24,25),
     "25,24": (item2 ,25,24),
@@ -279,7 +283,7 @@ def update_time():
 
     steps += 1
 
-    if steps >= 10:
+    if steps >= 90:
         hour += 1
         steps = 0
 
@@ -319,7 +323,7 @@ def update_danger():
     else:
         danger_level = "None"
 
-# def update_vision():
+"""# def update_vision():
 #     global vision
 #     if party_facing == 8:
 #         if check.N == 0:
@@ -483,7 +487,7 @@ def update_danger():
 #         elif check.N == 1 and check.E == 0 and check.S == 0:
 #             print(t100)
 #         elif check.N == 0 and check.E == 0 and check.S == 1:
-#             print(t001)
+#             print(t001)"""
 
 def getMap():
 
@@ -659,14 +663,26 @@ def getMap():
             localmap[y][x] = '♥'
         elif t == "M":
             localmap[y][x] = '☺'
-        elif t == "S":
+        elif t == "SO":
             localmap[y][x] = '↑'
-        elif t == "N":
+        elif t == "NO":
             localmap[y][x] = '↓'
-        elif t == "W":
+        elif t == "WO":
             localmap[y][x] = '→'
-        elif t == "E":
+        elif t == "EO":
             localmap[y][x] = '←'
+        elif t == "S":
+            localmap[y][x] = '■'
+        elif t == "N":
+            localmap[y][x] = '■'
+        elif t == "W":
+            localmap[y][x] = '■'
+        elif t == "E":
+            localmap[y][x] = '■'
+        elif t == 8:
+            localmap[y][x] = '↕'
+        elif t == 6:
+            localmap[y][x] = '↔'
         elif t == None:
             localmap[y][x] = 'X'
 
@@ -688,14 +704,26 @@ def getMap():
             localmaplight[y][x] = '♥'
         elif t == "M":
             localmaplight[y][x] = '☺'
-        elif t == "S":
+        elif t == "SO":
             localmaplight[y][x] = '↑'
-        elif t == "N":
+        elif t == "NO":
             localmaplight[y][x] = '↓'
-        elif t == "W":
+        elif t == "WO":
             localmaplight[y][x] = '→'
-        elif t == "E":
+        elif t == "EO":
             localmaplight[y][x] = '←'
+        elif t == "S":
+            localmaplight[y][x] = '■'
+        elif t == "N":
+            localmaplight[y][x] = '■'
+        elif t == "W":
+            localmaplight[y][x] = '■'
+        elif t == "E":
+            localmaplight[y][x] = '■'
+        elif t == 8:
+            localmaplight[y][x] = '↕'
+        elif t == 6:
+            localmaplight[y][x] = '↔'
         elif t == None:
             localmaplight[y][x] = 'X'
 
@@ -725,6 +753,14 @@ def getMap():
             localmaplightmore[y][x] = '→'
         elif t == "E":
             localmaplightmore[y][x] = '←'
+        elif t == "SO":
+            localmaplightmore[y][x] = '■'
+        elif t == "NO":
+            localmaplightmore[y][x] = '■'
+        elif t == "WO":
+            localmaplightmore[y][x] = '■'
+        elif t == "EO":
+            localmaplightmore[y][x] = '■'
         elif t == None:
             localmaplightmore[y][x] = 'X'
 
@@ -732,18 +768,27 @@ def getMap():
     #                   0       1       2       3           4           5       6           7
     # hour_names = ["Dawn","Morning","Noon","Afternoon","Twilight","Evening","Midnight","Witching Hour"]
 
-    if hour == 6 or hour == 7:
+    # if hour == 6 or hour == 7:
+    #     for n in range(0,len(localmap)):
+    #         # print(f"{localmap[n]}")
+    #         print(' '.join(localmap[n]))
+    # elif hour == 0 or hour == 4 or hour == 5:
+    #     for n in range(0,len(localmaplight)):
+    #         # print(f"{localmap[n]}")
+    #         print(' '.join(localmaplight[n]))
+    # elif hour == 1 or hour == 2 or hour == 3:
+    #     for n in range(0,len(localmaplightmore)):
+    #         # print(f"{localmap[n]}")
+    #         print(' '.join(localmaplightmore[n]))
+
+    if hour >= 4:
         for n in range(0,len(localmap)):
             # print(f"{localmap[n]}")
             print(' '.join(localmap[n]))
-    elif hour == 0 or hour == 4 or hour == 5:
+    else:
         for n in range(0,len(localmaplight)):
             # print(f"{localmap[n]}")
             print(' '.join(localmaplight[n]))
-    elif hour == 1 or hour == 2 or hour == 3:
-        for n in range(0,len(localmaplightmore)):
-            # print(f"{localmap[n]}")
-            print(' '.join(localmaplightmore[n]))
 
 
 def debugDungeonMap():
@@ -792,14 +837,26 @@ def dungeonMap():
                     horizontal += f' ♥ '
                 elif dungeon_blueprint[nny][nnx] == "M":
                     horizontal += f' ☺ '
-                elif dungeon_blueprint[nny][nnx] == "S":
+                elif dungeon_blueprint[nny][nnx] == "SO":
                     horizontal += f' ↑ '
-                elif dungeon_blueprint[nny][nnx] == "N":
+                elif dungeon_blueprint[nny][nnx] == "NO":
                     horizontal += f' ↓ '
-                elif dungeon_blueprint[nny][nnx] == "W":
+                elif dungeon_blueprint[nny][nnx] == "WO":
                     horizontal += f' → '
-                elif dungeon_blueprint[nny][nnx] == "E":
+                elif dungeon_blueprint[nny][nnx] == "EO":
                     horizontal += f' ← '
+                elif dungeon_blueprint[nny][nnx] == 8:
+                    horizontal += f' ↕ '
+                elif dungeon_blueprint[nny][nnx] == 6:
+                    horizontal += f' ↔ '
+                elif dungeon_blueprint[nny][nnx] == "S":
+                    horizontal += f' ■ '
+                elif dungeon_blueprint[nny][nnx] == "N":
+                    horizontal += f' ■ '
+                elif dungeon_blueprint[nny][nnx] == "W":
+                    horizontal += f' ■ '
+                elif dungeon_blueprint[nny][nnx] == "E":
+                    horizontal += f' ■ '
                 # horizontal += f" {dungeon_blueprint[nny][nnx]} "
             else:
                 horizontal += f"   "
@@ -813,16 +870,17 @@ def dungeonMap():
 
 def openDoor():
     
-    if party_facing == 8:
-        door = party_coord[0]-1, party_coord[1]
-    elif party_facing == 4:
-        door = party_coord[0], party_coord[1]-1
-    elif party_facing == 2:
-        door = party_coord[0]+1, party_coord[1]
-    elif party_facing == 6:
-        door = party_coord[0], party_coord[1]+1
 
-    door = dungeon_blueprint[door[0]][door[1]]
+    if party_facing == 8:
+        doorcoord = party_coord[0]-1, party_coord[1]
+    elif party_facing == 4:
+        doorcoord = party_coord[0], party_coord[1]-1
+    elif party_facing == 2:
+        doorcoord = party_coord[0]+1, party_coord[1]
+    elif party_facing == 6:
+        doorcoord = party_coord[0], party_coord[1]+1
+
+    door = dungeon_blueprint[doorcoord[0]][doorcoord[1]]
     
     if door == 2:
         print("You open the door and go through it.")
@@ -834,6 +892,18 @@ def openDoor():
             update_coord(0,2)
         elif party_facing ==6:
             update_coord(+2,0)
+    
+    elif door == 8 or door == 6:
+        print("You go through the passageway.")
+        if party_facing == 8:
+            update_coord(0,-2)
+        elif party_facing == 4:
+            update_coord(-2,0)
+        elif party_facing == 2:
+            update_coord(0,2)
+        elif party_facing ==6:
+            update_coord(+2,0)
+
     elif door == D:
         print("The door seems to be locked.")
     elif door == 9:
@@ -841,13 +911,91 @@ def openDoor():
         if choice.lower() == "y":
             print("You go across the passage.")
             if party_facing == 8:
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = 8
                 update_coord(0,-2)
             elif party_facing == 4:
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = 6
                 update_coord(-2,0)
             elif party_facing == 2:
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = 8
                 update_coord(0,2)
-            elif party_facing ==6:
+            elif party_facing == 6:
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = 6
                 update_coord(+2,0)
+        else:
+            print("Nevermind.")
+
+    elif door == NO or door == SO or door == EO or door == WO:
+        if party_facing == 8 and door == SO:
+            choice = input("It's a one-way passage. Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                print("You go across the passage.")
+                update_coord(0,-2)
+        elif party_facing == 8 and door == NO:
+            print("It's a one-way passage, but you can't access it from this side.")
+        
+        elif party_facing == 4 and door == EO:
+            choice = input("It's a one-way passage. Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                print("You go across the passage.")
+                update_coord(-2,0)
+        elif party_facing == 4 and door == WO:
+            print("It's a one-way passage, but you can't access it from this side.")
+
+        elif party_facing == 2 and door == NO:
+            choice = input("It's a one-way passage. Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                print("You go across the passage.")
+                update_coord(0,2)
+        elif party_facing == 2 and door == SO:
+            print("It's a one-way passage, but you can't access it from this side.")
+        
+        elif party_facing == 6 and door == WO:
+            choice = input("It's a one-way passage. Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                print("You go across the passage.")
+                update_coord(+2,0)
+        elif party_facing == 6 and door == EO:
+            print("It's a one-way passage, but you can't access it from this side.")
+        
+        else:
+            print("Nevermind.")
+
+    elif door == N or door == S or door == E or door == W:
+        
+        print("You find a secret passage in the wall!")
+        if party_facing == 8 and door == S:
+            choice = input("Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                update_coord(0,-2)
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = SO
+        elif party_facing == 8 and door == N:
+            print("But it seems blocked from this side.")
+
+        elif party_facing == 4 and door == E:
+            choice = input("Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = EO
+                update_coord(-2,0)
+        elif party_facing == 4 and door == W:
+            print("But it seems blocked from this side.")
+
+        elif party_facing == 2 and door == N:
+            choice = input("Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                update_coord(0,2)
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = NO
+        elif party_facing == 2 and door == S:
+            print("But it seems blocked from this side.")
+
+        elif party_facing == 6 and door == W:
+            choice = input("Go through it? (Y/N)\n")
+            if choice.lower() == "y":
+                update_coord(+2,0)
+                dungeon_blueprint[doorcoord[0]][doorcoord[1]] = WO
+        elif party_facing == 6 and door == E:
+            print("But it seems blocked from this side.")
+
         else:
             print("Nevermind.")
 
@@ -886,15 +1034,15 @@ def getLoot(looty,lootx):
         lootitem = dungeon_current_loot[lootcoord][0]
 
 
-    if len(EquipmentSystem.consumables) >10:
-        print(f"Found a {lootitem.name}. But the party stash is full.")    
+        if len(EquipmentSystem.consumables) >10:
+            print(f"Found a {lootitem.name}. But the party stash is full.")    
+        else:
+            EquipmentSystem.consumables.append(copy.deepcopy(lootitem))
+            dungeon_blueprint[looty][lootx] = "O"
+            dungeon_current_loot.pop(lootcoord)
+            print(f"Found a {lootitem.name}. Added to party's stash.\n")
     else:
-
-        EquipmentSystem.consumables.append(copy.deepcopy(lootitem))
-        dungeon_blueprint[looty][lootx] = "O"
-        dungeon_current_loot.pop(lootcoord)
-        print(f"Found a {lootitem.name}. Added to party's stash.")
-
+        print ("But something in the code went wrong.\n")
 
 directions = {
     8: ("N", (0, -1)),
@@ -932,7 +1080,7 @@ def exploreDungeon():
 
         print ("Party:") #spacer
         for n in party:
-            print (f"{n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+            print (f"{n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} /// TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
         print ("") #spacer
         
         getMap()
@@ -1006,60 +1154,12 @@ def exploreDungeon():
                 elif getattr(check, facing) == M:
                     print ("This person has merchandise to sell.\n")
                 elif getattr(check, facing) in (N,S,W,E):
-                    print ("This seems like a passageway, but it is blocked.\n")
+                    print ("This seems like a one-way passageway.\n")
+                elif getattr(check, facing) in (NO,SO,WO,EO):
+                    print ("This seems like a one-way passageway.\n")
+                elif getattr(check, facing) in (9,8,6):
+                    print ("This seems like a passageway in the wall.\n")
                 
-
-            
-
-            # if getattr(check,facing) == 0:
-            #     update_coord(dx,dy)
-            # elif check.facing == 1:
-            #     print ("You bonk against a wall.")
-            # elif check.facing == 2:
-            #     print ("There is a door in front of you.")
-            # elif check.facing == C:
-            #     print ("There is a closed chest in front of you.")
-            # elif check.facing == U:
-            #     print ("These are the stairs upwards.")
-            # elif check.facing == D:
-            #     print ("These are the stairs downwards.")
-            # elif check.facing == R:
-            #     print ("This is a resting area, you can camp here.")
-            # elif check.facing == M:
-            #     print ("This person has merchandise to sell.")
-
-
-            # if party_facing == 8:
-            #     if check.N == 0:
-            #         update_coord(0,1)
-            #     elif check.N == 1:
-            #         print ("You bonk against a wall.")
-            #     elif check.N == 2:
-            #         print ("There is a door in front of you.")
-            
-            # elif party_facing == 6:
-            #     if check.E == 0:
-            #         update_coord(1,0)
-            #     elif check.E == 1:
-            #         print ("You bonk against a wall.")
-            #     elif check.E == 2:
-            #         print ("There is a door in front of you.")
-
-            # elif party_facing == 2:
-            #     if check.S == 0:
-            #         update_coord(0,-1)
-            #     elif check.S == 1:
-            #         print ("You bonk against a wall.")
-            #     elif check.S == 2:
-            #         print ("There is a door in front of you.")
-
-            # elif party_facing == 4:
-            #     if check.W == 0:
-            #         update_coord(-1,0)
-            #     elif check.W == 1:
-            #         print ("You bonk against a wall.")
-            #     elif check.W == 2:
-            #         print ("There is a door in front of you.")
 
         if command == "5" or command == "f" or command == "i":
             openDoor()
@@ -1079,7 +1179,13 @@ def exploreDungeon():
         if command.lower() == "o":
             EquipmentSystem.runEquipment()
             
-    
+        if command.lower() == "exp":
+
+            exptogain = int(input("How much exp to gain?"))
+
+            for n in party:
+                n.exp += exptogain
+                CombatSystem.checkPLevel(n)
     
 
 

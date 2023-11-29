@@ -1,12 +1,12 @@
 # ENEMY LIST
 
 class Enemy:
-    def __init__(self,name,level,maxhp,hp,fp,str,dmg,tec,vit,agi,lck,defending,weak,exp,money,init):
+    def __init__(self,name,level,maxhp,hp,tp,str,dmg,tec,vit,agi,lck,defending,weak,exp,money,init):
         self.name = name
         self.level = level
         self.maxhp = maxhp
         self.hp = hp
-        self.fp = fp
+        self.tp = tp
         self.str = str
         self.dmg = dmg
         self.tec = tec
@@ -28,13 +28,21 @@ elem = ["phys","fire","wind","earth","ice","thunder","toxic","decay","chaos","de
     # Adhbah // Debufs and spell attacks
     # Grain // strong spell attacks or AOE spell attacks
 
+    # Laidir // Bosses
+
+    # Level 1 // Puny, Weak, Cowardly
+    # Level 2 // Malicious, Insidious, Cruel
+    # Level 3 // Hateful, Spiteful, Wrathful
+    # Level 4 // Angry, Merciless, Viscerous
+    # Level 5 // Cursed, Divisive, Unpleasant
+
 # FIRST FLOOR ENEMIES
 en_mal1 = Enemy(
     name = "Puny Malla",
     level = 1,
     maxhp = 40,
     hp = 40,
-    fp = 10,
+    tp = 10,
     str = 5,
     dmg = 1,
     tec = 2,
@@ -51,7 +59,7 @@ en_sgeu1 = Enemy(
     level = 1,
     maxhp = 30,
     hp = 30,
-    fp = 10,
+    tp = 10,
     str = 4,
     dmg = 1,
     tec = 2,
@@ -68,7 +76,7 @@ en_dio2 = Enemy(
     level = 2,
     maxhp = 60,
     hp = 60,
-    fp = 20,
+    tp = 20,
     str = 8,
     dmg = 1,
     tec = 5,
@@ -85,7 +93,7 @@ en_colt2 = Enemy(
     level = 2,
     maxhp = 50,
     hp = 50,
-    fp = 20,
+    tp = 20,
     str = 7,
     dmg = 1,
     tec = 5,
@@ -102,7 +110,7 @@ en_adhbah1 = Enemy(
     level = 1,
     maxhp = 40,
     hp = 40,
-    fp = 30,
+    tp = 30,
     str = 3,
     dmg = 1,
     tec = 6,
@@ -119,7 +127,7 @@ en_adhbah2 = Enemy(
     level = 2,
     maxhp = 45,
     hp = 45,
-    fp = 40,
+    tp = 40,
     str = 5,
     dmg = 1,
     tec = 11,
@@ -136,7 +144,7 @@ en_grain1 = Enemy(
     level = 1,
     maxhp = 30,
     hp = 30,
-    fp = 20,
+    tp = 20,
     str = 2,
     dmg = 1,
     tec = 8,
@@ -153,5 +161,11 @@ en_grain1 = Enemy(
 # enemy3 = Enemy("Despicable Shade",3,30,30,4,1,2,6,0,False,[elem[1],elem[3]],15,20,0)
 # enemy4 = Enemy("Troublesome Ghost",1,80,80,5,1,3,2,0,False,[elem[1],elem[2],elem[3],elem[4],elem[5],elem[6]],5,5,0)
 
+en_laid1 = Enemy(name = "Puny Làidir",
+    level = 1, maxhp = 200, hp = 200, tp = 30, str = 20, dmg = 2, tec = 15, vit = 10, agi = 5, lck = 5,
+    defending = False, weak = [], exp = 5, money = 100, init = 0)
+
 
 enemies_1 = [en_mal1,en_sgeu1,en_dio2,en_colt2,en_adhbah1,en_adhbah2,en_grain1]
+
+enemies_bosses = [en_laid1]

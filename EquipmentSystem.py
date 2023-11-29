@@ -1,3 +1,4 @@
+import math
 import os
 import copy
 import CombatSystem
@@ -37,7 +38,7 @@ access1 = Equipment("Shield","Accessory",1,None,-1,0,5,None,None,300)
 access2 = Equipment("Magic Ring","Accessory",1,"tec+",0,0,1,None,None,700)
 
 item1 = Consumable("Healing Draught","Healing","Heal 30 HP",50)
-item2 = Consumable("Invigorating Tonic","Healing","Heal 15 FP",200)
+item2 = Consumable("Invigorating Tonic","Healing","Heal 15 tp",200)
 item3 = Consumable("Charged Memento","Reviving","Revives with 25% HP", 200)
 
 # EQUIPMENT
@@ -97,7 +98,7 @@ def getStatus():
             print("")
             return
 
-    print(f"{char.name}'s Status\n Class: {char.char_class} // PLevel: {char.plevel}\n HP: {char.hp} / {char.maxhp}\n FP: {char.fp} / {char.maxfp}\n STR: {char.str} (DMG: {char.dmg})\n DEF: {char.vit}\n TEC: {char.tec}\n AGI: {char.agi}\n LCK: {char.lck}\n")
+    print(f"{char.name}'s Status\n Class: {char.char_class}\n PLevel: {char.plevel} ({char.exp} / {100*char.plevel} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}\n tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg})\n TEC: {math.floor(char.tec)}\n VIT: {math.floor(char.vit)}\n AGI: {math.floor(char.agi)}\n LCK: {math.floor(char.lck)}\n")
     # getEquip func
     getEquip(char)
 
@@ -111,17 +112,22 @@ def getSkills():
     if char.char_class == "Knight":
         availableskills += f"{char.name} knows these STR-based skills:\n"
         availableskills += "    CHARGE: Attacks one opponent up to three times (costs 15% HP)\n"
-        availableskills += "    HUNT: Attacks one opponent with increased strenght and crit chance (costs 15% HP and 3 FP)\n"
+        availableskills += "    HUNT: Attacks one opponent with increased strenght and crit chance (costs 15% HP and 3 TP)\n"
         availableskills += "    CLEAVE: Attacks random opponents up to five times (costs 25% HP)\n"
         availableskills += "\n"
     
+    if char.char_class == "Scout":
+        availableskills += f"{char.name} knows these SCOUT skills:\n"
+        availableskills += "    SNEAK: Attacks one opponent with increased damage and crit chance (costs 3 TP)\n"
+        availableskills += "    HIDE: Lower odds of being targeted for remainder of fight (costs 3 TP)\n"
+
     availableskills += f"{char.name} knows these TEC-based skills:\n"
     if "grun" in char.slist:
         availableskills += "    GRUN: Target multiple creatures(ally or opponents)\n"
 
-    availableskills += "    LAG: Causes Light amount of damage (4FP, 10FP if used with Grun)\n"
+    availableskills += "    LAG: Causes Light amount of damage (4tp, 10tp if used with Grun)\n"
     if "comas" in char.slist:
-        availableskills += "    COMAS: Causes moderate amount of damage (8FP, 16FP if used with Grun)\n"
+        availableskills += "    COMAS: Causes moderate amount of damage (8tp, 16tp if used with Grun)\n"
     if "pas" in char.slist:
         availableskills += "    PAS: Blessings of Pasperon commands FIRE.\n"
     if "yab" in char.slist:
@@ -135,35 +141,35 @@ def getSkills():
     availableskills += f"{char.name} knows these TEC-based Support skills:\n"
     if "leas" in char.slist:
         availableskills += "    LEAS: Heals an ally who's still alive.\n"
-        availableskills += "    TIN: Weak degree of restoration (3FP, 7FP if used with Grun or Igg to revive)\n"    
+        availableskills += "    TIN: Weak degree of restoration (3tp, 7tp if used with Grun or Igg to revive)\n"    
     if "cruai" in char.slist:
-        availableskills += "    CRUAI: Moderate degree of restoration (7FP, 12FP if used with Grun or Igg to revive)\n"
+        availableskills += "    CRUAI: Moderate degree of restoration (7tp, 12tp if used with Grun or Igg to revive)\n"
 
     print (availableskills)
 
 def partyRecovery():
-    fpcost = 0
-    totalfp = 0
-    totalfpcost = 0
+    tpcost = 0
+    totaltp = 0
+    totaltpcost = 0
 
     for n in party:
         if n.hp <= 0:
-            fpcost += 5
-            totalfp += n.fp
+            tpcost += 5
+            totaltp += n.tp
         elif n.hp < n.maxhp:
-            fpcost += (n.hp - n.maxhp)* -1/20 + 1
-            totalfp += n.fp
+            tpcost += (n.hp - n.maxhp)* -1/20 + 1
+            totaltp += n.tp
         else:
-            totalfp += n.fp
+            totaltp += n.tp
 
     
-    # fpcost = round(fpcost//len(CombatSystem.party))
+    # tpcost = round(tpcost//len(CombatSystem.party))
 
-    if totalfp >= fpcost:
+    if totaltp >= tpcost:
 
-        fpcost = round(fpcost//len(party))
-        totalfpcost = fpcost * len(party)
-        choice = input(f"This will use {totalfpcost} FP split between party member to revive fallen allies and fully heal the wounded.\nDo you want to continue? (No to cancel)\n").lower()
+        tpcost = round(tpcost//len(party))
+        totaltpcost = tpcost * len(party)
+        choice = input(f"This will use {totaltpcost} tp split between party member to revive fallen allies and fully heal the wounded.\nDo you want to continue? (No to cancel)\n").lower()
 
         if choice in cancelterms:
                 print("")
@@ -172,18 +178,18 @@ def partyRecovery():
             for n in party:
                     n.hp = n.maxhp
             
-            while totalfpcost > 0:
+            while totaltpcost > 0:
                 for n in party:
-                    if n.fp >= fpcost:
-                        if fpcost > totalfpcost:
-                            totalfpcost -= fpcost
-                            n.fp -= totalfpcost    
+                    if n.tp >= tpcost:
+                        if tpcost > totaltpcost:
+                            totaltpcost -= tpcost
+                            n.tp -= totaltpcost    
                         else:
-                            totalfpcost -= fpcost
-                            n.fp -= fpcost
+                            totaltpcost -= tpcost
+                            n.tp -= tpcost
     
     else:
-        print("The party doesn't have enough FP to fully recover.")
+        print("The party doesn't have enough tp to fully recover.")
 
 
 def getInventory():
@@ -224,7 +230,7 @@ def useItem(item):
 
             print("Party:")
             for char in party:
-                print(f"  ({party.index(char)}) {char.name} // HP: {char.hp} / {char.maxhp}")
+                print(f"  ({party.index(char)}) {char.name} // HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}")
             choice = input(f"This {item.name} will heal {ipower} HP. Who's using it?\n")
 
             if choice in cancelterms:
@@ -246,12 +252,12 @@ def useItem(item):
             consumables.remove(item)
             print(f"{choice.name} recovered {ipower} HP.")
 
-        elif ieffect == "FP":
+        elif ieffect == "TP":
 
             print("Party:")
             for char in party:
-                print(f"  ({party.index(char)}) {char.name} // FP: {char.fp} / {char.maxfp}")
-            choice = input(f"This {iname} will heal {ipower} FP. Who's using it?\n")
+                print(f"  ({party.index(char)}) {char.name} // tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}")
+            choice = input(f"This {iname} will heal {ipower} TP. Who's using it?\n")
 
             if choice in cancelterms:
                 print("")
@@ -264,16 +270,16 @@ def useItem(item):
                 print("Invalid input. Please enter a valid character.")
                 return None
             
-            choice.fp += ipower
+            choice.tp += ipower
             consumables.remove(item)
-            print(f"{choice.name} recovered {ipower} FP.")
+            print(f"{choice.name} recovered {ipower} tp.")
 
     if item.type == "Reviving":
         ieffect, i1, ipower, i2 = item.effect.split()
 
         print("Party:")
         for char in party:
-                print(f"  ({party.index(char)}) {char.name} // HP: {char.hp} / {char.maxhp}")
+                print(f"  ({party.index(char)}) {char.name} // HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}")
         choice = input(f"This {item.name} will revive with {ipower} HP. Who's using it?\n")
 
         if choice in cancelterms:
@@ -561,7 +567,7 @@ def runEquipment():
         # SHOW PARTY LIST
         print ("Party:") #spacer
         for n in party:
-            print (f"{n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+            print (f"{n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} /// TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
         print ("") #spacer
 
         equip_command = input("What do you want to do? \n (E)quip \n (U)nequip \n Check (I)nventory\n Check (C)haracter's Status \n Check (S)kills \n (R)ecover HP \n or (Q)uit management\n").lower()

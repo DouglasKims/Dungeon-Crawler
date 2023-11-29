@@ -10,15 +10,15 @@ import copy
 import EnemyList
 
 class Character:
-    def __init__(self,name,char_class,level,plevel,maxhp,hp,maxfp,fp,str,dmg,tec,vit,agi,lck,slist,acted,defending,weak,equip,exp,init):
+    def __init__(self,name,char_class,level,plevel,maxhp,hp,maxtp,tp,str,dmg,tec,vit,agi,lck,slist,acted,defending,weak,equip,exp,init):
         self.name = name
         self.char_class = char_class
         self.level = level
         self.plevel = plevel
         self.maxhp = maxhp
         self.hp = hp
-        self.maxfp = maxfp
-        self.fp = fp
+        self.maxtp = maxtp
+        self.tp = tp
         self.str = str
         self.dmg = dmg
         self.tec = tec
@@ -36,10 +36,10 @@ class Character:
 # Class Enemy:
 
 class CharacterClass:
-    def __init__(self,name,hp,fp,str,dmg,tec,vit,agi,lck,special,lore):
+    def __init__(self,name,hp,tp,str,dmg,tec,vit,agi,lck,special,improv,lore):
         self.name = name
         self.hp = hp
-        self.fp = fp
+        self.tp = tp
         self.str = str
         self.dmg = dmg
         self.tec = tec
@@ -47,6 +47,7 @@ class CharacterClass:
         self.agi = agi
         self.lck = lck
         self.special = special
+        self.improv = improv
         self.lore = lore
 
 # CHARACTER CLASSES
@@ -54,78 +55,84 @@ class CharacterClass:
 knight = CharacterClass(
     name = "Knight",
     hp = 10,
-    fp = 2,
+    tp = 2,
     str = 6,
     dmg = 2,
     tec = 2,
     vit = 5,
     agi = 3,
     lck = 3,
+    improv = [4/3, 1/2, 1, 1/3, 1, 3/5, 1/3],
     special = None,
     lore = "A capable fighter with high attack and defense, know a few combat tactics, but doesn't excels in special techniques.")
 #   # THAUMATURGE
 thaumaturge = CharacterClass(
-    "Thaumaruge",
+    "Thaumaturge",
     hp = 6,
-    fp = 5,
+    tp = 5,
     str = 4,
     dmg = 1,
     tec = 6,
     vit = 2,
     agi = 2,
     lck = 4,
+    improv = [2/3, 1, 2/3, 1, 2/3, 2/5, 2/3],
     special = None,
     lore = "A capable combatant who's reliable in physical combat, but really excells at support and healing.")
 #   # ARCANIST
 arcanist = CharacterClass(
     "Arcanist",
     hp = 4,
-    fp = 7,
+    tp = 7,
     str = 2,
     dmg = 1,
     tec = 8,
     vit = 1,
     agi = 4,
     lck = 2,
+    improv = [1/3, 3/2, 1/4, 3/2, 1/3, 2/3, 1/2],
     special = None,
     lore = "A specialist combatant, really weak and fragile, but can use devastating special techniques and elemental attacks.")
 #   # SCOUT
 scout = CharacterClass(
     "Scout",
     hp = 6,
-    fp = 3,
+    tp = 3,
     str = 3,
     dmg = 2,
     tec = 4,
     vit = 2,
     agi = 8,
     lck = 8,
+    improv = [1/2, 1/3, 1/2, 1/2, 1/2, 3/2, 4/3],
     special = None,
     lore = "A stealthy combatant, somewhat weak and fragile, but capable of landing powerful critical attacks more frequently than others.")
 #   # SCHOLAR / EXPLORER / HERALD
 herald = CharacterClass(
     "Herald",
     hp = 8,
-    fp = 4,
+    tp = 4,
     str = 5,
     dmg = 1,
     tec = 5,
     vit = 3,
     agi = 5,
     lck = 5,
+    improv = [3/4, 2/3, 1, 3/4, 2/3, 2/3, 2/3],
     special = None,
     lore = "A well-rounded combatant and explorer, able to use offensive and support abilities, but doesn't really excels in any.")
 #   # QUARTERMASTER
 quartermaster = CharacterClass(
     "Quartermaster",
     hp = 6,
-    fp = 3,
+    tp = 3,
     str = 4,
     dmg = 1,
     tec = 2,
     vit = 4,
     agi = 5,
     lck = 5,
+    improv = [1, 1/4, 1, 1/3, 1, 1/2, 1],
     special = None,
     lore = "A supportive combatant, not very powerful in combat, but able to make exploration easier with many support skills.")
 
@@ -173,7 +180,7 @@ eck = Character(
     name="Eckbert",
     char_class="Scout",
     level=1,plevel=1,
-    maxhp=60, hp=60, maxfp=30, fp=30, str=3, dmg=2, tec=4, vit=2, agi=8, lck=8,
+    maxhp=60, hp=60, maxtp=30, tp=30, str=3, dmg=2, tec=4, vit=2, agi=8, lck=8,
     slist=[], acted=False, defending=False, weak=[], exp=0, init=0,
     equip={
     "Weapon":None,
@@ -185,7 +192,7 @@ eck = Character(
 
 
 enemies_1 = EnemyList.enemies_1
-
+enemies_bosses = EnemyList.enemies_bosses
 
 party = [drav,dan,mars,eck]
 party_money = 0
@@ -210,25 +217,25 @@ def rollattack(char,target):
     miss = False
     d100 = random.randint(1,100)
 
-    if d100 >= 90 * abs((math.sqrt(char.lck)/100)-(math.sqrt(char.agi)/100)+1):
-        print("Miss!")
+    print (d100)
+    if d100 >= 90 * abs((math.sqrt(int(char.lck))/100)-(math.sqrt(int(char.agi))/100)+1):
+        print(f"Miss! // Miss Thresh: {90 * abs((math.sqrt(int(char.lck))/100)-(math.sqrt(int(char.agi))/100)+1)}")
         atkmod = 0
         miss = True
-    elif d100 >= 80 + math.sqrt(char.lck)/100:
-            print("Fumble!")
+    elif d100 >= 80 + math.sqrt(round(char.lck)):
+            print(f"Fumble! (0.5x damage) // F.Thresh: {80 + math.sqrt(round(char.lck))}")
             atkmod = 0.5
     else:
-        if d100 <= char.lck/2 + char.agi/4:
-            print("Critical Hit!")
-            atkmod = 1.5 + (char.lck/100)
+        if d100 <= int(char.lck)/2 + int(char.agi)/4:
+            print(f"Critical Hit! (1.5x damage) // Crit.Thresh: {(int(char.lck)/2 + int(char.agi)/4)}")
+            atkmod = 1.5 + (int(char.lck)/100)
         else:
             atkmod = 1
-
     return atkmod
 
 def rolldamage(char):
     rolleddamage = 0
-    for _ in range(char.str):
+    for _ in range(int(char.str)):
         if char.dmg == 1:
             rolleddamage += random.randint(1,4)
         elif char.dmg == 2:
@@ -268,7 +275,7 @@ def attackfunc(attacker,target):
             print (f"{target.name} has been downed!")
             target.hp = 0
         if target in party and target.hp > 0:
-            print (f"{target.name}'s HP: {target.hp} / {target.maxhp}")
+            print (f"{target.name}'s HP: {math.floor(target.hp)} / {math.floor(target.maxhp)}")
 
 
     elif finaldamage <= 0:
@@ -359,6 +366,7 @@ def command(char):
 
                     if chartarget.hp <= 0:
                         break
+                    time.sleep(0.6)
 
                 char.acted = True
         
@@ -375,6 +383,7 @@ def command(char):
                 if opposition:
                     chartarget = random.choice(opposition)
                     attackfunc(char,chartarget)
+                    time.sleep(0.6)
 
                     char.acted = True
                 
@@ -382,13 +391,13 @@ def command(char):
             print (f"{char.name} can't use this skill.")
 
     elif charcommand == "hunt":
-        if char.char_class == "Knight" and char.hp > round(char.maxhp*0.15) and char.fp >= 3:
+        if char.char_class == "Knight" and char.hp > round(char.maxhp*0.15) and char.tp >= 3:
             chartarget = targetenemy()
 
             if chartarget is not None:
 
                 char.hp -= round(char.maxhp*0.15)
-                char.fp -= 3
+                char.tp -= 3
 
                 char.str += 3
                 char.lck += 20
@@ -402,12 +411,12 @@ def command(char):
             print (f"{char.name} can't use this skill.")
 
     elif charcommand == "sneak":
-        if char.char_class == "Scout" and char.fp >= 3:
+        if char.char_class == "Scout" and char.tp >= 3:
             chartarget = targetenemy()
 
             if chartarget is not None:
 
-                char.fp -= 3
+                char.tp -= 3
 
                 char.dmg += 1
                 char.lck += 20
@@ -491,12 +500,12 @@ def command(char):
     else:
         print("Invalid command.")
 
-def usefp(char,fp):
-    if char.fp < fp:
-        print(f"{char.name} doesn't have enough FP.")
+def usetp(char,tp):
+    if char.tp < tp:
+        print(f"{char.name} doesn't have enough TP.")
         cancast = False
     else:
-        char.fp -= fp
+        char.tp -= tp
         cancast = True
     return cancast
 
@@ -504,21 +513,21 @@ def calcspelldamage(char,spelllevel):
     global spelldamage
     spelldamage = 0
     if spelllevel == "weak":
-        for _ in range(char.tec):
+        for _ in range(int(char.tec)):
             spelldamage += random.randint(2,4)
     elif spelllevel == "medium":
-        for _ in range(char.tec):
+        for _ in range(int(char.tec)):
             spelldamage += random.randint(4,8)
     elif spelllevel == "heavy":
-        for _ in range(char.tec):
+        for _ in range(int(char.tec)):
             spelldamage += random.randint(6,12)
 
 def calcspellheal(char,spelllevel):
     spellheal = 0
     if spelllevel == "weak":
-        spellheal = 25 + char.tec//2
+        spellheal = 25 * (math.sqrt(int(char.tec))/10+1)
     elif spelllevel == "medium":
-        spellheal = 50 + char.tec
+        spellheal = 50 * (math.sqrt(int(char.tec))/10+1)
     elif spelllevel == "heavy":
         spellheal = 100
 
@@ -528,7 +537,7 @@ def spellversion(char,spell,dmgtype):
     starget = None
     if "lag" in spell:
         if "grun" in spell and "grun" in char.slist:
-            if usefp(char,10) == True:
+            if usetp(char,10) == True:
                 calcspelldamage(char,"weak")
                 usespell(char,starget,dmgtype,"multi")
 
@@ -536,7 +545,7 @@ def spellversion(char,spell,dmgtype):
             print(f"{char.name} can't use this skill.")
 
         else:
-            if usefp(char,4) == True:
+            if usetp(char,4) == True:
                 starget = targetenemy()
                 if starget is not None:
                     calcspelldamage(char,"weak")
@@ -545,7 +554,7 @@ def spellversion(char,spell,dmgtype):
 
     elif "comas" in spell and "comas" in char.slist:
         if "grun" in spell and "grun" in char.slist:
-            if usefp(char,16) == True:
+            if usetp(char,16) == True:
                 calcspelldamage(char,"medium")
                 usespell(char,starget,dmgtype,"multi")
 
@@ -553,7 +562,7 @@ def spellversion(char,spell,dmgtype):
             print(f"{char.name} can't use this skill.")
 
         else:
-            if usefp(char,8) == True:
+            if usetp(char,8) == True:
                 starget = targetenemy()
                 if starget is not None:
                     calcspelldamage(char,"medium")
@@ -563,7 +572,7 @@ def spellversion(char,spell,dmgtype):
 
     elif "asmatha" in spell and "asmatha" in char.slist:
         if "grun" in spell and "grun" in char.slist:
-            if usefp(char,22) == True:
+            if usetp(char,22) == True:
                 calcspelldamage(char,"heavy")
                 usespell(char,starget,dmgtype,"multi")
 
@@ -571,7 +580,7 @@ def spellversion(char,spell,dmgtype):
             print(f"{char.name} can't use this skill.")
 
         else:
-            if usefp(char,12) == True:
+            if usetp(char,12) == True:
                 starget = targetenemy()
                 if starget is not None:
                     calcspelldamage(char,"heavy")
@@ -582,7 +591,7 @@ def spellversion(char,spell,dmgtype):
 
     elif "tin" in spell and not "igg" in spell:
         if "grun" in spell and "grun" in char.slist:
-            if usefp(char,7) == True:
+            if usetp(char,7) == True:
                 heal = calcspellheal(char,"weak")
                 for n in party:
                     # healally function
@@ -592,7 +601,7 @@ def spellversion(char,spell,dmgtype):
             print(f"{char.name} can't use this skill.")
 
         else:
-            if usefp(char,3) == True:
+            if usetp(char,3) == True:
                 starget = targetally()
                 if starget is not None:
                     heal = calcspellheal(char,"weak")
@@ -601,7 +610,7 @@ def spellversion(char,spell,dmgtype):
 
     elif "cruai" in spell and "cruai" in char.slist and not "igg" in spell:
         if "grun" in spell and "grun" in char.slist:
-            if usefp(char,12) == True:
+            if usetp(char,12) == True:
                 heal = calcspellheal(char,"medium")
                 for n in party:
                     # healally function
@@ -611,7 +620,7 @@ def spellversion(char,spell,dmgtype):
             print(f"{char.name} can't use this skill.")
 
         else:
-            if usefp(char,7) == True:
+            if usetp(char,7) == True:
                 starget = targetally()
                 if starget is not None:
                     heal = calcspellheal(char,"medium")
@@ -620,7 +629,7 @@ def spellversion(char,spell,dmgtype):
 
     elif "fallain" in spell and "fallain" in char.slist and not "igg" in spell:
         if "grun" in spell and "grun" in char.slist:
-            if usefp(char,30) == True:
+            if usetp(char,30) == True:
                 heal = calcspellheal(char,"heavy")
                 for n in party:
                     # healally function
@@ -630,7 +639,7 @@ def spellversion(char,spell,dmgtype):
             print(f"{char.name} can't use this skill.")
 
         else:
-            if usefp(char,18) == True:
+            if usetp(char,18) == True:
                 starget = targetally()
                 if starget is not None:
                     heal = calcspellheal(char,"heavy")
@@ -640,7 +649,7 @@ def spellversion(char,spell,dmgtype):
     elif "igg" in spell and "tin" in spell:
         if "igg" in char.slist:
             
-            if usefp(char,7) == True:
+            if usetp(char,7) == True:
                 starget = targetdeadally()
                 if starget is not None:
                     starget.hp += round((starget.maxhp*30/100))
@@ -651,7 +660,7 @@ def spellversion(char,spell,dmgtype):
     elif "igg" in spell and "cruai" in spell:
         if "igg" in char.slist and "cruai" in char.slist:
 
-            if usefp(char,10) == True:
+            if usetp(char,10) == True:
                 starget = targetdeadally()
                 if starget is not None:
                     starget.hp += round((starget.maxhp*60/100))
@@ -661,7 +670,7 @@ def spellversion(char,spell,dmgtype):
 
     elif "igg" in spell and "fallain" in spell:
         if "igg" in char.slist and "fallain" in char.slist:
-            if usefp(char,18) == True:
+            if usetp(char,18) == True:
                 starget = targetdeadally()
                 if starget is not None:
                     starget.hp += round((starget.maxhp))
@@ -679,7 +688,7 @@ def updatecombatlist():
     print ("") #spacer
     print ("Party:") #spacer
     for n in party:
-        print (f"({party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+        print (f"({party.index(n)}) {n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} /// TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
     print ("") #spacer
     print ("Opposition") #spacer
     for n in opposition:
@@ -792,8 +801,8 @@ def usespell(char,starget,dmgtype,spelltype):
     defeatedopp = []
     defeatedparty = []
 
-    # Use FP and roll damage
-    # char.fp -= fpcost
+    # Use tp and roll damage
+    # char.tp -= tpcost
     # spelldamage = 0
     # for _ in range(char.tec):
     #     spelldamage += random.randint(1,6)
@@ -856,8 +865,11 @@ def dealspelldamage(char,starget,dmgtype,spelldamage):
 
     else:
         if dmgtype in starget.weak:
-            print (f"{starget.name} is weak to {dmgtype} and suffered {spelldamage*2} {dmgtype} damage!")
             spelldamage = round(spelldamage * (1.5 + math.sqrt(char.tec)))
+            print (f"{starget.name} is weak to {dmgtype} and suffered {spelldamage} {dmgtype} damage!")
+        elif starget.defending == True:
+            spelldamage = round(spelldamage * (1.5 + math.sqrt(char.tec)))//2
+            print (f"{starget.name} was defending and suffered only {spelldamage} {dmgtype} damage.")
         else:
             print (f"{starget.name} suffered {spelldamage} {dmgtype} damage.")
         starget.hp -= spelldamage
@@ -885,7 +897,10 @@ def calcenemyexp(enemy):
     global combat_exp
     plevel = partyLevel()
 
-    combat_exp += round(40*enemy.level/plevel)
+    if "Làidir" in enemy.name:
+        combat_exp += round(round(40*enemy.level/plevel) * 4)
+    else:
+        combat_exp += round(40*enemy.level/plevel)
 
 def endofturncleanup():
     global initiative
@@ -972,15 +987,30 @@ def renameduplicates(initlist):
 def randomenemies():
     global opposition
 
-    # 2d3 enemies
-    number_of_enemies = random.randint(2,6)
+    # 10% of boss
+    laidirBattle = random.randint(1,100)
 
-    for _ in range(1,number_of_enemies+1):
-        opposition.append(copy.deepcopy(random.choice(enemies_1)))
+    if laidirBattle > 10:
+        # Level adequate enemies
+        levelmodifier = random.randint(-3,3)
+        enemygrouplevel = partyLevel() + levelmodifier
 
-    # renamedopposition = renameduplicates(opposition)
+        while enemygrouplevel > 0:
+            enemy_to_add = copy.deepcopy(random.choice(enemies_1))
+            opposition.append(enemy_to_add)
+            enemygrouplevel -= enemy_to_add.level
 
-    # opposition = renamedopposition
+        if not opposition:
+            opposition.append(copy.deepcopy(random.choice(enemies_1)))
+
+        # # 2d3 random enemies
+        # number_of_enemies = random.randint(2,6)
+        # for _ in range(1,number_of_enemies+1):
+        #     opposition.append(copy.deepcopy(random.choice(enemies_1)))
+    
+    else:
+        print("A Làidir has appeared!")
+        opposition.append(copy.deepcopy(random.choice(enemies_bosses)))
 
 dioghtarget = None
 
@@ -998,6 +1028,8 @@ def enemyTurn(enemy):
                 enemytarget = random.choice(party)
                 print (f"{enemy.name} seems fixated on {enemytarget.name}...")
                 dioghtarget = enemytarget
+        else:
+            enemytarget = dioghtarget
 
     # TARGET
     while enemytarget == None or enemytarget.hp == 0:
@@ -1027,13 +1059,13 @@ def enemyTurn(enemy):
     elif choice == "elem":
         if enemy.level < 5:
             spelllevel = "weak"
-            enemy.fp -= 4
+            enemy.tp -= 4
         elif enemy.level < 10 :
             spelllevel = "medium"
-            enemy.fp -= 7
+            enemy.tp -= 7
         
 
-        if enemy.fp < 0:
+        if enemy.tp < 0:
             print (f"{enemy.name} tried to use a technique, but couldn't focus.")
             attackfunc(enemy,enemytarget)
         else:
@@ -1046,12 +1078,12 @@ def enemyTurn(enemy):
     
         if enemy.level < 5:
             spelllevel = "weak"
-            enemy.fp -= 4
+            enemy.tp -= 4
         elif enemy.level < 10 :
             spelllevel = "medium"
-            enemy.fp -= 7
+            enemy.tp -= 7
 
-        if enemy.fp < 0:
+        if enemy.tp < 0:
             print (f"{enemy.name} tried to use a technique, but couldn't focus.")
             attackfunc(enemy,enemytarget)
         else:
@@ -1069,9 +1101,10 @@ plevel_exp = [0,500,1000,1500,2000,5000,12000]
 def checkPLevel(char):
 
     # if char.exp >= plevel_exp[char.plevel]:
-    if char.exp >= char.plevel*500:
+    ## WHILE instead of IF ?
+    while char.exp >= char.plevel*100:
         os.system("cls")
-        print(f"{char.name} has leveled up!")
+        print(f"{char.name} has leveled up to level {char.plevel+1}!")
         levelUpChar(char)
 
 def pickClass(cname):
@@ -1084,13 +1117,26 @@ def levelUpChar(char):
     choice_made = False
     char.plevel += 1
     
+    #Increase base stats
+    print(f"{char.name} stats have improved!\n Max HP: {math.floor(char.maxhp)} >>> {math.floor(char.maxhp+(class_choice.improv[0]*class_choice.hp))} // Max TP: {math.floor(char.maxtp)} >>> {math.floor(char.maxtp+(class_choice.improv[1]*class_choice.tp))}\n STR: {math.floor(char.str)} >>> {math.floor(char.str+class_choice.improv[2])} // TEC: {math.floor(char.tec)} >>> {math.floor(char.tec+class_choice.improv[3])} // VIT: {math.floor(char.vit)} >>> {math.floor(char.vit+class_choice.improv[4])} // AGI: {math.floor(char.agi)} >>> {math.floor(char.agi+class_choice.improv[5])} // LCK: {math.floor(char.lck)} >>> {math.floor(char.lck+class_choice.improv[6])}\n")
+    char.maxhp += class_choice.improv[0]*class_choice.hp
+    char.hp += class_choice.improv[0]*class_choice.hp
+    char.maxtp += class_choice.improv[1]*class_choice.tp
+    char.tp += class_choice.improv[1]*class_choice.tp
+    char.str += class_choice.improv[2]
+    char.tec += class_choice.improv[3]
+    char.vit += class_choice.improv[4]
+    char.agi += class_choice.improv[5]
+    char.lck += class_choice.improv[6]
+
+
     while choice_made == False:
     
-        choice = input(f"What do you want to improve?\n Max (H)P: {char.maxhp} >>> {char.maxhp+class_choice.hp}\n Max (F)P: {char.maxfp} >>> {char.maxfp+class_choice.fp}\n (T)ec: {char.tec} >>> {char.tec+1}\n (S)pd: {char.agi} >>> {char.agi+1}\n (L)ck: {char.lck} >>> {char.lck+1}\n\n")
+        choice = input(f"Choose one stat to improve:\n Max (H)P: {math.floor(char.maxhp)} >>> {math.floor(char.maxhp+class_choice.hp)}\n Max (TP): {math.floor(char.maxtp)} >>> {math.floor(char.maxtp+class_choice.tp)}\n (S)tr: {math.floor(char.str)} >>> {math.floor(char.str+1)}\n (T)ec: {math.floor(char.tec)} >>> {math.floor(char.tec+1)}\n (V)it: {math.floor(char.vit)} >>> {math.floor(char.vit+1)}\n (A)gi: {math.floor(char.agi)} >>> {math.floor(char.agi+1)}\n (L)ck: {math.floor(char.lck)} >>> {math.floor(char.lck+1)}\n\n")
 
         if choice.lower() == "h":
-            final_choice = input(f"\nThis will increase your Max HP by {class_choice.hp}.\n Proceed? (Y/N)\n")
-            if final_choice.lower() == "y":
+            final_choice = input(f"\nThis will increase your Max HP by {math.floor(class_choice.hp)}.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y" or final_choice.lower == "yes":
                 char.maxhp += class_choice.hp
                 char.hp += class_choice.hp
                 choice_made = True
@@ -1098,11 +1144,20 @@ def levelUpChar(char):
             if final_choice.lower() == "n":
                 pass
     
-        elif choice.lower() == "f":
-            final_choice = input(f"\nThis will increase your Max FP by {class_choice.fp}.\n Proceed? (Y/N)\n")
-            if final_choice.lower() == "y":
-                char.maxfp += class_choice.fp
-                char.maxfp += class_choice.fp
+        elif choice.lower() == "tp":
+            final_choice = input(f"\nThis will increase your Max TP by {math.floor(class_choice.tp)}.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y" or final_choice.lower == "yes":
+                char.maxtp += class_choice.tp
+                char.tp += class_choice.tp
+                choice_made = True
+
+            if final_choice.lower() == "n":
+                pass
+
+        elif choice.lower() == "s":
+            final_choice = input(f"\nThis will increase your Str by 1.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y" or final_choice.lower == "yes":
+                char.str += 1
                 choice_made = True
 
             if final_choice.lower() == "n":
@@ -1110,16 +1165,25 @@ def levelUpChar(char):
 
         elif choice.lower() == "t":
             final_choice = input(f"\nThis will increase your Tec by 1.\n Proceed? (Y/N)\n")
-            if final_choice.lower() == "y":
+            if final_choice.lower() == "y" or final_choice.lower == "yes":
                 char.tec += 1
                 choice_made = True
 
             if final_choice.lower() == "n":
                 pass
 
-        elif choice.lower() == "s":
+        elif choice.lower() == "v":
+            final_choice = input(f"\nThis will increase your Vit by 1.\n Proceed? (Y/N)\n")
+            if final_choice.lower() == "y" or final_choice.lower == "yes":
+                char.vit += 1
+                choice_made = True
+
+            if final_choice.lower() == "n":
+                pass
+
+        elif choice.lower() == "a":
             final_choice = input(f"\nThis will increase your agi by 1.\n Proceed? (Y/N)\n")
-            if final_choice.lower() == "y":
+            if final_choice.lower() == "y" or final_choice.lower == "yes":
                 char.agi += 1
                 choice_made = True
 
@@ -1128,15 +1192,12 @@ def levelUpChar(char):
 
         elif choice.lower() == "l":
             final_choice = input(f"\nThis will increase your Lck by 1.\n Proceed? (Y/N)\n")
-            if final_choice.lower() == "y":
+            if final_choice.lower() == "y" or final_choice.lower == "yes":
                 char.lck += 1
                 choice_made = True
 
             if final_choice.lower() == "n":
                 pass
-
-
-
 
         
 # GAME
@@ -1174,7 +1235,7 @@ def runCombat():
         print ("") #spacer
         print ("Party:") #spacer
         for n in party:
-            print (f"({party.index(n)}) {n.name}'s HP: {n.hp}/{n.maxhp} /// FP: {n.fp}/{n.maxfp}")
+            print (f"({party.index(n)}) {n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} /// TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
         print ("") #spacer
         print ("Opposition") #spacer
         for n in opposition:
@@ -1210,7 +1271,7 @@ def runCombat():
                     break
 
                 print ("")
-                time.sleep(0.4)
+                time.sleep(0.8)
             
             elif n in party:
                 n.acted = False
@@ -1224,7 +1285,7 @@ def runCombat():
                         command(n)
 
                     print ("")
-                    time.sleep(0.4)
+                    time.sleep(0.8)
 
         if gameover(party):
             print ("")
