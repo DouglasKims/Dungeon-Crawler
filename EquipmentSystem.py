@@ -7,14 +7,14 @@ import CombatSystem
 # LOGIC
 
 class Equipment():
-    def __init__(self,name,type,level,special,atk,dmg,dfn,weak,resist, value):
+    def __init__(self,name,type,level,special,str,dmg,vit,weak,resist, value):
         self.name = name
         self.type = type
         self.level = level
         self.special = special
-        self.atk = atk
+        self.str = str
         self.dmg = dmg
-        self.dfn = dfn
+        self.vit = vit
         self.weak = weak
         self.resist = resist
         self.value = value
@@ -98,7 +98,7 @@ def getStatus():
             print("")
             return
 
-    print(f"{char.name}'s Status\n Class: {char.char_class}\n PLevel: {char.plevel} ({char.exp} / {100*char.plevel} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}\n tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg})\n TEC: {math.floor(char.tec)}\n VIT: {math.floor(char.vit)}\n AGI: {math.floor(char.agi)}\n LCK: {math.floor(char.lck)}\n")
+    print(f"{char.name}'s Status\n Class: {char.char_class}\n PLevel: {char.plevel} ({round(char.exp)} / {round(char.plevel*200*1.5)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}\n tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg})\n TEC: {math.floor(char.tec)}\n VIT: {math.floor(char.vit)}\n AGI: {math.floor(char.agi)}\n LCK: {math.floor(char.lck)}\n")
     # getEquip func
     getEquip(char)
 
@@ -349,7 +349,7 @@ def changeEquip():
                 char.equip["Weapon"] = wpn
                 inventory.remove(wpn)
 
-                char.str += wpn.atk
+                char.str += wpn.str
                 char.dmg += wpn.dmg
             
             else:
@@ -384,9 +384,9 @@ def changeEquip():
                 char.equip["Armor"] = arm
                 inventory.remove(arm)
 
-                char.vit += arm.dfn
-                for n in arm.weak:
-                    char.weak.append(n)
+                char.vit += arm.vit
+                # for n in arm.weak:
+                #     char.weak.append(n)
             
             else:
                 print ("No armor to equip.")
@@ -420,8 +420,8 @@ def changeEquip():
                 char.equip["Accessory 1"] = acc
                 inventory.remove(acc)
 
-                char.str += acc.atk
-                char.vit += acc.dfn
+                char.str += acc.str
+                char.vit += acc.vit
                 for n in arm.weak:
                     char.weak.append(n)
                 char.dmg += wpn.dmg
@@ -457,8 +457,8 @@ def changeEquip():
             char.equip["Accessory 2"] = acc
             inventory.remove(acc)
 
-            char.str += acc.atk
-            char.vit += acc.dfn
+            char.str += acc.str
+            char.vit += acc.vit
             for n in arm.weak:
                     char.weak.append(n)
             char.dmg += wpn.dmg
@@ -497,7 +497,7 @@ def removeEquip():
             inventory.append(wpn)
             char.equip["Weapon"] = None
 
-            char.str -= wpn.atk
+            char.str -= wpn.str
             char.dmg -= wpn.dmg
 
     elif slot.lower() == "a":
@@ -511,10 +511,10 @@ def removeEquip():
             inventory.append(arm)
             char.equip["Armor"] = None
 
-            char.str -= arm.atk
-            char.vit -= arm.dfn
-            for n in arm.weak:
-                char.weak.remove(n)
+            char.str -= arm.str
+            char.vit -= arm.vit
+            # for n in arm.weak:
+            #     char.weak.remove(n)
 
     elif slot.lower() == "1":
         
@@ -527,8 +527,8 @@ def removeEquip():
             inventory.append(acc)
             char.equip["Accesory 1"] = None
 
-            char.str -= acc.atk
-            char.vit -= acc.dfn
+            char.str -= acc.str
+            char.vit -= acc.vit
             for n in arm.weak:
                 char.weak.remove(n)
 
@@ -545,8 +545,8 @@ def removeEquip():
             inventory.append(acc)
             char.equip["Accesory 2"] = None
 
-            char.str -= acc.atk
-            char.vit -= acc.dfn
+            char.str -= acc.str
+            char.vit -= acc.vit
             for n in arm.weak:
                 char.weak.remove(n)
 

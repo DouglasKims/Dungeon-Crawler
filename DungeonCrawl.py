@@ -39,6 +39,36 @@ EO = "EO" # Secret Passage East only open
 R = "R" # Resting Area
 M = "M" # Merchant
 
+BLACK = "\033[30m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN = "\033[36m"
+WHITE = "\033[37m"
+RESET = "\033[0m"  # Reset to default color
+
+# Bright versions
+BRIGHT_BLACK = "\033[90m"
+BRIGHT_RED = "\033[91m"
+BRIGHT_GREEN = "\033[92m"
+BRIGHT_YELLOW = "\033[93m"
+BRIGHT_BLUE = "\033[94m"
+BRIGHT_MAGENTA = "\033[95m"
+BRIGHT_CYAN = "\033[96m"
+BRIGHT_WHITE = "\033[97m"
+
+# Background colors (add 10 to the color code)
+BG_BLACK = "\033[40m"
+BG_RED = "\033[41m"
+BG_GREEN = "\033[42m"
+BG_YELLOW = "\033[43m"
+BG_BLUE = "\033[44m"
+BG_MAGENTA = "\033[45m"
+BG_CYAN = "\033[46m"
+BG_WHITE = "\033[47m"
+
 dungeon01 = [[Tile('1100',1,1,0,0,False),Tile('1010',1,0,1,0,False),Tile('1110',1,1,1,0,False)],
              [Tile('0110',0,1,1,0,False),Tile('0110',0,1,1,0,False),Tile('0110',0,1,1,0,False)],
              [Tile('0111',0,1,1,1,False),Tile('0101',0,1,0,1,False),Tile('0011',0,0,1,1,False)],
@@ -257,7 +287,7 @@ danger_level = ""
 dungeon_level = 1
 check = dungeon_current[party_coord[0]][party_coord[1]]
 vision = None
-hour_names = ["Dawn","Morning","Noon","Afternoon","Twilight","Evening","Midnight","Witching Hour"]
+hour_names = [f"{YELLOW}Dawn{RESET}",f"{YELLOW}Morning{RESET}",f"{YELLOW}Noon{RESET}",f"{YELLOW}Afternoon{RESET}",f"{BRIGHT_BLUE}Twilight{RESET}",f"{BRIGHT_BLUE}Evening{RESET}",f"{BRIGHT_BLUE}Midnight{RESET}",f"{MAGENTA}Witching Hour{RESET}"]
 # Dark between time = 4*90 and time = 7*90 // Each 90 steps advances the clock
 hour = 2
 steps = 0
@@ -283,7 +313,7 @@ def update_time():
 
     steps += 1
 
-    if steps >= 90:
+    if steps >= 60:
         hour += 1
         steps = 0
 
@@ -292,6 +322,8 @@ def update_time():
 
 def update_seen():
     global dungeon_current
+    global surrounds
+    global surrounds2
 
     NW = dungeon_current[party_coord[0]+1][party_coord[1]-1]
     N = dungeon_current[party_coord[0]+1][party_coord[1]]
@@ -304,9 +336,12 @@ def update_seen():
     SE = dungeon_current[party_coord[0]-1][party_coord[1]+1]
 
     surrounds = [NW,N,NE,W,C,E,SW,S,SE]
+    
 
     for n in surrounds:
         n.seen = True
+
+    surrounds2 = []
 
 def update_danger():
     global danger
@@ -315,13 +350,13 @@ def update_danger():
     danger += random.randint(1,6)
 
     if danger > 85:
-        danger_level = "Red"
+        danger_level = f"{BG_RED}{WHITE}Red{RESET}"
     elif danger >50:
-        danger_level = "Yellow"
+        danger_level = f"{YELLOW}Yellow{RESET}"
     elif danger > 25:
-        danger_level = "Green"
+        danger_level = f"{GREEN}Green{RESET}"
     else:
-        danger_level = "None"
+        danger_level = f"None"
 
 """# def update_vision():
 #     global vision
@@ -566,27 +601,55 @@ def getMap():
          map_coords_bright["0,0"]=(None, 0, 0)
          map_coords_bright["0,1"]=(None, 0, 1)
          map_coords_bright["1,0"]=(None, 1, 0)
+    else: #Toggle SEEN for NW tiles
+        dungeon_current[party_coord[0]-2][party_coord[1]-2].seen = True
+        dungeon_current[party_coord[0]-2][party_coord[1]-1].seen = True
+        dungeon_current[party_coord[0]-1][party_coord[1]-2].seen = True
+
     if map_coords_bright["NE"][0] != 0:
          map_coords_bright["0,3"]=(None, 0, 3)
          map_coords_bright["0,4"]=(None, 0, 4)
          map_coords_bright["1,4"]=(None, 1, 4)
+    else:
+        dungeon_current[party_coord[0]-2][party_coord[1]+1].seen = True
+        dungeon_current[party_coord[0]-2][party_coord[1]+2].seen = True
+        dungeon_current[party_coord[0]-1][party_coord[1]+2].seen = True
     if map_coords_bright["SW"][0] != 0:
          map_coords_bright["3,0"]=(None, 3, 0)
          map_coords_bright["4,0"]=(None, 4, 0)
          map_coords_bright["4,1"]=(None, 4, 1)
+    else:
+        dungeon_current[party_coord[0]+1][party_coord[1]-2].seen = True
+        dungeon_current[party_coord[0]+2][party_coord[1]-2].seen = True
+        dungeon_current[party_coord[0]+2][party_coord[1]-1].seen = True
     if map_coords_bright["SE"][0] != 0:
          map_coords_bright["4,4"]=(None, 4, 4)
          map_coords_bright["3,4"]=(None, 3, 4)
          map_coords_bright["4,3"]=(None, 4, 3)
+    else:
+        dungeon_current[party_coord[0]+2][party_coord[1]+2].seen = True
+        dungeon_current[party_coord[0]+1][party_coord[1]+2].seen = True
+        dungeon_current[party_coord[0]+2][party_coord[1]+1].seen = True
 
     if map_coords_bright["N"][0] != 0:
         map_coords_bright["0,2"]=(None, 0, 2)
+    else:
+        dungeon_current[party_coord[0]-2][party_coord[1]].seen = True
+
     if map_coords_bright["W"][0] != 0:
         map_coords_bright["2,0"]=(None, 2, 0)
+    else:
+        dungeon_current[party_coord[0]][party_coord[1]-2].seen = True
+
     if map_coords_bright["E"][0] != 0:
         map_coords_bright["2,4"]=(None, 2, 4)
+    else:
+        dungeon_current[party_coord[0]][party_coord[1]+2].seen = True
+
     if map_coords_bright["S"][0] != 0:
         map_coords_bright["4,2"]=(None, 4, 2)
+    else:
+        dungeon_current[party_coord[0]+2][party_coord[1]].seen = True
     
     if party_facing == 8:
         localmap[1][1] = "▲"
@@ -649,14 +712,14 @@ def getMap():
         t, y, x = values
         if t == 0:
             localmap[y][x] = ' '
-        elif t == 1 or t == 9:
+        elif t == 1 or t == 9 or t == N or t == S or t == W or t == E:
             localmap[y][x] = '■'
         elif t == 2 or t == 3:
             localmap[y][x] = '□'
         elif t == "U" or t == "D":
             localmap[y][x] = '♦'
         elif t == "C":
-            localmap[y][x] = '●'
+            localmap[y][x] = f'{CYAN}●{RESET}'
         elif t == "O":
             localmap[y][x] = '○'
         elif t == "R":
@@ -671,14 +734,6 @@ def getMap():
             localmap[y][x] = '→'
         elif t == "EO":
             localmap[y][x] = '←'
-        elif t == "S":
-            localmap[y][x] = '■'
-        elif t == "N":
-            localmap[y][x] = '■'
-        elif t == "W":
-            localmap[y][x] = '■'
-        elif t == "E":
-            localmap[y][x] = '■'
         elif t == 8:
             localmap[y][x] = '↕'
         elif t == 6:
@@ -690,14 +745,14 @@ def getMap():
         t, y, x = values
         if t == 0:
             localmaplight[y][x] = ' '
-        elif t == 1 or t == 9:
+        elif t == 1 or t == 9 or t == N or t == S or t == W or t == E:
             localmaplight[y][x] = '■'
         elif t == 2 or t == 3:
             localmaplight[y][x] = '□'
         elif t == "U" or t == "D":
             localmaplight[y][x] = '♦'
         elif t == "C":
-            localmaplight[y][x] = '●'
+            localmaplight[y][x] = f'{CYAN}●{RESET}'
         elif t == "O":
             localmaplight[y][x] = '○'
         elif t == "R":
@@ -712,14 +767,6 @@ def getMap():
             localmaplight[y][x] = '→'
         elif t == "EO":
             localmaplight[y][x] = '←'
-        elif t == "S":
-            localmaplight[y][x] = '■'
-        elif t == "N":
-            localmaplight[y][x] = '■'
-        elif t == "W":
-            localmaplight[y][x] = '■'
-        elif t == "E":
-            localmaplight[y][x] = '■'
         elif t == 8:
             localmaplight[y][x] = '↕'
         elif t == 6:
@@ -830,7 +877,7 @@ def dungeonMap():
                 elif dungeon_blueprint[nny][nnx] == "U" or dungeon_blueprint[nny][nnx] == "D":
                     horizontal += f" ♦ "
                 elif dungeon_blueprint[nny][nnx] == "C":
-                    horizontal += f' ● '
+                    horizontal += f'{CYAN} ● {RESET}'
                 elif dungeon_blueprint[nny][nnx] == "O":
                     horizontal += f' ○ '
                 elif dungeon_blueprint[nny][nnx] == "R":
@@ -1033,14 +1080,22 @@ def getLoot(looty,lootx):
     if lootcoord in dungeon_current_loot:
         lootitem = dungeon_current_loot[lootcoord][0]
 
-
-        if len(EquipmentSystem.consumables) >10:
-            print(f"Found a {lootitem.name}. But the party stash is full.")    
+        if lootitem.type == "Weapon" or lootitem.type == "Armor" or lootitem.type == "Accessory":
+            if len(EquipmentSystem.inventory) >20:
+                print(f"Found a {lootitem.name}, but the party's stash is full.\n")
+            else:
+                EquipmentSystem.inventory.append(copy.deepcopy(lootitem))
+                dungeon_blueprint[looty][lootx] = "O"
+                dungeon_current_loot.pop(lootcoord)
+                print(f"Found a {lootitem.name}. Added to party's stash.\n")
         else:
-            EquipmentSystem.consumables.append(copy.deepcopy(lootitem))
-            dungeon_blueprint[looty][lootx] = "O"
-            dungeon_current_loot.pop(lootcoord)
-            print(f"Found a {lootitem.name}. Added to party's stash.\n")
+            if len(EquipmentSystem.consumables) >20:
+                print(f"Found a {lootitem.name}. But the party stash is full.")    
+            else:
+                EquipmentSystem.consumables.append(copy.deepcopy(lootitem))
+                dungeon_blueprint[looty][lootx] = "O"
+                dungeon_current_loot.pop(lootcoord)
+                print(f"Found a {lootitem.name}. Added to party's stash.\n")
     else:
         print ("But something in the code went wrong.\n")
 
@@ -1061,6 +1116,10 @@ def exploreDungeon():
     update_coord(0,0)
 
     while exploring == True:
+
+        if CombatSystem.gameover(CombatSystem.party):
+            exploring = False
+            break
 
         if party_coord == [50,50]:
             
@@ -1089,7 +1148,7 @@ def exploreDungeon():
         # update_vision()
 
         # updateText(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
-        print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
+        print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]}")
         command = input(f"\nType W/8 to go Forwards, Q/7 to turn left, and E/9 to turn right:\nYou can also check the (M)ap, (I)nteract (or F), or (O)pen party menu.\n").lower()
         
         os.system('cls')
@@ -1187,7 +1246,10 @@ def exploreDungeon():
                 n.exp += exptogain
                 CombatSystem.checkPLevel(n)
     
-
+        if command.lower() == "boss":
+            print ("Finding a nearby Làidir...")
+            CombatSystem.bossbattle = True
+            CombatSystem.runCombat()
 
 # TEST
 # exploreDungeon()

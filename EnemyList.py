@@ -162,7 +162,7 @@ en_grain1 = Enemy(
 # enemy4 = Enemy("Troublesome Ghost",1,80,80,5,1,3,2,0,False,[elem[1],elem[2],elem[3],elem[4],elem[5],elem[6]],5,5,0)
 
 en_laid1 = Enemy(name = "Puny Làidir",
-    level = 1, maxhp = 200, hp = 200, tp = 30, str = 20, dmg = 2, tec = 15, vit = 10, agi = 5, lck = 5,
+    level = 8, maxhp = 450, hp = 450, tp = 30, str = 20, dmg = 2, tec = 15, vit = 10, agi = 5, lck = 5,
     defending = False, weak = [], exp = 5, money = 100, init = 0)
 
 

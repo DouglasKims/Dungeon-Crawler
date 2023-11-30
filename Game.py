@@ -54,8 +54,13 @@ def startGame():
         # GAME BOOTS DIRECTLY INTO DUNGEON CRAWL
         # HERE THE STORY AND OTHER THINGS WILL GO TOWARDS AFTER.    
 
+        if CombatSystem.gameover(CombatSystem.party):
+            gamerunning = False
+            break
+
         os.system("cls")
         DungeonCrawl.exploreDungeon()
+            
 
 def updateText (label,newtext):
     label.configure(text = newtext)

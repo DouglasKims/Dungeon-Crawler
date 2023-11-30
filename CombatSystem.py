@@ -9,6 +9,38 @@ import copy
 
 import EnemyList
 
+
+# COLORS
+BLACK = "\033[30m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN = "\033[36m"
+WHITE = "\033[37m"
+RESET = "\033[0m"  # Reset to default color
+
+# Bright versions
+BRIGHT_BLACK = "\033[90m"
+BRIGHT_RED = "\033[91m"
+BRIGHT_GREEN = "\033[92m"
+BRIGHT_YELLOW = "\033[93m"
+BRIGHT_BLUE = "\033[94m"
+BRIGHT_MAGENTA = "\033[95m"
+BRIGHT_CYAN = "\033[96m"
+BRIGHT_WHITE = "\033[97m"
+
+# Background colors (add 10 to the color code)
+BG_BLACK = "\033[40m"
+BG_RED = "\033[41m"
+BG_GREEN = "\033[42m"
+BG_YELLOW = "\033[43m"
+BG_BLUE = "\033[44m"
+BG_MAGENTA = "\033[45m"
+BG_CYAN = "\033[46m"
+BG_WHITE = "\033[47m"
+
 class Character:
     def __init__(self,name,char_class,level,plevel,maxhp,hp,maxtp,tp,str,dmg,tec,vit,agi,lck,slist,acted,defending,weak,equip,exp,init):
         self.name = name
@@ -174,7 +206,7 @@ marsspells = ["leas","yab","grun"]
 
 
 drav = Character("Dravroth","Herald",1,1,80,80,40,40,6,1,6,2,5,6,dravspells,False,False,[],drav_equip,0,0)
-dan = Character("Thorudan","Thaumaturge",1,1,80,80,50,50,4,1,10,2,3,3,danspells,False,False,[],dan_equip,0,0)
+dan = Character("Thorudan","Thaumaturge",1,1,60,60,50,50,4,1,10,2,3,3,danspells,False,False,[],dan_equip,0,0)
 mars = Character("Mars","Knight",1,1,100,100,20,20,8,2,3,4,3,3,marsspells,False,False,[],mars_equip,0,0)
 eck = Character(
     name="Eckbert",
@@ -217,17 +249,21 @@ def rollattack(char,target):
     miss = False
     d100 = random.randint(1,100)
 
-    print (d100)
+    # print (d100)
     if d100 >= 90 * abs((math.sqrt(int(char.lck))/100)-(math.sqrt(int(char.agi))/100)+1):
-        print(f"Miss! // Miss Thresh: {90 * abs((math.sqrt(int(char.lck))/100)-(math.sqrt(int(char.agi))/100)+1)}")
+        print(f"Miss!")
+        # print(f"Miss! // Miss Thresh: {90 * abs((math.sqrt(int(char.lck))/100)-(math.sqrt(int(char.agi))/100)+1)}")
         atkmod = 0
         miss = True
-    elif d100 >= 80 + math.sqrt(round(char.lck)):
-            print(f"Fumble! (0.5x damage) // F.Thresh: {80 + math.sqrt(round(char.lck))}")
-            atkmod = 0.5
+    ## FUMBLE MECHANIC
+    # elif d100 >= 80 + math.sqrt(round(char.lck)):
+    #         print(f"Fumble! (0.5x damage)")
+    #         # print(f"Fumble! (0.5x damage) // F.Thresh: {80 + math.sqrt(round(char.lck))}")
+    #         atkmod = 0.5
     else:
         if d100 <= int(char.lck)/2 + int(char.agi)/4:
-            print(f"Critical Hit! (1.5x damage) // Crit.Thresh: {(int(char.lck)/2 + int(char.agi)/4)}")
+            print(f"Critical Hit! (1.5x damage)")
+            # print(f"Critical Hit! (1.5x damage) // Crit.Thresh: {(int(char.lck)/2 + int(char.agi)/4)}")
             atkmod = 1.5 + (int(char.lck)/100)
         else:
             atkmod = 1
@@ -237,13 +273,26 @@ def rolldamage(char):
     rolleddamage = 0
     for _ in range(int(char.str)):
         if char.dmg == 1:
-            rolleddamage += random.randint(1,4)
+            rolleddamage += random.randint(1,4) # 1d4
         elif char.dmg == 2:
-            rolleddamage += random.randint(2,6)
+            rolleddamage += random.randint(1,6) # 1d6
         elif char.dmg == 3:
-            rolleddamage += random.randint(3,8)
-        elif char.dmg >= 4:
-            rolleddamage += random.randint(4,10)
+            rolleddamage += random.randint(1,8) # 1d8
+        elif char.dmg == 4:
+            rolleddamage += random.randint(2,12) # 2d6
+        elif char.dmg == 5:
+            rolleddamage += random.randint(2,16) # 2d8
+        elif char.dmg == 6:
+            rolleddamage += random.randint(2,20) # 2d10
+        elif char.dmg == 7:
+            rolleddamage += random.randint(3,24) # 3d8
+        elif char.dmg == 8:
+            rolleddamage += random.randint(3,30) # 3d10
+        elif char.dmg == 9:
+            rolleddamage += random.randint(3,36) # 3d12
+        elif char.dmg >= 10:
+            rolleddamage += random.randint(4,40) # 4d10
+
 
     rolleddamage = rolleddamage
     return rolleddamage
@@ -695,7 +744,7 @@ def updatecombatlist():
         print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
     print ("") #spacer
     initnames = ", ".join(str(n.name) for n in initiative)
-    print (f"Turn order: {initnames}")
+    print (f"Turn order: {initnames}\n")
 
 
 ## Logic
@@ -815,8 +864,8 @@ def usespell(char,starget,dmgtype,spelltype):
                 opptoremove.append(starget)
                 print (f"{char.name} defeated {starget.name}!")
             
-            elif starget in party:
-                print (f"{char.name} downed {starget.name}!")
+            # elif starget in party:
+            #     print (f"{char.name} downed {starget.name}!")
 
     elif spelltype == "multi":
         if char in party:
@@ -865,10 +914,10 @@ def dealspelldamage(char,starget,dmgtype,spelldamage):
 
     else:
         if dmgtype in starget.weak:
-            spelldamage = round(spelldamage * (1.5 + math.sqrt(char.tec)))
+            spelldamage = round(spelldamage * (1.5 + math.sqrt(char.tec)/10+1))
             print (f"{starget.name} is weak to {dmgtype} and suffered {spelldamage} {dmgtype} damage!")
         elif starget.defending == True:
-            spelldamage = round(spelldamage * (1.5 + math.sqrt(char.tec)))//2
+            spelldamage = round(spelldamage * (math.sqrt(char.tec)/10+1))//2
             print (f"{starget.name} was defending and suffered only {spelldamage} {dmgtype} damage.")
         else:
             print (f"{starget.name} suffered {spelldamage} {dmgtype} damage.")
@@ -878,6 +927,8 @@ def dealspelldamage(char,starget,dmgtype,spelldamage):
         starget.hp = 0
 
 def gameover(party):
+    global isgameover
+    isgameover = True
     return all(n.hp == 0 for n in party)
 
 opptoremove = []
@@ -898,7 +949,7 @@ def calcenemyexp(enemy):
     plevel = partyLevel()
 
     if "Làidir" in enemy.name:
-        combat_exp += round(round(40*enemy.level/plevel) * 4)
+        combat_exp += round(round(40*enemy.level/plevel) * 10)
     else:
         combat_exp += round(40*enemy.level/plevel)
 
@@ -971,9 +1022,9 @@ def renameduplicates(initlist):
             name_counts[n.name] = name_count + 1
             
             if name_count == 0:
-                n.name += f" {ids[name_count]}"
+                n.name = f"{YELLOW}{n.name} {ids[name_count]}{RESET}"
             if name_count > 0:
-                n.name += f" {ids[name_count]}"
+                n.name = f"{YELLOW}{n.name} {ids[name_count]}{RESET}"
 
     # for n in initlist:
     #     uniqueidindex = 0
@@ -986,13 +1037,17 @@ def renameduplicates(initlist):
 
 def randomenemies():
     global opposition
+    global bossbattle
 
     # 10% of boss
-    laidirBattle = random.randint(1,100)
+    if 'bossbattle' in globals() and bossbattle:
+        laidirBattle = random.randint(-1,-5)
+    else:
+        laidirBattle = random.randint(1,100)
 
-    if laidirBattle > 10:
+    if laidirBattle > 0:
         # Level adequate enemies
-        levelmodifier = random.randint(-3,3)
+        levelmodifier = random.randint(-2,3)
         enemygrouplevel = partyLevel() + levelmodifier
 
         while enemygrouplevel > 0:
@@ -1011,6 +1066,8 @@ def randomenemies():
     else:
         print("A Làidir has appeared!")
         opposition.append(copy.deepcopy(random.choice(enemies_bosses)))
+
+    bossbattle = False
 
 dioghtarget = None
 
@@ -1102,7 +1159,7 @@ def checkPLevel(char):
 
     # if char.exp >= plevel_exp[char.plevel]:
     ## WHILE instead of IF ?
-    while char.exp >= char.plevel*100:
+    while char.exp >= char.plevel*200*1.5:
         os.system("cls")
         print(f"{char.name} has leveled up to level {char.plevel+1}!")
         levelUpChar(char)
@@ -1205,6 +1262,7 @@ def runCombat():
     global combat_money
     global combat_exp
     global rounds
+    global dioghtarget
 
     randomenemies()
     rollinitiative()
@@ -1295,6 +1353,8 @@ def runCombat():
         endofturncleanup()
 
         input("Type anything to continue: ")
+    
+    dioghtarget = None
 
 
 # TESTING
