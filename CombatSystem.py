@@ -262,7 +262,7 @@ def rollattack(char,target):
     #         atkmod = 0.5
     else:
         if d100 <= int(char.lck)/2 + int(char.agi)/4:
-            print(f"Critical Hit! (1.5x damage)")
+            print(f"Critical Hit! ({math.floor(1.5 + (int(char.lck)/100))}x damage)")
             # print(f"Critical Hit! (1.5x damage) // Crit.Thresh: {(int(char.lck)/2 + int(char.agi)/4)}")
             atkmod = 1.5 + (int(char.lck)/100)
         else:
