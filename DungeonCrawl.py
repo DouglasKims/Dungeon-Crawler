@@ -170,6 +170,13 @@ dungeon11loot = {
     "25,24": (item2 ,25,24),
 }
 
+dungeon11_laid1 = {
+    1: (1,12,8),
+    2: (1,13,6),
+    3: (1,12,4),
+    4: (2,12,2),
+    "step": (0)
+}
 
 dungeon11test = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -188,6 +195,7 @@ dungeon11test = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 ]
 
+dungeon_bosses = [dungeon11_laid1]
 
 def tileLookup(tiley, tilex, dungeon_bp):
 
@@ -253,7 +261,9 @@ def tileLookup(tiley, tilex, dungeon_bp):
         for i in range(len(ttype)):
             ttype[i] = 1
 
-    tiletitle = f"{ttype[0]}{ttype[1]}{ttype[2]}{ttype[3]}"
+
+    # tiletitle = f"{ttype[0]}{ttype[1]}{ttype[2]}{ttype[3]}"
+    tiletitle = f"{ttype[0]}"
     finaltile = Tile(tiletitle,ttype[0],ttype[1],ttype[2],ttype[3],False)
     
     return finaltile
@@ -314,7 +324,18 @@ def update_coord(x,y):
     update_time()    
     update_seen()
     update_danger()
+
+def update_laid():
     
+    for n in dungeon_bosses:
+        
+        if n["step"] == len(n):
+            pass
+        else:
+            n["step"] += 1
+            # add to "local map"
+                # make local map be shared between party and boss
+
 
 def update_time():
     global steps
@@ -322,7 +343,7 @@ def update_time():
 
     steps += 1
 
-    if steps >= 60:
+    if steps >= 5:
         hour += 1
         steps = 0
 
@@ -367,173 +388,7 @@ def update_danger():
     else:
         danger_level = f"None"
 
-"""# def update_vision():
-#     global vision
-#     if party_facing == 8:
-#         if check.N == 0:
-#             front = "Corridor"
-#         elif check.N == 1:
-#             front = "Wall"
-#         elif check.N == 2:
-#             front = "Door"
-
-#         if check.W == 0:
-#             left = "Corridor"
-#         elif check.W == 1:
-#             left = "Wall"
-#         elif check.W == 2:
-#             left = "Door"
-
-#         if check.E == 0:
-#             right = "Corridor"
-#         elif check.E == 1:
-#             right = "Wall"
-#         elif check.E == 2:
-#             right = "Door"
-
-#     if party_facing == 2:
-#         if check.S == 0:
-#             front = "Corridor"
-#         elif check.S == 1:
-#             front = "Wall"
-#         elif check.S == 2:
-#             front = "Door"
-
-#         if check.E == 0:
-#             left = "Corridor"
-#         elif check.E == 1:
-#             left = "Wall"
-#         elif check.E == 2:
-#             left = "Door"
-
-#         if check.W == 0:
-#             right = "Corridor"
-#         elif check.W == 1:
-#             right = "Wall"
-#         elif check.W == 2:
-#             right = "Door"
-
-#     if party_facing == 4:
-#         if check.W == 0:
-#             front = "Corridor"
-#         elif check.W == 1:
-#             front = "Wall"
-#         elif check.W == 2:
-#             front = "Door"
-
-#         if check.S == 0:
-#             left = "Corridor"
-#         elif check.S == 1:
-#             left = "Wall"
-#         elif check.S == 2:
-#             left = "Door"
-
-#         if check.N == 0:
-#             right = "Corridor"
-#         elif check.N == 1:
-#             right = "Wall"
-#         elif check.N == 2:
-#             right = "Door"
-
-#     if party_facing == 6:
-#         if check.E == 0:
-#             front = "Corridor"
-#         elif check.E == 1:
-#             front = "Wall"
-#         elif check.E == 2:
-#             front = "Door"
-
-#         if check.N == 0:
-#             left = "Corridor"
-#         elif check.N == 1:
-#             left = "Wall"
-#         elif check.N == 2:
-#             left = "Door"
-
-#         if check.S == 0:
-#             right = "Corridor"
-#         elif check.S == 1:
-#             right = "Wall"
-#         elif check.S == 2:
-#             right = "Door"
-
-#     vision = f"you can see a {front} in front of you, a {left} to your left, and a {right} to your right."
-#     print (vision)
-
-# def update_picture():
-#     if party_facing == 8:
-#         if check.W == 0 and check.N == 0 and check.E == 0:
-#             print(t000)
-#         elif check.W == 1 and check.N == 0 and check.E == 1:
-#             print(t101)
-#         elif check.W == 0 and check.N == 1 and check.E == 1:
-#             print(t011)
-#         elif check.W == 1 and check.N == 1 and check.E == 0:
-#             print(t110)
-#         elif check.W == 0 and check.N == 1 and check.E == 0:
-#             print(t010)
-#         elif check.W == 1 and check.N == 1 and check.E == 1:
-#             print(t111)
-#         elif check.W == 0 and check.N == 0 and check.E == 1:
-#             print(t001)
-#         elif check.W == 1 and check.N == 0 and check.E == 0:
-#             print(t100)
-
-#     elif party_facing == 4:
-#         if check.S == 0 and check.W == 0 and check.N == 0:
-#             print(t000)
-#         elif check.S == 1 and check.W == 0 and check.N == 1:
-#             print(t101)
-#         elif check.S == 0 and check.W == 1 and check.N == 1:
-#             print(t011)
-#         elif check.S == 1 and check.W == 1 and check.N == 0:
-#             print(t110)
-#         elif check.S == 0 and check.W == 1 and check.N == 0:
-#             print(t010)
-#         elif check.S == 1 and check.W == 1 and check.N == 1:
-#             print(t111)
-#         elif check.S == 1 and check.W == 0 and check.N == 0:
-#             print(t100)
-#         elif check.S == 0 and check.W == 0 and check.N == 1:
-#             print(t001)
-
-#     elif party_facing == 2:
-#         if check.E == 0 and check.S == 0 and check.W == 0:
-#             print(t000)
-#         elif check.E == 1 and check.S == 0 and check.W == 1:
-#             print(t101)
-#         elif check.E == 0 and check.S == 1 and check.W == 1:
-#             print(t011)
-#         elif check.E == 1 and check.S == 1 and check.W == 0:
-#             print(t110)
-#         elif check.E == 0 and check.S == 1 and check.W == 0:
-#             print(t010)
-#         elif check.E == 1 and check.S == 1 and check.W == 1:
-#             print(t111)
-#         elif check.E == 1 and check.S == 0 and check.W == 0:
-#             print(t100)
-#         elif check.E == 0 and check.S == 0 and check.W == 1:
-#             print(t001)
-        
-#     elif party_facing ==6:
-#         if check.N == 0 and check.E == 0 and check.S == 0:
-#             print(t000)
-#         elif check.N == 1 and check.E == 0 and check.S == 1:
-#             print(t101)
-#         elif check.N == 0 and check.E == 1 and check.S == 1:
-#             print(t011)
-#         elif check.N == 1 and check.E == 1 and check.S == 0:
-#             print(t110)
-#         elif check.N == 0 and check.E == 1 and check.S == 0:
-#             print(t010)
-#         elif check.N == 1 and check.E == 1 and check.S == 1:
-#             print(t111)
-#         elif check.N == 1 and check.E == 0 and check.S == 0:
-#             print(t100)
-#         elif check.N == 0 and check.E == 0 and check.S == 1:
-#             print(t001)"""
-
-def getMap():
+def getMapOld():
 
     global dungeon_blueprint
     localmap = [
@@ -701,8 +556,7 @@ def getMap():
         map_coords_bright["3,4"]=(None, 3, 4)
 
         localmaplightmore[3][3] = "◄"
-    
-    
+      
     elif party_facing == 6:
         localmap[1][1] = "►"
         map_coords["NW"]=(None, 0, 0)
@@ -845,6 +699,170 @@ def getMap():
         for n in range(0,len(localmaplight)):
             # print(f"{localmap[n]}")
             print(' '.join(localmaplight[n]))
+
+
+def getMap():
+
+    global dungeon_blueprint
+    view_distance = 1
+    localmap = []
+    map_coords = {}
+    
+
+    if hour >= 4:
+        view_distance = 1
+    else:
+        view_distance = 2
+
+
+    for ny in range((view_distance*2+1)):
+        localmap.append([])
+        for nx in range((view_distance*2+1)):
+            localmap[ny].append("")
+
+    # Adding map coordinates based on minimap size
+    try:
+        for iy in range(view_distance*-1, view_distance+1):
+            for jx in range(view_distance*-1, view_distance+1):
+                if iy != 0 or jx != 0:
+                    map_coords[f"{iy+view_distance},{jx+view_distance}"] = (dungeon_blueprint[party_coord[0]+iy][party_coord[1]+jx], iy+view_distance, jx+view_distance)
+    except IndexError:
+        map_coords[f"{iy+view_distance},{jx+view_distance}"] = (None, iy+view_distance, jx+view_distance)
+
+
+    map_coords_check = {
+        "NW": (dungeon_blueprint[party_coord[0]-1][party_coord[1]-1], view_distance-1, view_distance-1),
+        "N" : (dungeon_blueprint[party_coord[0]-1][party_coord[1]], view_distance-1, view_distance),
+        "NE" : (dungeon_blueprint[party_coord[0]-1][party_coord[1]+1], view_distance-1, view_distance+1),
+        "W": (dungeon_blueprint[party_coord[0]][party_coord[1]-1], view_distance, view_distance-1),
+        "E" : (dungeon_blueprint[party_coord[0]][party_coord[1]+1], view_distance, view_distance+1),
+        "SW": (dungeon_blueprint[party_coord[0]+1][party_coord[1]-1], view_distance+1, view_distance-1),
+        "S" : (dungeon_blueprint[party_coord[0]+1][party_coord[1]], view_distance+1, view_distance),
+        "SE" : (dungeon_blueprint[party_coord[0]+1][party_coord[1]+1], view_distance+1, view_distance+1)
+    }
+
+
+    if view_distance > 1:
+        #Check visibility map bright
+        if map_coords_check["NW"][0] != 0:
+            map_coords["0,0"]=(None, view_distance-2, view_distance-2)
+            map_coords["0,1"]=(None, view_distance-2, view_distance-1)
+            map_coords["1,0"]=(None, view_distance-1, view_distance-2)
+        else: #Toggle SEEN for NW tiles
+            dungeon_current[party_coord[0]-2][party_coord[1]-2].seen = True
+            dungeon_current[party_coord[0]-2][party_coord[1]-1].seen = True
+            dungeon_current[party_coord[0]-1][party_coord[1]-2].seen = True
+
+        if map_coords_check["NE"][0] != 0:
+            map_coords["0,3"]=(None, view_distance-2, view_distance+1)
+            map_coords["0,4"]=(None, view_distance-2, view_distance+2)
+            map_coords["1,4"]=(None, view_distance-1, view_distance+2)
+        else:
+            dungeon_current[party_coord[0]-2][party_coord[1]+1].seen = True
+            dungeon_current[party_coord[0]-2][party_coord[1]+2].seen = True
+            dungeon_current[party_coord[0]-1][party_coord[1]+2].seen = True
+        
+        if map_coords_check["SW"][0] != 0:
+            map_coords["3,0"]=(None, view_distance+1, view_distance-2)
+            map_coords["4,0"]=(None, view_distance+2, view_distance-2)
+            map_coords["4,1"]=(None, view_distance+2, view_distance-1)
+        else:
+            dungeon_current[party_coord[0]+1][party_coord[1]-2].seen = True
+            dungeon_current[party_coord[0]+2][party_coord[1]-2].seen = True
+            dungeon_current[party_coord[0]+2][party_coord[1]-1].seen = True
+        
+        if map_coords_check["SE"][0] != 0:
+            map_coords["4,4"]=(None, view_distance+2, view_distance+2)
+            map_coords["3,4"]=(None, view_distance+1, view_distance+2)
+            map_coords["4,3"]=(None, view_distance+2, view_distance+1)
+        else:
+            dungeon_current[party_coord[0]+2][party_coord[1]+2].seen = True
+            dungeon_current[party_coord[0]+1][party_coord[1]+2].seen = True
+            dungeon_current[party_coord[0]+2][party_coord[1]+1].seen = True
+
+        if map_coords_check["N"][0] != 0:
+            map_coords["0,2"]=(None, view_distance-2, view_distance)
+        else:
+            dungeon_current[party_coord[0]-2][party_coord[1]].seen = True
+
+        if map_coords_check["W"][0] != 0:
+            map_coords["2,0"]=(None, view_distance, view_distance-2)
+        else:
+            dungeon_current[party_coord[0]][party_coord[1]-2].seen = True
+
+        if map_coords_check["E"][0] != 0:
+            map_coords["2,4"]=(None, view_distance, view_distance+2)
+        else:
+            dungeon_current[party_coord[0]][party_coord[1]+2].seen = True
+
+        if map_coords_check["S"][0] != 0:
+            map_coords["4,2"]=(None, view_distance+2, view_distance)
+        else:
+            dungeon_current[party_coord[0]+2][party_coord[1]].seen = True
+
+    if party_facing is not None:
+        if party_facing == 8:
+            localmap[view_distance][view_distance] = "▲"
+            # map_coords["SW"]=(None, view_distance, 0)
+            # map_coords["S"]=(None, 2, 1)
+            # map_coords["SE"]=(None, 2, 2)
+
+        elif party_facing == 2:
+            localmap[view_distance][view_distance] = "▼"
+            # map_coords["NW"]=(None, 0, 0)
+            # map_coords["N"]=(None, 0, 1)
+            # map_coords["NE"]=(None, 0, 2)
+
+        elif party_facing == 4:
+            localmap[view_distance][view_distance] = "◄"
+            # map_coords["NE"]=(None, 0, 2)
+            # map_coords["E"]=(None, 1, 2)
+            # map_coords["SE"]=(None, 2, 2)
+        
+        elif party_facing == 6:
+            localmap[view_distance][view_distance] = "►"
+            # map_coords["NW"]=(None, 0, 0)
+            # map_coords["W"]=(None, 1, 0)
+            # map_coords["SW"]=(None, 2, 0)
+    
+    for key, values in map_coords.items():
+        t, y, x = values
+        if t == 0:
+            localmap[y][x] = ' '
+        elif t == 1 or t == 9 or t == N or t == S or t == W or t == E:
+            localmap[y][x] = '■'
+        elif t == 2 or t == 3:
+            localmap[y][x] = '□'
+        elif t == "U" or t == "D":
+            localmap[y][x] = '♦'
+        elif t == "C":
+            localmap[y][x] = f'{CYAN}●{RESET}'
+        elif t == "O":
+            localmap[y][x] = '○'
+        elif t == "R":
+            localmap[y][x] = '♥'
+        elif t == "M":
+            localmap[y][x] = '☺'
+        elif t == "SO":
+            localmap[y][x] = '↑'
+        elif t == "NO":
+            localmap[y][x] = '↓'
+        elif t == "WO":
+            localmap[y][x] = '→'
+        elif t == "EO":
+            localmap[y][x] = '←'
+        elif t == 8:
+            localmap[y][x] = '↕'
+        elif t == 6:
+            localmap[y][x] = '↔'
+        elif t == None or t == "out":
+            localmap[y][x] = 'X'
+    
+    #                   0       1       2       3           4           5       6           7
+    # hour_names = ["Dawn","Morning","Noon","Afternoon","Twilight","Evening","Midnight","Witching Hour"]
+
+    for n in range(len(localmap)):
+        print(f' '.join(localmap[n]))
 
 
 def debugDungeonMap():
