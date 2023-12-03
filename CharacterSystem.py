@@ -99,7 +99,7 @@ scout = CharacterClass(
     "Scout",
     hp = 6,
     tp = 3,
-    str = 3,
+    str = 5,
     dmg = 2,
     tec = 4,
     vit = 2,
@@ -198,7 +198,7 @@ mars = Character(
 eck = Character(
     name="Eckbert", char_class= scout, race = r_faefolk,
     level=1, maxhp=60, hp=60, maxtp=30, tp=30,
-    str=3, dmg=2, tec=4, vit=2, agi=8, lck=8,
+    str=5, dmg=2, tec=4, vit=2, agi=8, lck=8,
     slist=[], acted=False, defending=False, weak=[], exp=0, init=0,
     equip={
     "Weapon":None,

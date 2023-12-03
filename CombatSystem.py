@@ -7,6 +7,7 @@ import time
 import random
 import copy
 import CharacterSystem
+import EnemyGenerator
 
 import EnemyList
 
@@ -313,10 +314,12 @@ def command(char):
 
                 char.tp -= 3
 
+                char.str += 1
                 char.dmg += 1
                 char.lck += 20
                 attackfunc(char,chartarget)
                 char.dmg -= 1
+                char.str -= 1
                 char.lck -= 20
 
                 char.acted = True
@@ -587,7 +590,7 @@ def updatecombatlist():
     print ("") #spacer
     print ("Opposition") #spacer
     for n in opposition:
-        print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
+        print (f"({opposition.index(n)}) Level {n.level} {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
     print ("") #spacer
     initnames = ", ".join(str(n.name) for n in initiative)
     print (f"Turn order: {initnames}\n")
@@ -893,22 +896,34 @@ def randomenemies():
         laidirBattle = random.randint(2,100)
 
     if laidirBattle > 1:
+
         # Level adequate enemies
-        levelmodifier = random.randint(-2,3)
-        enemygrouplevel = partyLevel() + levelmodifier
+        levelmodifier = random.choice([0.5,1,2,3,4])
+        enemygrouplevel = int(partyLevel() * levelmodifier)
 
         while enemygrouplevel > 0:
-            enemy_to_add = copy.deepcopy(random.choice(enemies_1))
+            # enemy_to_add = copy.deepcopy(random.choice(enemies_1))
+            # opposition.append(enemy_to_add)
+            # enemygrouplevel -= enemy_to_add.level
+
+
+            randomenemylevel = partyLevel() + random.randint(-2,2) -1 
+            if randomenemylevel < 0:
+                randomenemylevel = 0
+
+            entype = random.choice(["Malla","Sgeu","Diogh","Colt","Adhbah","Grain"])
+
+            enemy_to_add = EnemyGenerator.generateEnemy(entype,randomenemylevel)
             opposition.append(enemy_to_add)
             enemygrouplevel -= enemy_to_add.level
 
-        if not opposition:
-            opposition.append(copy.deepcopy(random.choice(enemies_1)))
+            if len(opposition) >5:
+                break
 
-        # # 2d3 random enemies
-        # number_of_enemies = random.randint(2,6)
-        # for _ in range(1,number_of_enemies+1):
-        #     opposition.append(copy.deepcopy(random.choice(enemies_1)))
+        if not opposition:
+            entype = random.choice(["Malla","Sgeu","Diogh","Colt","Adhbah","Grain"])
+            opposition.append(EnemyGenerator.generateEnemy(entype,partyLevel()))
+            
     
     else:
         print("A Làidir has appeared!")
@@ -1043,7 +1058,7 @@ def runCombat():
         print ("") #spacer
         print ("Opposition") #spacer
         for n in opposition:
-            print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
+            print (f"({opposition.index(n)}) Level {n.level} {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
         print ("") #spacer
 
         initnames = ", ".join(str(n.name) for n in initiative)

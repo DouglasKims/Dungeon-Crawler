@@ -98,7 +98,7 @@ def getStatus():
             print("")
             return
 
-    print(f"{char.name}'s Status\n Class: {char.char_class}\n Level: {char.level} ({round(char.exp)} / {round(char.level*1000*1.5)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}\n tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg})\n TEC: {math.floor(char.tec)}\n VIT: {math.floor(char.vit)}\n AGI: {math.floor(char.agi)}\n LCK: {math.floor(char.lck)}\n")
+    print(f"{char.name}'s Status\n Class: {char.char_class.name}\n Level: {char.level} ({round(char.exp)} / {round(char.level*1000*1.5)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}\n tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg})\n TEC: {math.floor(char.tec)}\n VIT: {math.floor(char.vit)}\n AGI: {math.floor(char.agi)}\n LCK: {math.floor(char.lck)}\n")
     # getEquip func
     getEquip(char)
 
@@ -109,14 +109,14 @@ def getSkills():
             return
     availableskills = ""
 
-    if char.char_class == "Knight":
+    if char.char_class.name == "Knight":
         availableskills += f"{char.name} knows these STR-based skills:\n"
         availableskills += "    CHARGE: Attacks one opponent up to three times (costs 15% HP)\n"
         availableskills += "    HUNT: Attacks one opponent with increased strenght and crit chance (costs 15% HP and 3 TP)\n"
         availableskills += "    CLEAVE: Attacks random opponents up to five times (costs 25% HP)\n"
         availableskills += "\n"
     
-    if char.char_class == "Scout":
+    if char.char_class.name == "Scout":
         availableskills += f"{char.name} knows these SCOUT skills:\n"
         availableskills += "    SNEAK: Attacks one opponent with increased damage and crit chance (costs 3 TP)\n"
         availableskills += "    HIDE: Lower odds of being targeted for remainder of fight (costs 3 TP)\n"
