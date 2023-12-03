@@ -8,7 +8,7 @@
 # DUNGEON CRAWLER PART
     # Try to implement a random dungeon generator?
 
-    # Field Bosses
+    # Field Bosses (DONE)
         # To do this, the code needs a "fieldmap" that contains the whole dungeon, but shows only where the group is at, at a 3x3/5x5 grid around the party. (doable, but requires big rewrite, however, allows for Field bosses)
 
     # Implement Doors and Objects (chests/treasure) (DONE)
@@ -23,6 +23,9 @@
     # Use items in combat
     # Escape combat
     # create buff, debuff skills
+
+    # Enemy Generator? 
+    #  Fix formulas
 
 # CLASS SKILLS
     # KNIGHT

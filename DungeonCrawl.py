@@ -171,10 +171,10 @@ dungeon11loot = {
 }
 
 dungeon11_laid1 = {
-    1: (1,12,8),
-    2: (1,13,6),
-    3: (1,12,4),
-    4: (2,12,2),
+    0: (1,12,8),
+    1: (1,13,6),
+    2: (1,12,4),
+    3: (2,12,2),
     "step": (0)
 }
 
@@ -304,7 +304,7 @@ party_facing = 2
 danger = 0
 danger_level = ""
 dungeon_level = 1
-check = dungeon_current[party_coord[0]][party_coord[1]]
+check = dungeon_blueprint[party_coord[0]][party_coord[1]]
 vision = None
 hour_names = [f"{YELLOW}Dawn{RESET}",f"{YELLOW}Morning{RESET}",f"{YELLOW}Noon{RESET}",f"{YELLOW}Afternoon{RESET}",f"{BRIGHT_BLUE}Twilight{RESET}",f"{BRIGHT_BLUE}Evening{RESET}",f"{BRIGHT_BLUE}Midnight{RESET}",f"{MAGENTA}Witching Hour{RESET}"]
 # Dark between time = 4*90 and time = 7*90 // Each 90 steps advances the clock
@@ -319,20 +319,49 @@ def update_coord(x,y):
     global check
     party_coord[0] += y
     party_coord[1] += x
-    check = dungeon_current[party_coord[0]][party_coord[1]]
+    check = dungeon_blueprint[party_coord[0]][party_coord[1]]
     
     update_time()    
     update_seen()
     update_danger()
+    update_laid()
 
 def update_laid():
-    
+
     for n in dungeon_bosses:
+        # Get new position
+        n["step"] += 1
+        if n["step"] == len(n)-1:
+            n["step"] = 0
+
+        step_n = n["step"]
+        step_prev = step_n-1
         
-        if n["step"] == len(n):
-            pass
-        else:
-            n["step"] += 1
+        if step_prev < 0:
+            step_prev = len(n)-2
+
+        ly = n[step_n][0]
+        lx = n[step_n][1]
+        ly_prev = n[step_prev][0]
+        lx_prev = n[step_prev][1]
+
+        # Clears previous position
+        dungeon_blueprint[ly_prev][lx_prev] = 0
+
+
+        if n[step_n][2] is not None:
+            if n[step_n][2] == 8:
+                dungeon_blueprint[ly][lx] = f"{RED}▲{RESET}"
+
+            elif n[step_n][2] == 2:
+                dungeon_blueprint[ly][lx] = f"{RED}▼{RESET}"
+
+            elif n[step_n][2] == 4:
+                dungeon_blueprint[ly][lx] = f"{RED}◄{RESET}"
+            
+            elif n[step_n][2] == 6:
+                dungeon_blueprint[ly][lx] = f"{RED}►{RESET}"
+
             # add to "local map"
                 # make local map be shared between party and boss
 
@@ -343,7 +372,7 @@ def update_time():
 
     steps += 1
 
-    if steps >= 5:
+    if steps >= 60:
         hour += 1
         steps = 0
 
@@ -857,6 +886,14 @@ def getMap():
             localmap[y][x] = '↔'
         elif t == None or t == "out":
             localmap[y][x] = 'X'
+        elif t == f"{RED}▲{RESET}":
+            localmap[y][x] = f"{RED}▲{RESET}"
+        elif t == f"{RED}▼{RESET}":
+            localmap[y][x] = f"{RED}▼{RESET}"
+        elif t == f"{RED}◄{RESET}":
+            localmap[y][x] = f"{RED}◄{RESET}"
+        elif t == f"{RED}►{RESET}":
+            localmap[y][x] = f"{RED}►{RESET}"
     
     #                   0       1       2       3           4           5       6           7
     # hour_names = ["Dawn","Morning","Noon","Afternoon","Twilight","Evening","Midnight","Witching Hour"]
@@ -1222,7 +1259,54 @@ def exploreDungeon():
                 dy = 1
 
             if facing is not None:
+                if party_facing == 8:
+                    tilecoords = party_coord[0]-1, party_coord[1]
+                elif party_facing == 4:
+                    tilecoords = party_coord[0], party_coord[1]-1
+                elif party_facing == 2:
+                    tilecoords = party_coord[0]+1, party_coord[1]
+                elif party_facing == 6:
+                    tilecoords = party_coord[0], party_coord[1]+1
+
+                tileface = dungeon_blueprint[tilecoords[0]][tilecoords[1]]
+
+                if tileface == 0:
+                    update_coord(dx,dy)
+                elif tileface in [f"{RED}▲{RESET}",f"{RED}▼{RESET}",f"{RED}◄{RESET}",f"{RED}►{RESET}"]:
+                    input("You walk into a Làidir!")
+                    CombatSystem.bossbattle = True
+                    CombatSystem.runCombat()
+                    update_coord(dx,dy)
+                elif tileface == 1:
+                    print ("You bonk against a wall.\n")
+                elif tileface == 2:
+                    print ("There is a door in front of you.\n")
+                elif tileface == C:
+                    print ("There is a closed chest in front of you.\n")
+                elif tileface == O:
+                    print ("There is a looted chest in front of you.\n")
+                elif tileface == U:
+                    print ("These are the stairs upwards.\n")
+                elif tileface == D:
+                    print ("These are the stairs downwards.\n")
+                elif tileface == R:
+                    print ("This is a resting area, you can camp here.\n")
+                elif tileface == M:
+                    print ("This person has merchandise to sell.\n")
+                elif tileface in (N,S,W,E):
+                    print ("This seems like a one-way passageway.\n")
+                elif tileface in (NO,SO,WO,EO):
+                    print ("This seems like a one-way passageway.\n")
+                elif tileface in (9,8,6):
+                    print ("This seems like a passageway in the wall.\n")
+
+            """if facing is not None:
                 if getattr(check, facing) == 0:
+                    update_coord(dx,dy)
+                elif getattr(check, facing) in [f"{RED}▲{RESET}",f"{RED}▼{RESET}",f"{RED}◄{RESET}",f"{RED}►{RESET}"]:
+                    input("You walk into a Làidir!")
+                    CombatSystem.bossbattle = True
+                    CombatSystem.runCombat()
                     update_coord(dx,dy)
                 elif getattr(check, facing) == 1:
                     print ("You bonk against a wall.\n")
@@ -1246,7 +1330,7 @@ def exploreDungeon():
                     print ("This seems like a one-way passageway.\n")
                 elif getattr(check, facing) in (9,8,6):
                     print ("This seems like a passageway in the wall.\n")
-                
+                """
 
         if command == "5" or command == "f" or command == "i":
             openDoor()

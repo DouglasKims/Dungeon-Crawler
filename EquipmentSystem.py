@@ -98,7 +98,7 @@ def getStatus():
             print("")
             return
 
-    print(f"{char.name}'s Status\n Class: {char.char_class}\n PLevel: {char.plevel} ({round(char.exp)} / {round(char.plevel*200*1.5)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}\n tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg})\n TEC: {math.floor(char.tec)}\n VIT: {math.floor(char.vit)}\n AGI: {math.floor(char.agi)}\n LCK: {math.floor(char.lck)}\n")
+    print(f"{char.name}'s Status\n Class: {char.char_class}\n Level: {char.level} ({round(char.exp)} / {round(char.level*1000*1.5)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)}\n tp: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg})\n TEC: {math.floor(char.tec)}\n VIT: {math.floor(char.vit)}\n AGI: {math.floor(char.agi)}\n LCK: {math.floor(char.lck)}\n")
     # getEquip func
     getEquip(char)
 
