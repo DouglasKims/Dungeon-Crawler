@@ -20,12 +20,13 @@
     # City
 
 # COMBAT & SKILLS
+    # Rename Skills
     # Use items in combat
     # Escape combat
     # create buff, debuff skills
 
-    # Enemy Generator? 
-    #  Fix formulas
+    # Enemy Generator? (DONE)
+    #  Fix formulas (DONE)
 
 # CLASS SKILLS
     # KNIGHT
@@ -116,3 +117,21 @@
     # water > Grun/Irg/mor // Irg/matha
     # earth > Grun/Gaa/mor // Gaa/matha
     # air > Grun/Fam/mor // Fam/matha
+
+    Fire    //  Firo / mor / matha
+    Ice     //  Gelo
+    Earth   //  Tera
+    Air     //  Gale
+    Thunder //  Volt
+    Creation//  Cura
+    Toxic   //  Veno
+    Chaos   //  Nuke
+
+    Revive  //  Revita / mor / matha
+
+    Weak damage spell = 4 TP
+    weak damage spell group (grun) = 10 TP
+    medium damage spell (mor) =  8 TP
+    medium damage spell group (grun/mor) = 16 TP
+    heavy damage spell (matha) = 12 TP
+    heavy damage spell group (grun/matha) = 22 TP

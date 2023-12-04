@@ -166,7 +166,7 @@ drav = Character(
     name = "Dravroth", char_class = herald, race = r_dragonkin,
     level = 1, maxhp = 80, hp = 80, maxtp = 40, tp = 40,
     str = 6, dmg = 1, tec = 6, vit = 2, agi = 5, lck = 6,
-    slist =  ["leas","pas","comas","grun"],
+    slist =  ["firo","grunfiro","firomor","cura","gruncura"],
     acted = False, defending = False, weak = [], exp = 0, init = 0,
     equip = {
     "Weapon":None,
@@ -177,7 +177,7 @@ dan = Character(
     name = "Thorudan", char_class= thaumaturge, race = r_faefolk,
     level=1, maxhp=60, hp=60, maxtp=50, tp=50,
     str = 4, dmg = 1, tec = 10, vit = 2, agi = 3, lck = 3,
-    slist = ["leas","cruai","igg","gaa","grun","comas"],
+    slist = ["tera","gruntera","teramor","grunteramor","cura","gruncura","curamor","revita"],
     acted = False, defending = False, weak = [], exp = 0, init = 0,
     equip = {
     "Weapon":None,
@@ -188,7 +188,7 @@ mars = Character(
     name = "Mars", char_class = knight, race = r_orc,
     level = 1, maxhp = 100, hp = 100, maxtp = 20, tp = 20,
     str = 8, dmg = 2, tec = 3, vit = 4, agi = 3, lck = 3,
-    slist = ["leas","yab","grun"],
+    slist = ["charge","cleave"],
     acted= False, defending = False, weak = [], exp = 0, init = 0,
     equip = {
     "Weapon":None,
@@ -199,7 +199,7 @@ eck = Character(
     name="Eckbert", char_class= scout, race = r_faefolk,
     level=1, maxhp=60, hp=60, maxtp=30, tp=30,
     str=5, dmg=2, tec=4, vit=2, agi=8, lck=8,
-    slist=[], acted=False, defending=False, weak=[], exp=0, init=0,
+    slist=["sneak"], acted=False, defending=False, weak=[], exp=0, init=0,
     equip={
     "Weapon":None,
     "Armor":None,

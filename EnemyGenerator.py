@@ -168,6 +168,29 @@ def generateEnemy(type, leveltogen):
                 implck = random.randint(1,6)
                 )
 
+
+    if type == "Laidir":
+        model = EnemyType(
+                name = "Laidir",
+                hp = round (300 * (random.random()/2 + 0.75)),
+                imphp = round((150 * (random.random()/2 + 0.75)) * 0.55),
+                tp = 20,
+                imptp = 10,
+                str = random.randint(15,20),
+                impstr = random.randint(5,8),
+                tec = random.randint(12,15),
+                imptec = random.randint(5,8),
+                dmg = 3,
+                impdmg = 1/2,
+                vit = random.randint(12,15),
+                impvit = random.randint(2,8),
+                agi = random.randint(6,12),
+                impagi = random.randint(1,6),
+                lck = random.randint(6,12),
+                implck = random.randint(1,6)
+                )
+
+
     if leveltogen is not None:
         if leveltogen == 0:
             new.name = f"{random.choice(['Puny','Weak','Cowardly'])}"
@@ -201,7 +224,7 @@ def generateEnemy(type, leveltogen):
 def runGenerator():
 
 
-    gen_type = input ("What enemy you want to generate?\n (M)alla, (S)geu, (D)iogh, (C)olt, (A)dhbah, (G)rain, or (R)andom?").lower()
+    gen_type = input ("What enemy you want to generate?\n (M)alla, (S)geu, (D)iogh, (C)olt, (A)dhbah, (G)rain, (L)àidir, or (R)andom?").lower()
     gen_times = input ("How many enemies to generate? ")
     gen_levels = input ("Up to which level? ")
 
@@ -219,6 +242,8 @@ def runGenerator():
         entype = "Grain"
     elif gen_type == "r":
         gen_type = "Random"
+    elif gen_type == "l":
+        entype = "Laidir"
 
 
     for n in range(int(gen_levels)):
@@ -235,6 +260,6 @@ def runGenerator():
 
 
 #TEST
-# runGenerator()
+runGenerator()
 
 ###

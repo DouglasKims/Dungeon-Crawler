@@ -182,6 +182,59 @@ def attackfunc(attacker,target):
 
     # print (atk_report)
 
+def fetchSkills(char):
+    
+    availableskills = f"{char.name} knows:\n"
+
+    # FOR loop / For "X" in spell, print an f-string with proper names
+
+    availableskills += "ELEM Techniques\n"
+
+    if "firo" in char.slist:
+        availableskills += " FIRO (weak fire damage to one target // 4 TP)\n"
+    if "grunfiro" in char.slist:
+        availableskills += " GRUNFIRO (weak fire damage to all targets // 10 TP)\n"
+    if "firomor" in char.slist:
+        availableskills += " FIROMOR (medium fire damage to one target // 8 TP)\n"
+    if "grunfiromor" in char.slist:
+        availableskills += " GRUNFIROMOR (medium fire damage to all targets // 16 TP)\n"
+    if "firomatha" in char.slist:
+        availableskills += " FIROMATHA (heavy fire damage to one target // 12 TP)\n"
+    if "grunfiromatha" in char.slist:
+        availableskills += " GRUNFIROMATHA (heavy fire damage to all targets // 22 TP)\n"
+    
+    if "cura" in char.slist:
+        availableskills += " CURA (Restores a low amount of HP to one ally // 3 TP)\n"
+    if "gruncura" in char.slist:
+        availableskills += " GRUNCURA (Restores a low amount of HP to all allies // 7 TP)\n"
+    if "curamor" in char.slist:
+        availableskills += " CURAMOR (Restores a medium amount of HP to one ally // 7 TP)\n"
+    if "gruncuramor" in char.slist:
+        availableskills += " GRUNCURAMOR (Restores a low amount of HP to all allies // 12 TP)\n"
+    if "curamatha" in char.slist:
+        availableskills += " CURA (Fully restores HP to one ally // 18 TP)\n"
+    if "gruncuramatha" in char.slist:
+        availableskills += " GRUNCURA (Fully restores HP to all allies // 30 TP)\n"
+
+    
+    if "revita" in char.slist:
+        availableskills += f" REVITA (Revives a fallen ally with 30\% of HP)\n"
+
+    availableskills += "PHYS Skills\n"
+
+    if "charge" in char.slist:
+        availableskills += f" CHARGE (Attacks one enemy up to three times // {round(char.maxhp*0.15)} HP)\n"
+
+    if "cleave" in char.slist:
+        availableskills += f" CLEAVE (Attack random enemies up to five times // {round(char.maxhp*0.20)} HP and 3 TP)\n"
+
+    if "sneak" in char.slist:
+        availableskills += f" SNEAK (Attacks one enemy with increased damage and crit chance // 3 TP)\n"
+    
+
+    print (availableskills)
+
+
 def command(char):
     global chartarget
     global opposition
@@ -220,30 +273,7 @@ def command(char):
         pass
 
     elif charcommand == "skill" or charcommand == "skills" or charcommand == "s":
-        availableskills = f"{char.name} knows:\n"
-        if "grun" in char.slist:
-            availableskills += " GRUN (target multiple creatures)\n"
-
-        availableskills += " LAG (weak damage)\n"
-        if "comas" in char.slist:
-            availableskills += " COMAS (moderate damage)\n"
-        if "pas" in char.slist:
-            availableskills += " PAS (fire)\n"
-        if "yab" in char.slist:
-            availableskills += " YAB (thunder)\n"
-        if "gaa" in char.slist:
-            availableskills += " GAA (earth)\n"
-        if "igg" in char.slist:
-            availableskills += " IGG (death)\n"
-        
-        
-        if "leas" in char.slist:
-            availableskills += " LEAS (healing)\n"
-            availableskills += " TIN (weak restoration)\n"
-        if "cruai" in char.slist:
-            availableskills += " CRUAI (moderate restoration)\n"
-
-        print (availableskills)
+        fetchSkills(char)
         
 # PHYS SKILLS
 
@@ -379,6 +409,67 @@ def command(char):
         else:
             spellversion(char,charcommand,"chaos")
 
+
+
+    elif "firo" in charcommand:
+        if "firo" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"fire")
+
+    elif "volt" in charcommand:
+        if "volt" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"thunder")
+
+    elif "tera" in charcommand:
+        if "tera" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"earth")
+
+    elif "veno" in charcommand:
+        if "veno" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"toxic")
+
+    elif "gelo" in charcommand:
+        if "gelo" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"ice")
+
+    elif "gale" in charcommand:
+        if "gale" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"air")
+
+    elif "nuke" in charcommand:
+        if "nuke" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,"chaos")
+
+# SUPPORT SKILLS
+    elif "cura" in charcommand:
+        if "cura" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,None)
+
+    elif "revita" in charcommand:
+        if "revita" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            spellversion(char,charcommand,None)
+
+    
+
+
+
     elif "update" in charcommand or "u" in charcommand:
         updatecombatlist()
 
@@ -391,7 +482,7 @@ def command(char):
         char.acted = True
 
     else:
-        print("Invalid command.")
+        print("Invalid command or character can't use this skill.")
 
 def usetp(char,tp):
     if char.tp < tp:
@@ -426,7 +517,7 @@ def calcspellheal(char,spelllevel):
 
     return spellheal
 
-def spellversion(char,spell,dmgtype):
+def spellversionold(char,spell,dmgtype):
     starget = None
     if "lag" in spell:
         if "grun" in spell and "grun" in char.slist:
@@ -573,6 +664,165 @@ def spellversion(char,spell,dmgtype):
 
     else:
         print(f"{char.name} can't use this skill.")
+
+def spellversion(char,spell,dmgtype):
+    starget = None
+
+    if "cura" not in spell and "revita" not in spell and any(element in spell for element in ["firo", "gelo", "gale", "tera", "volt", "veno", "nuke"]):
+
+        if "mor" in spell and spell in char.slist:
+            if "grun" in spell and spell in char.slist:
+                if usetp(char,16) == True:
+                    calcspelldamage(char,"medium")
+                    usespell(char,starget,dmgtype,"multi")
+
+            elif "grun" in spell and spell not in char.slist:
+                print(f"{char.name} can't use this skill.")
+
+            elif spell in char.slist:
+                if usetp(char,8) == True:
+                    starget = targetenemy()
+                    if starget is not None:
+                        calcspelldamage(char,"medium")
+                        usespell(char,starget,dmgtype,"single")
+
+            pass
+
+        elif "matha" in spell and spell in char.slist:
+            if "grun" in spell and "grun" in char.slist:
+                if usetp(char,22) == True:
+                    calcspelldamage(char,"heavy")
+                    usespell(char,starget,dmgtype,"multi")
+
+            elif "grun" in spell and spell not in char.slist:
+                print(f"{char.name} can't use this skill.")
+
+            elif spell in char.slist:
+                if usetp(char,12) == True:
+                    starget = targetenemy()
+                    if starget is not None:
+                        calcspelldamage(char,"heavy")
+                        usespell(char,starget,dmgtype,"single")
+
+        elif "mor" not in spell and "matha" not in spell and "cura" not in spell:
+            if "grun" in spell and spell in char.slist:
+                if usetp(char,10) == True:
+                    calcspelldamage(char,"weak")
+                    usespell(char,starget,dmgtype,"multi")
+
+            elif "grun" in spell and spell not in char.slist:
+                print(f"{char.name} can't use this skill.")
+
+            elif spell in char.slist:
+                if usetp(char,4) == True:
+                    starget = targetenemy()
+                    if starget is not None:
+                        calcspelldamage(char,"weak")
+                        usespell(char,starget,dmgtype,"single")
+
+        else:
+            print(f"{char.name} can't use this skill.")
+
+    elif "cura" in spell:
+        if "cura" in spell and "mor" in spell:
+            if "grun" in spell and spell in char.slist:
+                if usetp(char,12) == True:
+                    heal = calcspellheal(char,"medium")
+                    for n in party:
+                        # healally function
+                        healally(char,n,heal)
+
+            elif "grun" in spell and spell not in char.slist:
+                print(f"{char.name} can't use this skill.")
+
+            else:
+                if usetp(char,7) == True:
+                    starget = targetally()
+                    if starget is not None:
+                        heal = calcspellheal(char,"medium")
+                        healally(char,starget,heal)
+            pass
+
+        elif "cura" in spell and "matha" in spell:
+            if "grun" in spell and spell in char.slist:
+                if usetp(char,30) == True:
+                    heal = calcspellheal(char,"heavy")
+                    for n in party:
+                        # healally function
+                        healally(char,n,heal)
+
+            elif "grun" in spell and spell not in char.slist:
+                print(f"{char.name} can't use this skill.")
+
+            else:
+                if usetp(char,18) == True:
+                    starget = targetally()
+                    if starget is not None:
+                        heal = calcspellheal(char,"heavy")
+                        healally(char,starget,heal)
+            pass
+
+        elif "cura" in spell:
+            if "grun" in spell and spell in char.slist:
+                if usetp(char,7) == True:
+                    heal = calcspellheal(char,"weak")
+                    for n in party:
+                        # healally function
+                        healally(char,n,heal)
+
+            elif "grun" in spell and spell not in char.slist:
+                print(f"{char.name} can't use this skill.")
+
+            else:
+                if usetp(char,3) == True:
+                    starget = targetally()
+                    if starget is not None:
+                        heal = calcspellheal(char,"weak")
+                        healally(char,starget,heal)
+
+        else:
+            print(f"{char.name} can't use this skill.")
+
+    elif "revita" in spell:
+        
+        if "revita" in spell and "mor" not in spell and "motha" not in spell:
+            if spell in char.slist:
+                
+                if usetp(char,7) == True:
+                    starget = targetdeadally()
+                    if starget is not None:
+                        starget.hp += round((starget.maxhp*30/100))
+
+                        print (f"{starget.name} has been revived with {round(starget.maxhp*30/100)} HP!")
+                        char.acted = True
+
+        elif "revita" in spell and "mor" in spell:
+            if spell in char.slist:
+
+                if usetp(char,10) == True:
+                    starget = targetdeadally()
+                    if starget is not None:
+                        starget.hp += round((starget.maxhp*60/100))
+
+                        print (f"{starget.name} has been revived with {round(starget.maxhp*60/100)} HP!")
+                        char.acted = True
+
+        elif "revita" in spell and "motha" in spell:
+            
+            if spell in char.slist:
+                if usetp(char,18) == True:
+                    starget = targetdeadally()
+                    if starget is not None:
+                        starget.hp = round((starget.maxhp))
+
+                        print (f"{starget.name} has been revived with full HP!")
+                        char.acted = True
+        
+        else:
+            print(f"{char.name} can't use this skill.")
+
+    
+
 
 def updatecombatlist():
     global rounds
