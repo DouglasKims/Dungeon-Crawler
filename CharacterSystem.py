@@ -229,7 +229,7 @@ cancelterms = ["no","back","cancel","return","quit"]
 
 def checkLevel(char):
 
-    while char.exp >= char.level*1000*1.5:
+    while char.exp >= char.level*1000: # *1.5
         os.system("cls")
         print(f"{char.name} has leveled up to level {char.level+1}!")
         levelUpChar(char)

@@ -380,14 +380,9 @@ def command(char):
             spellversion(char,charcommand,"chaos")
 
     elif "update" in charcommand or "u" in charcommand:
-        # print ("Updating Opposition list")
-        # print ("Opposition") #spacer
-        # for n in opposition:
-        #     print (f"({opposition.index(n)}) {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
-        # print ("") #spacer
         updatecombatlist()
 
-    elif "rush" in charcommand:
+    elif "rush" in charcommand: # FINISH
         rushcount = int(input("How many turns to rush? (0 to cancel) "))
 
     elif "die" in charcommand:
