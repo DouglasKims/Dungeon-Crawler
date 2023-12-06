@@ -3,12 +3,14 @@ import os
 import math
 import copy
 import random
+import EquipmentSystem
 
 # CHaracters
-
+weapon1 = EquipmentSystem.weapon1
+armor1 = EquipmentSystem.armor1
 
 class Character:
-    def __init__(self,name,char_class,race,level,maxhp,hp,maxtp,tp,str,dmg,tec,vit,agi,lck,slist,acted,defending,weak,equip,exp,init):
+    def __init__(self,name,char_class,race,level,maxhp,hp,maxtp,tp,str,dmg,tec,vit,agi,lck,slist,acted,defending,weak,resist,equip,exp,init,skillpts,perkpts):
         self.name = name
         self.char_class = char_class
         self.race = race
@@ -27,8 +29,11 @@ class Character:
         self.acted = acted
         self.defending = defending
         self.weak = weak
+        self.resist = resist
         self.equip = equip
         self.exp = exp
+        self.skillpts = skillpts
+        self.perkpts = perkpts
         self.init = init
 
 # Class Enemy:
@@ -64,9 +69,9 @@ knight = CharacterClass(
     dmg = 2,
     tec = 2,
     vit = 5,
-    agi = 3,
+    agi = 2,
     lck = 3,
-    improv = [4/3, 1/2, 1, 1/3, 1, 3/5, 1/3],
+    improv = [4/3, 1/2, 1, 1/3, 1, 3/5, 1/3, 1/6],
     special = None,
     lore = "A capable fighter with high attack and defense, know a few combat tactics, but doesn't excels in special techniques.")
 thaumaturge = CharacterClass(
@@ -79,7 +84,7 @@ thaumaturge = CharacterClass(
     vit = 2,
     agi = 2,
     lck = 4,
-    improv = [2/3, 1, 2/3, 1, 2/3, 2/5, 2/3],
+    improv = [2/3, 1, 2/3, 1, 2/3, 2/5, 2/3, 1/10],
     special = None,
     lore = "A capable combatant who's reliable in physical combat, but really excells at support and healing.")
 arcanist = CharacterClass(
@@ -92,33 +97,33 @@ arcanist = CharacterClass(
     vit = 1,
     agi = 4,
     lck = 2,
-    improv = [1/3, 3/2, 1/4, 3/2, 1/3, 2/3, 1/2],
+    improv = [1/3, 3/2, 1/4, 3/2, 1/3, 2/3, 1/2, 1/15],
     special = None,
     lore = "A specialist combatant, really weak and fragile, but can use devastating special techniques and elemental attacks.")
 scout = CharacterClass(
     "Scout",
     hp = 6,
-    tp = 3,
+    tp = 2,
     str = 5,
     dmg = 2,
-    tec = 4,
+    tec = 2,
     vit = 2,
-    agi = 8,
-    lck = 8,
-    improv = [1/2, 1/3, 1/2, 1/2, 1/2, 3/2, 4/3],
+    agi = 6,
+    lck = 6,
+    improv = [1/2, 1/3, 1/2, 1/2, 1/2, 3/2, 4/3, 1/8],
     special = None,
     lore = "A stealthy combatant, somewhat weak and fragile, but capable of landing powerful critical attacks more frequently than others.")
 herald = CharacterClass(
     "Herald",
-    hp = 8,
-    tp = 4,
-    str = 5,
+    hp = 6,
+    tp = 3,
+    str = 4,
     dmg = 1,
-    tec = 5,
+    tec = 4,
     vit = 3,
-    agi = 5,
-    lck = 5,
-    improv = [3/4, 2/3, 1, 3/4, 2/3, 2/3, 2/3],
+    agi = 4,
+    lck = 4,
+    improv = [3/4, 2/3, 1, 3/4, 2/3, 2/3, 2/3, 1/8],
     special = None,
     lore = "A well-rounded combatant and explorer, able to use offensive and support abilities, but doesn't really excels in any.")
 quartermaster = CharacterClass(
@@ -127,11 +132,11 @@ quartermaster = CharacterClass(
     tp = 3,
     str = 4,
     dmg = 1,
-    tec = 2,
+    tec = 1,
     vit = 4,
     agi = 5,
     lck = 5,
-    improv = [1, 1/4, 1, 1/3, 1, 1/2, 1],
+    improv = [1, 1/4, 1, 1/3, 1, 1/2, 1, 1/6],
     special = None,
     lore = "A supportive combatant, not very powerful in combat, but able to make exploration easier with many support skills.")
 
@@ -166,64 +171,74 @@ drav = Character(
     name = "Dravroth", char_class = herald, race = r_dragonkin,
     level = 1, maxhp = 80, hp = 80, maxtp = 40, tp = 40,
     str = 6, dmg = 1, tec = 6, vit = 2, agi = 5, lck = 6,
-    slist =  ["firo","grunfiro","firomor","cura","gruncura"],
-    acted = False, defending = False, weak = [], exp = 0, init = 0,
+    acted = False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 5, perkpts= 0,
     equip = {
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
-    "Accessory 2":None})
+    "Accessory 2":None},
+    slist =  {"firo": 1,
+              "cura": 1,
+              "enha": 1})
 dan = Character(
     name = "Thorudan", char_class= thaumaturge, race = r_faefolk,
     level=1, maxhp=60, hp=60, maxtp=50, tp=50,
     str = 4, dmg = 1, tec = 10, vit = 2, agi = 3, lck = 3,
-    slist = ["tera","gruntera","teramor","grunteramor","cura","gruncura","curamor","revita"],
-    acted = False, defending = False, weak = [], exp = 0, init = 0,
+    acted = False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 0, perkpts= 0,
     equip = {
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
-    "Accessory 2":None})
+    "Accessory 2":None},
+    slist = {"tera": 1,
+             "cura": 1,
+             "revita": 1})
 mars = Character(
     name = "Mars", char_class = knight, race = r_orc,
     level = 1, maxhp = 100, hp = 100, maxtp = 20, tp = 20,
     str = 8, dmg = 2, tec = 3, vit = 4, agi = 3, lck = 3,
-    slist = ["charge","cleave"],
-    acted= False, defending = False, weak = [], exp = 0, init = 0,
+    acted= False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 0, perkpts= 0,
     equip = {
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
-    "Accessory 2":None})
+    "Accessory 2":None},
+    slist = {"charge": 1,
+             "cleave": 1,
+             "protect": 1},)
 eck = Character(
     name="Eckbert", char_class= scout, race = r_faefolk,
     level=1, maxhp=60, hp=60, maxtp=30, tp=30,
     str=5, dmg=2, tec=4, vit=2, agi=8, lck=8,
-    slist=["sneak"], acted=False, defending=False, weak=[], exp=0, init=0,
+    acted=False, defending=False, weak=[], resist = [], exp=0, init=0, skillpts= 0, perkpts= 0,
     equip={
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
-    "Accessory 2":None})
+    "Accessory 2":None},
+    slist={"sneak": 1,
+           "decoy": 1,
+           "hunt": 1})
 
 charTemplate = Character(
     name="Name", char_class="Class", race = None,
     level=1, maxhp=10, hp=10, maxtp=10, tp=10,
     str=1, dmg=1, tec=1, vit=1, agi=1, lck=1,
-    slist=[], acted=False, defending=False, weak=[], exp=0, init=0,
+    acted=False, defending=False, weak=[], resist=[], exp=0, init=0, skillpts=0, perkpts=0,
     equip={
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
-    "Accessory 2":None})
+    "Accessory 2":None},
+    slist={})
 
 
-character_roster = [drav, dan, mars, eck]
+character_roster = []
 
 elem = ["phys","fire","wind","earth","ice","thunder","toxic","decay","chaos","death"]
 
 party = [drav,dan,mars,eck]
-party_money = 0
+party_money = 100
 
 cancelterms = ["no","back","cancel","return","quit"]
 
@@ -255,6 +270,7 @@ def levelUpChar(char):
     char.vit += class_choice.improv[4]
     char.agi += class_choice.improv[5]
     char.lck += class_choice.improv[6]
+    char.dmg += class_choice.improv[7]
 
 
     while choice_made == False:
@@ -375,16 +391,16 @@ def createCharacter():
         name = choice_name, char_class = character_classes[choice_class], race = character_races[choice_race],
         maxhp = character_classes[choice_class].hp * 10, hp = character_classes[choice_class].hp * 10 , maxtp = character_classes[choice_class].tp * 10, tp = character_classes[choice_class].tp * 10,
         str = character_classes[choice_class].str, dmg = character_classes[choice_class].dmg, tec = character_classes[choice_class].tec, vit = character_classes[choice_class].vit, agi = character_classes[choice_class].agi, lck = character_classes[choice_class].lck,
-        slist = [], acted = False, defending = False, weak = [], level = 1, exp = 0, init = 0,
+        slist = [], acted = False, defending = False, weak = [], resist= [], level = 1, exp = 0, init = 0,
         equip = {
-            "Weapon":None,
-            "Armor":None,
+            "Weapon":weapon1,
+            "Armor":armor1,
             "Accessory 1":None,
             "Accessory 2":None})
     
     if newchar is not None:
         if newchar.race == r_human:
-            randomstat = random.choice["str","tec","vit","agi","lck"]
+            randomstat = random.choice(["str","tec","vit","agi","lck"])
             if randomstat == "str":
                 newchar.str += 1
             elif randomstat == "tec":
@@ -427,8 +443,135 @@ def createCharacter():
     else:
         character_roster.append(copy.deepcopy(newchar))
         input(f"Character {newchar.name} has been added to the roster. Type anything to continue.  ")
-        return
+        return newchar
     pass
+
+def checkRoster():
+    global party_money
+    checkingroster = True
+
+    while checkingroster:
+        os.system("cls")
+        print ("ROSTER")
+        for index, char in enumerate(character_roster):
+            print (f"({character_roster.index(char)}) {char.name}: a {char.race.name} {char.char_class.name}.")
+
+        print ("\nPARTY")
+        for index, char in enumerate(party):
+            print (f"({party.index(char)}) {char.name}: a {char.race.name} {char.char_class.name}.")
+
+        choice = input("\nDo you want to (I)nspect a character, (D)ismiss a Vagranteer, (A)dd or (R)emove from party, (T)rain Perks, or (Q)uit?").lower()
+
+        if choice in ("d"):
+            choice_roster = input("What character do you want to permanently remove from the Roster?")
+
+            try:
+                choice_roster = int(choice_roster)
+            except ValueError:
+                choice_roster = None
+
+            if choice_roster is not None:
+                if choice_roster in range (len(character_roster)):
+                    char = character_roster[choice_roster]
+                    choice = input (f"This will PERMANENTLY remove {char.name} from the Roster. They will be lost forever.\nDo you want to continue? Y/N  ")
+
+                    if choice in ("y"):
+                        if char.hp > 0:
+                            party_money += char.level*5
+                            print(f"{char.name} part ways. They leave behind {char.level*5} Cr as a token of good-will.")
+                        else:
+                            print(f"{char.name}'s body is sent back to their family.")
+
+                        character_roster.remove(character_roster[choice_roster])
+
+        if choice in ("i"):
+
+            choice_type = input("(R)oster or (P)arty?  ").lower()
+
+            if choice_type in ("r"):
+
+                choice_roster = input("Which character from the Roster?")
+
+                try:
+                    choice_roster = int(choice_roster)
+                except ValueError:
+                    choice_roster = None
+
+                if choice_roster is not None:
+                    if int(choice_roster) in range (len(character_roster)):
+
+                        char = character_roster[int(choice_roster)]
+
+                        print(f"\n{char.name}'s Status\n Race: {char.race.name} / Class: {char.char_class.name} / Level: {char.level} ({round(char.exp)} / {round(char.level*1000)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)} // TP: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {int(char.dmg)}) / TEC: {math.floor(char.tec)} / VIT: {math.floor(char.vit)} / AGI: {math.floor(char.agi)} / LCK: {math.floor(char.lck)}")
+                        from CombatSystem import fetchSkills
+                        fetchSkills(char)
+                        input ("Press anything to continue.")
+            
+            elif choice_type in ("p"):
+
+                choice_party = input("Which character from the Party?")
+
+                try:
+                    choice_party = int(choice_party)
+                except ValueError:
+                    choice_party = None
+
+                if choice_party is not None:
+                    if int(choice_party) in range (len(party)):
+
+                        char = party[choice_party]
+
+                        print(f"\n{char.name}'s Status\n Race: {char.race.name} / Class: {char.char_class.name} / Level: {char.level} ({round(char.exp)} / {round(char.level*1000)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)} // TP: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {int(char.dmg)}) / TEC: {math.floor(char.tec)} / VIT: {math.floor(char.vit)} / AGI: {math.floor(char.agi)} / LCK: {math.floor(char.lck)}")
+                        from CombatSystem import fetchSkills
+                        fetchSkills(char)
+                        input ("Press anything to continue.")
+
+        if choice in ("a"):
+            choice_roster = None
+            if len(party) >= 4:
+                print("The party is full already. Please remove vagranteers before adding more.")
+                input ("Press anything to continue")
+            else:
+                choice_roster = input("Add which character from the Roster?")
+
+                try:
+                    choice_roster = int(choice_roster)
+                except ValueError:
+                    choice_roster = None
+
+
+                if choice_roster is not None:
+                    party.append(character_roster[choice_roster])
+                    character_roster.remove(character_roster[choice_roster])
+
+        if choice in ("r"):
+            choice_party = None
+            if len(party) < 1:
+                print("The party is empty.")
+                input ("Press anything to continue")
+            else:
+                choice_party = input("Remove which character from the Party?")
+
+                try:
+                    choice_party = int(choice_party)
+                except ValueError:
+                    choice_party = None
+
+
+                if choice_party is not None:
+                    character_roster.append(party[choice_party])
+                    party.remove(party[choice_party])
+
+
+        if choice in ("t"):
+            
+            managePerks()
+
+        if choice in ("q"):
+            if len(party) <= 0:
+                input ("Party can't be empty. Press anything to continue.")
+            elif len(party) >= 1:
+                checkingroster = False
 
 def runRoster():
     testing_characters = True
@@ -441,19 +584,7 @@ def runRoster():
 
         if command in ["r", "roster"]:
 
-            for index, char in enumerate(character_roster):
-                print (f"({character_roster.index(char)}) {char.name}: a {char.race.name} {char.char_class.name}.")
-
-            choice_roster = input("Inspect any character further?")
-
-            if int(choice_roster) in range (len(character_roster)):
-
-                char = character_roster[int(choice_roster)]
-
-                print(f"\n{char.name}'s Status\n Race: {char.race.name} / Class: {char.char_class.name} / Level: {char.level} ({round(char.exp)} / {round(char.level*200*1.5)} EXP)\n HP: {math.floor(char.hp)} / {math.floor(char.maxhp)} // TP: {math.floor(char.tp)} / {math.floor(char.maxtp)}\n STR: {math.floor(char.str)} (DMG: {char.dmg}) / TEC: {math.floor(char.tec)} / VIT: {math.floor(char.vit)} / AGI: {math.floor(char.agi)} / LCK: {math.floor(char.lck)}\n")
-
-            else:
-                pass
+            checkRoster()
             
         elif command in ["n","new"]:
 
@@ -461,6 +592,186 @@ def runRoster():
 
         elif command in ["q", "quit"]:
             testing_characters = False
+
+def managePerks():
+    m_perks = True
+    
+    while m_perks:
+        os.system("cls")
+        
+        print ("\nPARTY")
+        for index, char in enumerate(party):
+            print (f"({party.index(char)}) {char.name}: a {char.race.name} {char.char_class.name}.")
+
+        choice_party = None
+        choice_party = input("\nManage the Skills/Perks of which Character? (Q)uit to return.  ")
+
+        if choice_party in ("q"):
+            m_perks = False
+
+        try:
+            choice_party = int(choice_party)
+        except ValueError:
+            choice_party = None
+
+        if choice_party is not None:
+            char = party[choice_party]
+
+            choice = input("Manage (S)kills or (P)erks?").lower()
+
+            if choice in ("s"):
+                if char is not None:
+                    print (f"{char.name} has {char.skillpts} skill points and {char.perkpts} perk points.\n")
+                    for n in char.slist:
+                        print (f"{n.upper()}, Skill Level {char.slist[n]}")
+
+                    keys = char.slist.keys()
+                    choice = input("What skill you want to inspect and improve? Type the name of skill or (Q) to quit.  ").lower()
+
+                    # try:
+                    #     choice = int(choice)
+                    # except ValueError:
+                    #     choice = None
+
+                    if choice in ("q"):
+                        pass
+
+                    elif choice is not None and choice in keys:
+                        skill_level = char.slist[choice]
+
+                        if choice in ("firo","tera","gelo","gale","veno","volt","nuke"):
+                            
+                            descriptor = (f"\n{choice.upper()} (Level: {skill_level}) is a skill that causes weak elemental damage.\n")
+                            if char.char_class == arcanist:
+                                if skill_level <2:
+                                    descriptor += (f" At Level 2 you learn GRUN{choice.upper()}, which affects all enemies.\n")
+                                if skill_level <3:
+                                    descriptor += (f" At Level 3 you learn {choice.upper()}MOR, which causes medium elemental damage.\n")
+                                if skill_level <4:
+                                    descriptor += (f" At Level 4 you learn GRUN{choice.upper()}MOR, which causes medium elemental damage to all enemies.\n")
+                                if skill_level <5:
+                                    descriptor += (f" At Level 5 you learn {choice.upper()}MATHA, which causes heavy elemental damage.\n")
+                                if skill_level <6:
+                                    descriptor += (f" At Level 6 you learn GRUN{choice.upper()}MATHA, which causes heavy elemental damage to all enemies.")
+                            elif char.char_class == herald or char.char_class == thaumaturge:
+                                if skill_level <3:
+                                    descriptor += (f" At Level 3 you learn GRUN{choice.upper()}, which affects all enemies.\n")
+                                if skill_level <4:
+                                    descriptor += (f" At Level 4 you learn {choice.upper()}MOR, which causes medium elemental damage.\n")
+                                if skill_level <6:
+                                    descriptor += (f" At Level 6 you learn GRUN{choice.upper()}MOR, which causes medium elemental damage to all enemies.\n")
+                                if skill_level <7:
+                                    descriptor += (f" At Level 7 you learn {choice.upper()}MATHA, which causes heavy elemental damage.\n")
+                                if skill_level <9:
+                                    descriptor += (f" At Level 9 you learn GRUN{choice.upper()}MATHA, which causes heavy elemental damage to all enemies.")
+                            
+                            print (descriptor)
+                            choice_final = input("Spend 1 skill point to level up this skill? (Y/N)  ").lower()
+                            
+                            if choice_final in ("y"):
+                                if char.skillpts >0:
+                                    char.slist[choice] += 1
+                                    char.skillpts -= 1
+
+                                    if char.char_class == arcanist:
+                                        if char.slist[choice] >= 2:
+                                            char.slist[f"grun{choice.lower()}"] = char.slist[choice]
+                                        if char.slist[choice] >= 3:
+                                            char.slist[f"{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 4:
+                                            char.slist[f"grun{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 5:
+                                            char.slist[f"{choice.lower()}matha"] = char.slist[choice]
+                                        if char.slist[choice] >= 6:
+                                            char.slist[f"grun{choice.lower()}matha"] = char.slist[choice]
+
+                                    elif char.char_class == herald or char.char_class == thaumaturge:
+                                        if char.slist[choice] >= 3:
+                                            char.slist[f"grun{choice.lower()}"] = char.slist[choice]
+                                        if char.slist[choice] >= 4:
+                                            char.slist[f"{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 6:
+                                            char.slist[f"grun{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 7:
+                                            char.slist[f"{choice.lower()}matha"] = char.slist[choice]
+                                        if char.slist[choice] >= 9:
+                                            char.slist[f"grun{choice.lower()}matha"] = char.slist[choice]
+                                    pass
+                                else:
+                                    input ("You don't have enough skill points. Press anything to continue")
+                            else:
+                                pass
+
+
+                        if choice in ("cura"):
+                            
+                            descriptor = (f"\n{choice.upper()} (Level: {skill_level}) is a skill that heals a light amount of damage.\n")
+                            
+                            if char.char_class == thaumaturge:
+                                if skill_level <2:
+                                    descriptor += (f" At Level 2 you learn GRUN{choice.upper()}, which affects all allies.\n")
+                                if skill_level <3:
+                                    descriptor += (f" At Level 3 you learn {choice.upper()}MOR, which heals a medium amount of damage.\n")
+                                if skill_level <4:
+                                    descriptor += (f" At Level 4 you learn GRUN{choice.upper()}MOR, which heals a medium amount of damage to all allies.\n")
+                                if skill_level <5:
+                                    descriptor += (f" At Level 5 you learn {choice.upper()}MATHA, which heals a heavy amount of damage.\n")
+                                if skill_level <6:
+                                    descriptor += (f" At Level 6 you learn GRUN{choice.upper()}MATHA, which heals a heavy amount of damage to all allies.")
+                            elif char.char_class == herald:
+                                if skill_level <3:
+                                    descriptor += (f" At Level 3 you learn GRUN{choice.upper()}, which affects all allies.\n")
+                                if skill_level <4:
+                                    descriptor += (f" At Level 4 you learn {choice.upper()}MOR, which heals a medium amount of damage.\n")
+                                if skill_level <6:
+                                    descriptor += (f" At Level 6 you learn GRUN{choice.upper()}MOR, which heals a medium amount of damage to all allies.\n")
+                                if skill_level <7:
+                                    descriptor += (f" At Level 7 you learn {choice.upper()}MATHA, which heals a heavy amount of damage.\n")
+                                if skill_level <9:
+                                    descriptor += (f" At Level 9 you learn GRUN{choice.upper()}MATHA, which heals a heavy amount of damage to all allies.")
+                            
+                            print (descriptor)
+                            choice_final = input("Spend 1 skill point to level up this skill? (Y/N)  ").lower()
+                            
+                            if choice_final in ("y"):
+                                if char.skillpts >0:
+                                    char.slist[choice] += 1
+                                    char.skillpts -= 1
+
+                                    if char.char_class == arcanist:
+                                        if char.slist[choice] >= 2:
+                                            char.slist[f"grun{choice.lower()}"] = char.slist[choice]
+                                        if char.slist[choice] >= 3:
+                                            char.slist[f"{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 4:
+                                            char.slist[f"grun{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 5:
+                                            char.slist[f"{choice.lower()}matha"] = char.slist[choice]
+                                        if char.slist[choice] >= 6:
+                                            char.slist[f"grun{choice.lower()}matha"] = char.slist[choice]
+
+                                    elif char.char_class == herald:
+                                        if char.slist[choice] >= 3:
+                                            char.slist[f"grun{choice.lower()}"] = char.slist[choice]
+                                        if char.slist[choice] >= 4:
+                                            char.slist[f"{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 6:
+                                            char.slist[f"grun{choice.lower()}mor"] = char.slist[choice]
+                                        if char.slist[choice] >= 7:
+                                            char.slist[f"{choice.lower()}matha"] = char.slist[choice]
+                                        if char.slist[choice] >= 9:
+                                            char.slist[f"grun{choice.lower()}matha"] = char.slist[choice]
+                                    pass
+                                else:
+                                    input ("You don't have enough skill points. Press anything to continue")
+
+                        # if skill in ("enha","enfe","revita"):
+
+            if choice in ("p"):
+                if char.perkpts <= 0:
+                    input ("You have no Perk points to spend. Type anything to continue. ")
+        
+            pass
 
 
 # TESTING

@@ -51,7 +51,7 @@ cclasses = CharacterSystem.character_classes
     3: earth
     4: ice
     5: thunder
-    6: toxin
+    6: toxic
 """
 
 elem = ["phys","fire","wind","earth","ice","thunder","toxic","decay","chaos","death"]
@@ -153,8 +153,12 @@ def attackfunc(attacker,target):
 
     if finaldamage > 0:
         if "phys" in target.weak:
-            finaldamage = finaldamage * 2
+            finaldamage = finaldamage * 1.5
             print (f"{attacker.name} attacks {target.name}, who's weak to Physical attacks for {finaldamage} damage!")
+
+        elif "phys" in target.resist:
+            finaldamage = int(finaldamage * 0.5)
+            print (f"{attacker.name} attacks {target.name}, who's resistant to Physical attacks for {finaldamage} damage!")
 
         elif target.defending == True:
             finaldamage = finaldamage // 2
@@ -184,55 +188,90 @@ def attackfunc(attacker,target):
 
 def fetchSkills(char):
     
-    availableskills = f"{char.name} knows:\n"
+    spellchart = {
+        "firo": "fire",
+        "gelo": "ice",
+        "gale": "wind",
+        "tera": "earth",
+        "volt": "thunder",
+        "veno": "toxic",
+        "nuke": "chaos"
+        }
+
+    availableskills = ""
+    availableskills_sup = ""
+    availableskills_phys = ""
+    print (f"\n{char.name} knows:")
 
     # FOR loop / For "X" in spell, print an f-string with proper names
 
-    availableskills += "ELEM Techniques\n"
+    for element in ["firo", "gelo", "gale", "tera", "volt", "veno", "nuke"]:
+        if element in char.slist:
+            availableskills += f" {element.upper()} (weak {spellchart[element]} damage to one target // 4 TP)\n"
+        
+        if f"grun{element}" in char.slist:
+            availableskills += f" GRUN{element.upper()} (weak {spellchart[element]} damage to all targets // 10 TP)\n"
+        if f"{element}mor" in char.slist:
+            availableskills += f" {element.upper()}MOR (medium {spellchart[element]} damage to one target // 8 TP)\n"
+        if f"grun{element}mor" in char.slist:
+            availableskills += f" GRUN{element.upper()}MOR (medium {spellchart[element]} damage to all targets // 16 TP)\n"
+        if f"{element}matha" in char.slist:
+            availableskills += f" {element.upper()}MATHA (heavy {spellchart[element]} damage to one target // 12 TP)\n"
+        if f"grun{element}matha" in char.slist:
+            availableskills += f" GRUN{element.upper()}MATHA (heavy {spellchart[element]} damage to all targets // 22 TP)\n"
 
-    if "firo" in char.slist:
-        availableskills += " FIRO (weak fire damage to one target // 4 TP)\n"
-    if "grunfiro" in char.slist:
-        availableskills += " GRUNFIRO (weak fire damage to all targets // 10 TP)\n"
-    if "firomor" in char.slist:
-        availableskills += " FIROMOR (medium fire damage to one target // 8 TP)\n"
-    if "grunfiromor" in char.slist:
-        availableskills += " GRUNFIROMOR (medium fire damage to all targets // 16 TP)\n"
-    if "firomatha" in char.slist:
-        availableskills += " FIROMATHA (heavy fire damage to one target // 12 TP)\n"
-    if "grunfiromatha" in char.slist:
-        availableskills += " GRUNFIROMATHA (heavy fire damage to all targets // 22 TP)\n"
+    if availableskills != "":
+        print ("ELEMENTAL skills")
+        print (availableskills)
+
+    # if "firo" in char.slist:
+    #     availableskills += " FIRO (weak fire damage to one target // 4 TP)\n"
+    # if "grunfiro" in char.slist:
+    #     availableskills += " GRUNFIRO (weak fire damage to all targets // 10 TP)\n"
+    # if "firomor" in char.slist:
+    #     availableskills += " FIROMOR (medium fire damage to one target // 8 TP)\n"
+    # if "grunfiromor" in char.slist:
+    #     availableskills += " GRUNFIROMOR (medium fire damage to all targets // 16 TP)\n"
+    # if "firomatha" in char.slist:
+    #     availableskills += " FIROMATHA (heavy fire damage to one target // 12 TP)\n"
+    # if "grunfiromatha" in char.slist:
+    #     availableskills += " GRUNFIROMATHA (heavy fire damage to all targets // 22 TP)\n"
     
     if "cura" in char.slist:
-        availableskills += " CURA (Restores a low amount of HP to one ally // 3 TP)\n"
+        availableskills_sup += " CURA (Restores a low amount of HP to one ally // 3 TP)\n"
     if "gruncura" in char.slist:
-        availableskills += " GRUNCURA (Restores a low amount of HP to all allies // 7 TP)\n"
+        availableskills_sup += " GRUNCURA (Restores a low amount of HP to all allies // 7 TP)\n"
     if "curamor" in char.slist:
-        availableskills += " CURAMOR (Restores a medium amount of HP to one ally // 7 TP)\n"
+        availableskills_sup += " CURAMOR (Restores a medium amount of HP to one ally // 7 TP)\n"
     if "gruncuramor" in char.slist:
-        availableskills += " GRUNCURAMOR (Restores a low amount of HP to all allies // 12 TP)\n"
+        availableskills_sup += " GRUNCURAMOR (Restores a low amount of HP to all allies // 12 TP)\n"
     if "curamatha" in char.slist:
-        availableskills += " CURA (Fully restores HP to one ally // 18 TP)\n"
+        availableskills_sup += " CURA (Fully restores HP to one ally // 18 TP)\n"
     if "gruncuramatha" in char.slist:
-        availableskills += " GRUNCURA (Fully restores HP to all allies // 30 TP)\n"
+        availableskills_sup += " GRUNCURA (Fully restores HP to all allies // 30 TP)\n"
 
     
     if "revita" in char.slist:
-        availableskills += f" REVITA (Revives a fallen ally with 30\% of HP)\n"
+        availableskills_sup += f" REVITA (Revives a fallen ally with 30% of HP // 7 TP)\n"
+    if "revitamor" in char.slist:
+        availableskills_sup += f" REVITAMOR (Revives a fallen ally with 60% of HP // 10 TP)\n"
 
-    availableskills += "PHYS Skills\n"
+    if availableskills_sup != "":
+        print("SUPPORT Skills")
+        print(availableskills_sup)
 
     if "charge" in char.slist:
-        availableskills += f" CHARGE (Attacks one enemy up to three times // {round(char.maxhp*0.15)} HP)\n"
+        availableskills_phys += f" CHARGE (Attacks one enemy up to three times // {round(char.maxhp*0.15)} HP)\n"
 
     if "cleave" in char.slist:
-        availableskills += f" CLEAVE (Attack random enemies up to five times // {round(char.maxhp*0.20)} HP and 3 TP)\n"
+        availableskills_phys += f" CLEAVE (Attack random enemies up to five times // {round(char.maxhp*0.20)} HP and 4 TP)\n"
 
     if "sneak" in char.slist:
-        availableskills += f" SNEAK (Attacks one enemy with increased damage and crit chance // 3 TP)\n"
+        availableskills_phys += f" SNEAK (Attacks one enemy with increased damage and crit chance // 4 TP)\n"
     
-
-    print (availableskills)
+    if availableskills_phys != "":
+        print("PHYSICAL Skills")
+        print(availableskills_phys)
 
 
 def command(char):
@@ -831,7 +870,10 @@ def updatecombatlist():
     print ("") #spacer
     print ("Party:") #spacer
     for n in party:
-        print (f"({party.index(n)}) {n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} /// TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
+        if n.hp <= 0:
+            print (f"({party.index(n)}) {BG_RED}{n.name}{RESET}'s HP: DEAD/{math.floor(n.maxhp)} // TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
+        else:
+            print (f"({party.index(n)}) {n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} // TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
     print ("") #spacer
     print ("Opposition") #spacer
     for n in opposition:
@@ -1010,9 +1052,15 @@ def dealspelldamage(char,starget,dmgtype,spelldamage):
         if dmgtype in starget.weak:
             spelldamage = round(spelldamage * (1.5 + math.sqrt(char.tec)/10+1))
             print (f"{starget.name} is weak to {dmgtype} and suffered {spelldamage} {dmgtype} damage!")
+        
         elif starget.defending == True:
             spelldamage = round(spelldamage * (math.sqrt(char.tec)/10+1))//2
             print (f"{starget.name} was defending and suffered only {spelldamage} {dmgtype} damage.")
+
+        elif dmgtype in starget.resist:
+            spelldamage = round(spelldamage * (math.sqrt(char.tec)/10+1)//1.5)
+            print (f"{starget.name} is resistant to {dmgtype} and suffers only {spelldamage} {dmgtype} damage.")
+
         else:
             print (f"{starget.name} suffered {spelldamage} {dmgtype} damage.")
         starget.hp -= spelldamage
@@ -1295,19 +1343,7 @@ def runCombat():
             # break
 
         rounds += 1
-        print (f"Round {rounds}")
-        print ("") #spacer
-        print ("Party:") #spacer
-        for n in party:
-            print (f"({party.index(n)}) {n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} /// TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
-        print ("") #spacer
-        print ("Opposition") #spacer
-        for n in opposition:
-            print (f"({opposition.index(n)}) Level {n.level} {n.name}'s HP is {round(n.hp/n.maxhp*100)}%")
-        print ("") #spacer
-
-        initnames = ", ".join(str(n.name) for n in initiative)
-        print (f"Turn order: {initnames}")
+        updatecombatlist()
         
         print ("") #spacer
 

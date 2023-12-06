@@ -33,7 +33,7 @@ class EnemyType():
 defaultEnemy = Enemy(
     name = "Enemy", level = 1, maxhp=1, hp = 1, tp = 1,
     str = 1, dmg = 1, tec = 1, vit = 1, agi = 1, lck = 1,
-    defending=False,weak=[],exp=0,money=0,init=0
+    defending=False,weak=[],resist=[],exp=0,money=0,init=0
     )
 
 enemylist = []
@@ -60,8 +60,9 @@ def generateEnemy(type, leveltogen):
                 agi = random.randint(3,9),
                 impagi = random.randint(1,6),
                 lck = random.randint(3,9),
-                implck = random.randint(1,6)
+                implck = random.randint(1,6),
                 )
+        money = random.randint(2,8)
 
     if type == "Sgeu":
         model = EnemyType(
@@ -83,6 +84,7 @@ def generateEnemy(type, leveltogen):
                 lck = random.randint(3,18),
                 implck = random.randint(1,6)
                 )
+        money = random.randint(5,15)
 
     if type == "Diogh":
         model = EnemyType(
@@ -104,6 +106,7 @@ def generateEnemy(type, leveltogen):
                 lck = random.randint(1,6),
                 implck = random.randint(1,4)
                 )
+        money = random.randint(10,20)
 
     if type == "Colt":
         model = EnemyType(
@@ -125,6 +128,7 @@ def generateEnemy(type, leveltogen):
                 lck = random.randint(2,12),
                 implck = random.randint(1,6)
                 )
+        money = random.randint(15,25)
 
     if type == "Adhbah":
         model = EnemyType(
@@ -146,6 +150,7 @@ def generateEnemy(type, leveltogen):
                 lck = random.randint(2,12),
                 implck = random.randint(1,6)
                 )
+        money = random.randint(5,15)
 
     if type == "Grain":
         model = EnemyType(
@@ -167,19 +172,19 @@ def generateEnemy(type, leveltogen):
                 lck = random.randint(2,12),
                 implck = random.randint(1,6)
                 )
-
+        money = random.randint(10,20)
 
     if type == "Laidir":
         model = EnemyType(
                 name = "Laidir",
-                hp = round (300 * (random.random()/2 + 0.75)),
-                imphp = round((150 * (random.random()/2 + 0.75)) * 0.55),
+                hp = round (400 * (random.random()/2 + 0.75)),
+                imphp = round((200 * (random.random()/2 + 0.75)) * 0.55),
                 tp = 20,
                 imptp = 10,
                 str = random.randint(15,20),
                 impstr = random.randint(5,8),
-                tec = random.randint(12,15),
-                imptec = random.randint(5,8),
+                tec = random.randint(8,12),
+                imptec = random.randint(2,6),
                 dmg = 3,
                 impdmg = 1/2,
                 vit = random.randint(12,15),
@@ -189,7 +194,7 @@ def generateEnemy(type, leveltogen):
                 lck = random.randint(6,12),
                 implck = random.randint(1,6)
                 )
-
+        money = random.randint(80,150)
 
     if leveltogen is not None:
         if leveltogen == 0:
@@ -216,6 +221,7 @@ def generateEnemy(type, leveltogen):
     new.vit = model.vit + (leveltogen * model.impvit)
     new.agi = model.agi + (leveltogen * model.impagi)
     new.lck = model.lck + (leveltogen * model.implck)
+    new.money = money * (leveltogen + 1)
 
     enemylist.append(new)
 
@@ -249,17 +255,17 @@ def runGenerator():
     for n in range(int(gen_levels)):
         for _ in range(int(gen_times)):
             if gen_type == "Random":
-                entype = random.choice(["Malla","Sgeu","Diogh","Colt","Adhbah","Grain"])
+                entype = random.choice(["Malla","Sgeu","Diogh","Colt","Adhbah","Grain","Laidir"])
             generateEnemy(entype, n)
 
     for n in enemylist:
-        print(f"Level {n.level} {n.name} // HP: {n.hp} / TP: {n.tp} // STR: {n.str} (DMG: {int(n.dmg)}) / TEC: {n.tec} / VIT: {n.vit} / AGI: {n.agi} / LCK: {n.lck} // DMG pot. PHYS: {round((math.sqrt(n.str)/10+1) * 2.5 * n.str + n.str)} / ELEM: {round((math.sqrt(n.tec)/10+1) * 5 * n.tec)}")
+        print(f"Level {n.level} {n.name} // HP: {n.hp} / TP: {n.tp} // STR: {n.str} (DMG: {int(n.dmg)}) / TEC: {n.tec} / VIT: {n.vit} / AGI: {n.agi} / LCK: {n.lck} // DMG pot. PHYS: {round((math.sqrt(n.str)/10+1) * 2.5 * n.str + n.str)} / ELEM: {round((math.sqrt(n.tec)/10+1) * 5 * n.tec)} / Money: {n.money}")
 
         # dmg = round((math.sqrt(n.str)/10+1) * 2.5 + n.str)
 
 
 
 #TEST
-runGenerator()
+# runGenerator()
 
 ###

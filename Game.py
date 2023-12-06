@@ -21,7 +21,9 @@ def startGame():
             break
 
         os.system("cls")
-        DungeonCrawl.exploreDungeon()
+        # DungeonCrawl.exploreDungeon()
+        from TownSystem import runTown
+        runTown()
 
 startGame()
 

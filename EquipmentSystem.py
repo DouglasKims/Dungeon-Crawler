@@ -1,63 +1,105 @@
 import math
 import os
 import copy
-import CombatSystem
+
+
+BLACK = "\033[30m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN = "\033[36m"
+WHITE = "\033[37m"
+RESET = "\033[0m"  # Reset to default color
+
+# Bright versions
+BRIGHT_BLACK = "\033[90m"
+BRIGHT_RED = "\033[91m"
+BRIGHT_GREEN = "\033[92m"
+BRIGHT_YELLOW = "\033[93m"
+BRIGHT_BLUE = "\033[94m"
+BRIGHT_MAGENTA = "\033[95m"
+BRIGHT_CYAN = "\033[96m"
+BRIGHT_WHITE = "\033[97m"
+
+# Background colors (add 10 to the color code)
+BG_BLACK = "\033[40m"
+BG_RED = "\033[41m"
+BG_GREEN = "\033[42m"
+BG_YELLOW = "\033[43m"
+BG_BLUE = "\033[44m"
+BG_MAGENTA = "\033[45m"
+BG_CYAN = "\033[46m"
+BG_WHITE = "\033[47m"
 
 
 # LOGIC
 
 class Equipment():
-    def __init__(self,name,type,level,special,str,dmg,vit,weak,resist, value):
+    def __init__(self,name,type,level,special,str,dmg,vit,tec,agi,lck,weak,resist,value,lore):
         self.name = name
         self.type = type
         self.level = level
         self.special = special
         self.str = str
         self.dmg = dmg
+        self.tec = tec
         self.vit = vit
+        self.agi = agi
+        self.lck = lck
         self.weak = weak
         self.resist = resist
         self.value = value
+        self.lore = lore
 
 class Consumable():
-    def __init__(self, name, type, effect, value):
+    def __init__(self, name, type, lore, value):
         self.name = name
         self.type = type
-        self.effect = effect
+        self.lore = lore
         self.value = value
 
 # Equip types: Armor, Weapon, Accessory
 
-armor1 = Equipment("Leather Armor","Armor",1,None,0,0,1,None,None,100)
-armor2 = Equipment("Chain Mail","Armor",1,None,0,0,3,None,None,250)
-weapon1 = Equipment("Battle Axe","Weapon",1,None,1,1,0,None,None,100)
-weapon2 = Equipment("Vicious Blade","Weapon",1,None,0,2,0,None,None,500)
-weapon5 = Equipment("Longsword +1","Weapon",2,"Dmg +",2,2,0,None,None,1500)
-weapon6 = Equipment("Longsword +2","Weapon",3,"Dmg ++",3,3,0,None,None,5000)
-access1 = Equipment("Shield","Accessory",1,None,-1,0,5,None,None,300)
-access2 = Equipment("Magic Ring","Accessory",1,"tec+",0,0,1,None,None,700)
+armor1 = Equipment("Cloth Armor","Armor",1,None,str=0,dmg=0,tec=0,vit=1,agi=1,lck=0,weak=None,resist=None,value=20,
+                   lore="Simple armor that provides minimal protection to wearer, but allows good freedom of movement.")
+armor2 = Equipment("Chain Mail","Armor",1,None,str=0,dmg=0,tec=0,vit=2,agi=0,lck=0,weak=None,resist=None,value=50,
+                   lore="Simple armor that offers decent protection, but too heavy for the untrained to wear.")
+weapon1 = Equipment("Simple Blade","Weapon",1,None,str=1,dmg=0,tec=0,vit=0,agi=0,lck=0,weak=None,resist=None,value=10,
+                    lore="Simple weapon that offers basic means of offense and wieldy enough for anyone to use.")
+weapon2 = Equipment("Sturdy Branch","Weapon",1,None,str=0,dmg=0,tec=1,vit=0,agi=0,lck=0,weak=None,resist=None,value=20,
+                    lore="An ordinary tree branch inscribed with runes to facilitate the use of techniques in combat.")
+weapon3 = Equipment("Sharpened Blade","Weapon",1,None,str=3,dmg=1,tec=0,vit=0,agi=0,lck=0,weak=None,resist=None,value=80,
+                    lore="A weapon made to inflict grievous wounds and shorten the duration of battles.")
+acc1 = Equipment("Round Shield","Accessory",1,None,str=-2,dmg=0,tec=0,vit=2,agi=-1,lck=0,weak=None,resist=None,value=30,
+                    lore="A large pot lid repurposed into a shield. Not the sturdiest, but can still deflect some blows.")
+acc2 = Equipment("Focus Ring","Accessory",1,None,str=0,dmg=0,tec=1,vit=0,agi=0,lck=0,weak=None,resist=None,value=50,
+                    lore="A ring inscribed with runes that assists the wielder in remembering techniques in combat.")
+acc3 = Equipment("Lucky Charm","Accessory",1,None,str=0,dmg=0,tec=0,vit=0,agi=0,lck=1,weak=None,resist=None,value=50,
+                    lore="An amulet decorated with symbols of luck, said to work even for non-believers.")
+acc4 = Equipment("Fire Ring","Accessory",1,None,str=0,dmg=0,tec=0,vit=0,agi=0,lck=0,weak=None,resist=["fire"],value=50,
+                    lore="A charred and blackened ring that increases the user's protection to fire.")
 
-item1 = Consumable("Healing Draught","Healing","Heal 30 HP",50)
-item2 = Consumable("Invigorating Tonic","Healing","Heal 15 tp",200)
-item3 = Consumable("Charged Memento","Reviving","Revives with 25% HP", 200)
+item1 = Consumable("Healing Draught","Healing","Heal 30 HP",10)
+item2 = Consumable("Invigorating Tonic","Healing","Heal 15 tp",50)
+item3 = Consumable("Charged Memento","Reviving","Revives with 25% HP", 50)
+item4 = Consumable("Rations","Rest","Eating these in a safe place will recover half HP and TP to the party.", 50)
+item5 = Consumable("Urn of Ret","Return","Breaking this urn releases the magical powder that returns the party to town.", 50)
+
+# SHOP STOCK
+shop_stock = [armor1, armor2,weapon1,weapon2,acc1,acc2,acc3,acc4,item1,item2,item3,item4,item5]
 
 # EQUIPMENT
 inventory = []
-# inventory.append(copy.deepcopy(armor1))
-# inventory.append(copy.deepcopy(armor2))
-# inventory.append(copy.deepcopy(weapon1))
-# inventory.append(copy.deepcopy(access1))
 
 # CONSUMABLES
 consumables = []
-# for n in range(3):
-#     consumables.append(copy.deepcopy(item1))
-# consumables.append(copy.deepcopy(item2))
-# consumables.append(copy.deepcopy(item3))
 
-party = CombatSystem.party
+
 
 def chooseCharacter():
+    from CharacterSystem import party as party
     print("Which Character are you managing?")
     for n in party:
         print (f"({party.index(n)}) {n.name}")
@@ -107,63 +149,25 @@ def getSkills():
     if char == None:
             print("")
             return
-    availableskills = ""
-
-    if char.char_class.name == "Knight":
-        availableskills += f"{char.name} knows these STR-based skills:\n"
-        availableskills += "    CHARGE: Attacks one opponent up to three times (costs 15% HP)\n"
-        availableskills += "    HUNT: Attacks one opponent with increased strenght and crit chance (costs 15% HP and 3 TP)\n"
-        availableskills += "    CLEAVE: Attacks random opponents up to five times (costs 25% HP)\n"
-        availableskills += "\n"
     
-    if char.char_class.name == "Scout":
-        availableskills += f"{char.name} knows these SCOUT skills:\n"
-        availableskills += "    SNEAK: Attacks one opponent with increased damage and crit chance (costs 3 TP)\n"
-        availableskills += "    HIDE: Lower odds of being targeted for remainder of fight (costs 3 TP)\n"
-
-    availableskills += f"{char.name} knows these TEC-based skills:\n"
-    if "grun" in char.slist:
-        availableskills += "    GRUN: Target multiple creatures(ally or opponents)\n"
-
-    availableskills += "    LAG: Causes Light amount of damage (4tp, 10tp if used with Grun)\n"
-    if "comas" in char.slist:
-        availableskills += "    COMAS: Causes moderate amount of damage (8tp, 16tp if used with Grun)\n"
-    if "pas" in char.slist:
-        availableskills += "    PAS: Blessings of Pasperon commands FIRE.\n"
-    if "yab" in char.slist:
-        availableskills += "    YAB: Blessings of Yabarag commands THUNDER.\n"
-    if "gaa" in char.slist:
-        availableskills += "    GAA: Blessings of Gaaphadur commands EARTH.\n"
-    if "igg" in char.slist:
-        availableskills += "    IGG: Blessings of Igglebeth commands DEATH.\n"
-    
-    availableskills += "\n"
-    availableskills += f"{char.name} knows these TEC-based Support skills:\n"
-    if "leas" in char.slist:
-        availableskills += "    LEAS: Heals an ally who's still alive.\n"
-        availableskills += "    TIN: Weak degree of restoration (3tp, 7tp if used with Grun or Igg to revive)\n"    
-    if "cruai" in char.slist:
-        availableskills += "    CRUAI: Moderate degree of restoration (7tp, 12tp if used with Grun or Igg to revive)\n"
-
-    print (availableskills)
+    from CombatSystem import fetchSkills
+    fetchSkills(char)
 
 def partyRecovery():
+    from CharacterSystem import party as party
     tpcost = 0
     totaltp = 0
     totaltpcost = 0
 
     for n in party:
         if n.hp <= 0:
-            tpcost += 5
+            tpcost += 15
             totaltp += n.tp
         elif n.hp < n.maxhp:
             tpcost += (n.hp - n.maxhp)* -1/20 + 1
             totaltp += n.tp
         else:
             totaltp += n.tp
-
-    
-    # tpcost = round(tpcost//len(CombatSystem.party))
 
     if totaltp >= tpcost:
 
@@ -220,7 +224,7 @@ def getInventory():
     
 
 def useItem(item):
-
+    from CharacterSystem import party as party
 
     if item.type == "Healing":
         iname, ipower, ieffect = item.effect.split()
@@ -351,6 +355,16 @@ def changeEquip():
 
                 char.str += wpn.str
                 char.dmg += wpn.dmg
+                char.tec += wpn.tec
+                char.vit += wpn.vit
+                char.agi += wpn.agi
+                char.lck += wpn.lck
+                if wpn.weak is not None:
+                    for n in wpn.weak:
+                        char.weak.append(n)
+                if wpn.resist is not None:
+                    for n in wpn.resist:
+                        char.resist.append(n)
             
             else:
                 print ("No weapons to equip.")
@@ -384,9 +398,18 @@ def changeEquip():
                 char.equip["Armor"] = arm
                 inventory.remove(arm)
 
+                char.str += arm.str
+                char.dmg += arm.dmg
+                char.tec += arm.tec
                 char.vit += arm.vit
-                # for n in arm.weak:
-                #     char.weak.append(n)
+                char.agi += arm.agi
+                char.lck += arm.lck
+                if arm.weak is not None:
+                    for n in arm.weak:
+                        char.weak.append(n)
+                if arm.resist is not None:
+                    for n in arm.resist:
+                        char.resist.append(n)
             
             else:
                 print ("No armor to equip.")
@@ -421,10 +444,17 @@ def changeEquip():
                 inventory.remove(acc)
 
                 char.str += acc.str
+                char.dmg += acc.dmg
+                char.tec += acc.tec
                 char.vit += acc.vit
-                for n in arm.weak:
-                    char.weak.append(n)
-                char.dmg += wpn.dmg
+                char.agi += acc.agi
+                char.lck += acc.lck
+                if acc.weak is not None:
+                    for n in acc.weak:
+                        char.weak.append(n)
+                if acc.resist is not None:
+                    for n in acc.resist:
+                        char.resist.append(n)
 
             
             else:
@@ -458,11 +488,18 @@ def changeEquip():
             inventory.remove(acc)
 
             char.str += acc.str
+            char.dmg += acc.dmg
+            char.tec += acc.tec
             char.vit += acc.vit
-            for n in arm.weak:
+            char.agi += acc.agi
+            char.lck += acc.lck
+            if acc.weak is not None:
+                for n in acc.weak:
                     char.weak.append(n)
-            char.dmg += wpn.dmg
-        
+            if acc.resist is not None:
+                for n in acc.resist:
+                    char.resist.append(n)
+    
         else:
             print ("No Accessories to equip.")
 
@@ -499,6 +536,18 @@ def removeEquip():
 
             char.str -= wpn.str
             char.dmg -= wpn.dmg
+            char.tec -= wpn.tec
+            char.vit -= wpn.vit
+            char.agi -= wpn.agi
+            char.lck -= wpn.lck
+            if wpn.weak is not None:
+                for n in wpn.weak:
+                    if n in char.weak:
+                        char.weak.remove(n)
+            if wpn.resist is not None:
+                for n in wpn.resist:
+                    if n in char.resist:
+                        char.resist.remove(n)
 
     elif slot.lower() == "a":
         
@@ -512,9 +561,19 @@ def removeEquip():
             char.equip["Armor"] = None
 
             char.str -= arm.str
+            char.dmg -= arm.dmg
+            char.tec -= arm.tec
             char.vit -= arm.vit
-            # for n in arm.weak:
-            #     char.weak.remove(n)
+            char.agi -= arm.agi
+            char.lck -= arm.lck
+            if arm.weak is not None:
+                for n in arm.weak:
+                    if n in char.weak:
+                        char.weak.remove(n)
+            if arm.resist is not None:
+                for n in arm.resist:
+                    if n in char.resist:
+                        char.resist.remove(n)
 
     elif slot.lower() == "1":
         
@@ -528,11 +587,19 @@ def removeEquip():
             char.equip["Accesory 1"] = None
 
             char.str -= acc.str
+            char.dmg -= acc.dmg
+            char.tec -= acc.tec
             char.vit -= acc.vit
-            for n in arm.weak:
-                char.weak.remove(n)
-
-            char.dmg -= wpn.dmg
+            char.agi -= acc.agi
+            char.lck -= acc.lck
+            if acc.weak is not None:
+                for n in acc.weak:
+                    if n in char.weak:
+                        char.weak.remove(n)
+            if acc.resist is not None:
+                for n in acc.resist:
+                    if n in char.resist:
+                        char.resist.remove(n)
 
     elif slot.lower() == "2":
         
@@ -546,11 +613,19 @@ def removeEquip():
             char.equip["Accesory 2"] = None
 
             char.str -= acc.str
+            char.dmg -= acc.dmg
+            char.tec -= acc.tec
             char.vit -= acc.vit
-            for n in arm.weak:
-                char.weak.remove(n)
-
-            char.dmg -= wpn.dmg
+            char.agi -= acc.agi
+            char.lck -= acc.lck
+            if acc.weak is not None:
+                for n in acc.weak:
+                    if n in char.weak:
+                        char.weak.remove(n)
+            if acc.resist is not None:
+                for n in acc.resist:
+                    if n in char.resist:
+                        char.resist.remove(n)
 
 
     pass
@@ -559,6 +634,8 @@ cancelterms = ["no","back","cancel","return","quit"]
 # GAME
 
 def runEquipment():
+    import CharacterSystem
+    from CharacterSystem import party as party
     testing_equip = True
     while testing_equip == True:
 
@@ -567,8 +644,12 @@ def runEquipment():
         # SHOW PARTY LIST
         print ("Party:") #spacer
         for n in party:
-            print (f"{n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} /// TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
+            if n.hp <= 0:
+                print (f"{BG_RED}{n.name}{RESET}'s HP: DEAD/{math.floor(n.maxhp)} // TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")    
+            else:
+                print (f"{n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} // TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
         print ("") #spacer
+        print (f"Party Funds: {CharacterSystem.party_money} Crowns\n")
 
         equip_command = input("What do you want to do? \n (E)quip \n (U)nequip \n Check (I)nventory\n Check (C)haracter's Status \n Check (S)kills \n (R)ecover HP \n or (Q)uit management\n").lower()
 

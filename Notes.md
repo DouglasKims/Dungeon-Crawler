@@ -1,6 +1,6 @@
 
 # PROJECT OVERALL
-    # Create a file just for characters and classes
+    # Create a file just for characters and classes (DONE)
 
 # PERKS
     # Every 5/10(?) levels, characters get access to new spell level/type
@@ -12,27 +12,32 @@
         # To do this, the code needs a "fieldmap" that contains the whole dungeon, but shows only where the group is at, at a 3x3/5x5 grid around the party. (doable, but requires big rewrite, however, allows for Field bosses)
 
     # Implement Doors and Objects (chests/treasure) (DONE)
+    # Implement Stairs down
+        # Implement more floors
+        # Implement enemy difficulty by floor (as well as party level)
     # Implement Rest Area
-    # Implement Merchant 
+    # Implement Merchant (?)
 
 
 # IMPLEMENT CITY (& QUESTS?)
-    # City
+    # City Tavern (DONE)
+    # City Shop (DONE) // Missing Sell items
+    # City Trainer (DONE) // Missing Perks 
 
 # COMBAT & SKILLS
-    # Rename Skills
+    # Rename Skills (DONE)
     # Use items in combat
     # Escape combat
     # create buff, debuff skills
 
     # Enemy Generator? (DONE)
-    #  Fix formulas (DONE)
+    # Fix formulas (DONE)
 
 # CLASS SKILLS
     # KNIGHT
         # SKILLS
-            # CHARGE attack 1 opp up to 3 times (lvl 1/10)
-            # CLEAVE attack random opps up to 5 times (lvl 1/10)
+            # CHARGE attack 1 opp up to 3 times (minumum increases by 1 per 2 levels)(damage increases every 3 levels)(lvl 1/10)
+            # CLEAVE attack random opps up to 5 times (mininum increases by 1 per 2 levels)(lvl 1/10)
             # PROTECT reduce damage to all by 10%/lvl (lvl 1/10)
         # PERKS
             # STR boost for one lv1 / party lv3 for lvl turns (lvl 1/5)
@@ -43,7 +48,7 @@
         # SKILLS # FP cost reduced / lvl
             # ELEMENTAL damage weak lv1 / multi lvl 3 / med lvl 5 / heavy lvl 7 (lvl 1/10)
             # HEALING weak lvl 1 / multi lvl 2 / med lvl 3 / heavy lvl 4 (lvl 1/10)
-            # REVIVE weak lvl 1 / multi lvl 3 / med lvl 5 / full lvl 7 (lvl 1/10)
+            # REVIVE weak lvl 1 / med lvl 3 / full lvl 5 / --- lvl 7 (lvl 1/10)
         # PERKS
             # Restore HP at end of combat lvl 1 / per turn lvl 3 / per step lvl 5 (lvl 1/5)
             # Healing skills restore TP as well (lvl 1/5)
@@ -128,6 +133,8 @@
     Chaos   //  Nuke
 
     Revive  //  Revita / mor / matha
+    Buff    //  Enha / st / te / vi / ag / lk 
+    Debuff  //  Enfe / st / te / vi / ag / lk
 
     Weak damage spell = 4 TP
     weak damage spell group (grun) = 10 TP

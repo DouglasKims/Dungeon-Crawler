@@ -1,7 +1,7 @@
 # ENEMY LIST
 
 class Enemy:
-    def __init__(self,name,level,maxhp,hp,tp,str,dmg,tec,vit,agi,lck,defending,weak,exp,money,init):
+    def __init__(self,name,level,maxhp,hp,tp,str,dmg,tec,vit,agi,lck,defending,weak,resist,exp,money,init):
         self.name = name
         self.level = level
         self.maxhp = maxhp
@@ -15,6 +15,7 @@ class Enemy:
         self.lck = lck
         self.defending = defending
         self.weak = weak
+        self.resist = resist
         self.exp = exp
         self.money = money
         self.init = init
@@ -37,132 +38,13 @@ elem = ["phys","fire","wind","earth","ice","thunder","toxic","decay","chaos","de
     # Level 5 // Cursed, Divisive, Unpleasant
 
 # FIRST FLOOR ENEMIES
-en_mal1 = Enemy(
-    name = "Puny Malla",
-    level = 1,
-    maxhp = 40,
-    hp = 40,
-    tp = 10,
-    str = 5,
-    dmg = 1,
-    tec = 2,
-    vit = 3,
-    agi = 3,
-    lck = 3,
-    defending = False,
-    weak = [],
-    exp = 5,
-    money = 5,
-    init = 0)
-en_sgeu1 = Enemy(
-    name = "Weak Sgeu",
-    level = 1,
-    maxhp = 30,
-    hp = 30,
-    tp = 10,
-    str = 4,
-    dmg = 1,
-    tec = 2,
-    vit = 4,
-    agi = 8,
-    lck = 4,
-    defending = False,
-    weak = [],
-    exp = 5,
-    money = 5,
-    init = 0)
-en_dio2 = Enemy(
-    name = "Cowardly Diogh",
-    level = 2,
-    maxhp = 60,
-    hp = 60,
-    tp = 20,
-    str = 8,
-    dmg = 1,
-    tec = 5,
-    vit = 7,
-    agi = 4,
-    lck = 4,
-    defending = False,
-    weak = [],
-    exp = 10,
-    money = 10,
-    init = 0)
-en_colt2 = Enemy(
-    name = "Malicious Colt",
-    level = 2,
-    maxhp = 50,
-    hp = 50,
-    tp = 20,
-    str = 7,
-    dmg = 1,
-    tec = 5,
-    vit = 7,
-    agi = 4,
-    lck = 4,
-    defending = False,
-    weak = [],
-    exp = 10,
-    money = 10,
-    init = 0)
-en_adhbah1 = Enemy(
-    name = "Insidious Adhbah",
-    level = 1,
-    maxhp = 40,
-    hp = 40,
-    tp = 30,
-    str = 3,
-    dmg = 1,
-    tec = 6,
-    vit = 3,
-    agi = 3,
-    lck = 3,
-    defending = False,
-    weak = [],
-    exp = 5,
-    money = 5,
-    init = 0)
-en_adhbah2 = Enemy(
-    name = "Hateful Adhbah",
-    level = 2,
-    maxhp = 45,
-    hp = 45,
-    tp = 40,
-    str = 5,
-    dmg = 1,
-    tec = 11,
-    vit = 7,
-    agi = 5,
-    lck = 5,
-    defending = False,
-    weak = [],
-    exp = 10,
-    money = 10,
-    init = 0)
-en_grain1 = Enemy(
-    name = "Viscerous Grain",
-    level = 1,
-    maxhp = 30,
-    hp = 30,
-    tp = 20,
-    str = 2,
-    dmg = 1,
-    tec = 8,
-    vit = 2,
-    agi = 4,
-    lck = 3,
-    defending = False,
-    weak = [],
-    exp = 5,
-    money = 5,
-    init = 0)
 
 
 en_laid1 = Enemy(name = "Puny Làidir",
     level = 8, maxhp = 450, hp = 450, tp = 30, str = 20, dmg = 2, tec = 15, vit = 10, agi = 5, lck = 5,
-    defending = False, weak = [], exp = 5, money = 100, init = 0)
+    defending = False, weak = [],resist = [], exp = 5, money = 100, init = 0)
 
 
-enemies_1 = [en_mal1,en_sgeu1,en_dio2,en_colt2,en_adhbah1,en_adhbah2,en_grain1]
+enemies_1 = []
 
 enemies_bosses = [en_laid1]
