@@ -121,7 +121,7 @@ dungeon11 = [
     [1, 0,1,0,0,1, 0,1,C,1,0, 1,0,0,0,1, 0,0,0,1,0, 1,0,0,0,1, 1,1,0,0,0, 1],
     [1, 0,1,0,0,1, 0,1,1,1,0, 1,1,1,1,1, 1,2,1,1,0, 1,1,1,1,1, 0,2,0,0,0, 1],
     [1, 0,0,0,0,1, 0,0,0,0,0, 2,0,0,0,0, 0,0,1,1,0, 0,0,0,0,0, 0,1,0,0,D, 1], #30
-    
+
     [1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1]
 ]#   0  1 2 3 4 5  6 7 8 9 10 1 2 3 4 5  6 7 8 9 20 1 2 3 4 5  6 7 8 9 30 1
 
@@ -1080,6 +1080,7 @@ def openDoor():
             print("Nevermind.")
 
 def interact():
+    global dungeon_level
 
     if party_facing == 8:
         object = party_coord[0]-1, party_coord[1]
@@ -1341,6 +1342,9 @@ def exploreDungeon():
         if command.lower() == "boss":
             print ("Finding a nearby Làidir...")
             CombatSystem.bossbattle = True
+            CombatSystem.runCombat()
+
+        if command.lower() == "combat":
             CombatSystem.runCombat()
 
 # TEST

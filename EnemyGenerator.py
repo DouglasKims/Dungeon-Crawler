@@ -8,6 +8,7 @@ import EnemyList
 import math
 
 Enemy = EnemyList.Enemy
+elem = EnemyList.elem
 
 class EnemyType():
     def __init__(self, name, hp, tp, str, dmg, tec, vit, agi, lck, imphp, imptp, impstr, impdmg, imptec, impvit, impagi, implck):
@@ -33,7 +34,7 @@ class EnemyType():
 defaultEnemy = Enemy(
     name = "Enemy", level = 1, maxhp=1, hp = 1, tp = 1,
     str = 1, dmg = 1, tec = 1, vit = 1, agi = 1, lck = 1,
-    defending=False,weak=[],resist=[],exp=0,money=0,init=0
+    defending=False,weak=[],resist=[],exp=0,money=0,init=0,effects={}
     )
 
 enemylist = []
@@ -63,6 +64,8 @@ def generateEnemy(type, leveltogen):
                 implck = random.randint(1,6),
                 )
         money = random.randint(2,8)
+        new.weak.append(random.choice(["fire","ice","wind","earth"]))
+        new.resist.append("phys")
 
     if type == "Sgeu":
         model = EnemyType(
@@ -85,6 +88,8 @@ def generateEnemy(type, leveltogen):
                 implck = random.randint(1,6)
                 )
         money = random.randint(5,15)
+        new.weak.append("phys")
+        new.weak.append(random.choice(["ice","earth"]))
 
     if type == "Diogh":
         model = EnemyType(
@@ -107,6 +112,8 @@ def generateEnemy(type, leveltogen):
                 implck = random.randint(1,4)
                 )
         money = random.randint(10,20)
+        new.weak.append(random.choice(["fire","ice","wind","earth","thunder"]))
+        new.weak.append("toxic")
 
     if type == "Colt":
         model = EnemyType(
@@ -129,6 +136,11 @@ def generateEnemy(type, leveltogen):
                 implck = random.randint(1,6)
                 )
         money = random.randint(15,25)
+        new.weak.append(random.choice(["fire","ice","wind","earth","thunder","toxic"]))
+        newelem = None
+        while newelem in new.weak or newelem == None:
+            newelem = random.choice(["fire","ice","wind","earth","thunder","toxic"])
+        new.weak.append(newelem)
 
     if type == "Adhbah":
         model = EnemyType(
@@ -151,7 +163,8 @@ def generateEnemy(type, leveltogen):
                 implck = random.randint(1,6)
                 )
         money = random.randint(5,15)
-
+        new.resist.append(random.choice(["fire","ice","wind","earth","thunder","toxic"]))
+        
     if type == "Grain":
         model = EnemyType(
                 name = "Grain",
@@ -173,6 +186,11 @@ def generateEnemy(type, leveltogen):
                 implck = random.randint(1,6)
                 )
         money = random.randint(10,20)
+        new.resist.append(random.choice(["fire","ice","wind","earth","thunder","toxic"]))
+        newelem = None
+        while newelem in new.resist or newelem == None:
+            newelem = random.choice(["fire","ice","wind","earth","thunder","toxic"])
+        new.resist.append(newelem)
 
     if type == "Laidir":
         model = EnemyType(

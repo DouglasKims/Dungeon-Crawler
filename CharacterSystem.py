@@ -5,12 +5,72 @@ import copy
 import random
 import EquipmentSystem
 
-# CHaracters
+## SKILLS
+global_skill_list = {
+    "firo": (1, "Causes weak fire damage to one enemy.", 4),
+    "grunfiro": (1, "Causes weak fire damage to all enemies.", 10),
+    "firomor": (1, "Causes moderate fire damage to one enemy.", 8),
+    "grunfiromor": (1, "Causes moderate fire damage to all enemies.", 16),
+    "firomatha": (1, "Causes heavy fire damage to one enemy.", 12),
+    "grunfiromatha": (1, "Causes heavy fire damage to all enemies.", 22),
+    
+    "gelo": (1, "Causes weak ice damage to one enemy.", 4),
+    "grungelo": (1, "Causes weak ice damage to all enemies.", 10),
+    "gelomor": (1, "Causes moderate ice damage to one enemy.", 8),
+    "grungelomor": (1, "Causes moderate ice damage to all enemies.", 16),
+    "gelomatha": (1, "Causes heavy ice damage to one enemy.", 12),
+    "grungelomatha": (1, "Causes heavy ice damage to all enemies.", 22),
+
+    "gale": (1, "Causes weak wind damage to one enemy.", 4),
+
+
+    "tera": (1, "Causes weak earth damage to one enemy.", 4),
+    "gruntera": (1, "Causes weak earth damage to all enemies.", 10),
+    "teramor": (1, "Causes moderate earth damage to one enemy.", 8),
+    "grunteramor": (1, "Causes moderate earth damage to all enemies.", 16),
+    "teramatha": (1, "Causes heavy earth damage to one enemy.", 12),
+    "grunteramatha": (1, "Causes heavy earth damage to all enemies.", 22),
+
+
+    "volt": (1, "Causes weak thunder damage to one enemy.", 4),
+    "veno": (1, "Causes weak toxic damage to one enemy.", 4),
+    
+    "cura": (1, "Restores small amount of health to one ally.", 3, "S"),
+    "gruncura": (1, "Restores small amount of health to all allies.", 7, "S"),
+    "curamor": (1, "Restores moderate amount of health to one ally.", 7),
+    "gruncuramor": (1, "Restores moderate amount of health to all allies.", 12),
+    "curamatha": (1, "Restores full health to one ally.", 18),
+    "gruncuramatha": (1, "Restores full health to all allies.", 30),
+    
+    "revita": (1, f"Revives one fallen ally with 30% of HP.", 7),
+    "revitamor": (1, f"Revives one fallen ally with 60% of HP.", 10),
+    "revitamatha": (1, f"Revives one fallen ally with full HP.", 18),
+    
+    "enhast": (1, "Enhances STR for one ally.", 3, "S"),
+    "enhate": (1, "Enhances TEC for one ally.", 3, "S"),
+    "enhavi": (1, "Enhances VIT for one ally.", 3, "S"),
+    "enhagi": (1, "Enhances AGI for one ally.", 3, "S"),
+    "enhalk": (1, "Enhances LCK for one ally.", 3, "S"),
+
+    ### PHYS SKILLS
+
+    "charge": (1, "Attacks one enemy up to three times.", 0, 15),
+    "cleave": (1, "Attacks random enemies up to five times.", 3, 20),
+    "protect": (1, "Reduces incoming damage for one turn.", 5, "S"),
+    
+    "sneak": (1, "Attacks one enemy with increased damage and crit rate.", 3, 0),
+    "hunt": (1, "Attacks one enemy with increased blah.", 3, 0),
+    "decoy": (1, "Creates a decoy to divert attacks from party.", 15, "S"),
+
+}
+
+
+# Characters
 weapon1 = EquipmentSystem.weapon1
 armor1 = EquipmentSystem.armor1
 
 class Character:
-    def __init__(self,name,char_class,race,level,maxhp,hp,maxtp,tp,str,dmg,tec,vit,agi,lck,slist,acted,defending,weak,resist,equip,exp,init,skillpts,perkpts):
+    def __init__(self,name,char_class,race,level,maxhp,hp,maxtp,tp,str,dmg,tec,vit,agi,lck,slist,acted,defending,weak,resist,equip,exp,init,skillpts,perkpts, effects):
         self.name = name
         self.char_class = char_class
         self.race = race
@@ -35,6 +95,7 @@ class Character:
         self.skillpts = skillpts
         self.perkpts = perkpts
         self.init = init
+        self.effects = effects
 
 # Class Enemy:
 
@@ -171,60 +232,61 @@ drav = Character(
     name = "Dravroth", char_class = herald, race = r_dragonkin,
     level = 1, maxhp = 80, hp = 80, maxtp = 40, tp = 40,
     str = 6, dmg = 1, tec = 6, vit = 2, agi = 5, lck = 6,
-    acted = False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 5, perkpts= 0,
+    acted = False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 0, perkpts= 0, effects={},
     equip = {
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
     "Accessory 2":None},
-    slist =  {"firo": 1,
-              "cura": 1,
-              "enha": 1})
+    slist =  {
+        "firo": global_skill_list["firo"],
+        "cura": global_skill_list["cura"],
+        "enhast": global_skill_list["enhast"] })
 dan = Character(
     name = "Thorudan", char_class= thaumaturge, race = r_faefolk,
     level=1, maxhp=60, hp=60, maxtp=50, tp=50,
     str = 4, dmg = 1, tec = 10, vit = 2, agi = 3, lck = 3,
-    acted = False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 0, perkpts= 0,
+    acted = False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 0, perkpts= 0, effects={},
     equip = {
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
     "Accessory 2":None},
-    slist = {"tera": 1,
-             "cura": 1,
-             "revita": 1})
+    slist = {"tera": global_skill_list["tera"],
+             "cura": global_skill_list["cura"],
+             "revita": global_skill_list["revita"]})
 mars = Character(
     name = "Mars", char_class = knight, race = r_orc,
     level = 1, maxhp = 100, hp = 100, maxtp = 20, tp = 20,
     str = 8, dmg = 2, tec = 3, vit = 4, agi = 3, lck = 3,
-    acted= False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 0, perkpts= 0,
+    acted= False, defending = False, weak = [], resist = [], exp = 0, init = 0, skillpts= 0, perkpts= 0,effects={},
     equip = {
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
     "Accessory 2":None},
-    slist = {"charge": 1,
-             "cleave": 1,
-             "protect": 1},)
+    slist = {"charge": global_skill_list["charge"],
+             "cleave": global_skill_list["cleave"],
+             "protect": global_skill_list["protect"]},)
 eck = Character(
     name="Eckbert", char_class= scout, race = r_faefolk,
     level=1, maxhp=60, hp=60, maxtp=30, tp=30,
     str=5, dmg=2, tec=4, vit=2, agi=8, lck=8,
-    acted=False, defending=False, weak=[], resist = [], exp=0, init=0, skillpts= 0, perkpts= 0,
+    acted=False, defending=False, weak=[], resist = [], exp=0, init=0, skillpts= 0, perkpts= 0,effects={},
     equip={
     "Weapon":None,
     "Armor":None,
     "Accessory 1":None,
     "Accessory 2":None},
-    slist={"sneak": 1,
-           "decoy": 1,
-           "hunt": 1})
+    slist={"sneak": global_skill_list["sneak"],
+           "decoy": global_skill_list["decoy"],
+           "hunt": global_skill_list["hunt"]})
 
 charTemplate = Character(
     name="Name", char_class="Class", race = None,
     level=1, maxhp=10, hp=10, maxtp=10, tp=10,
     str=1, dmg=1, tec=1, vit=1, agi=1, lck=1,
-    acted=False, defending=False, weak=[], resist=[], exp=0, init=0, skillpts=0, perkpts=0,
+    acted=False, defending=False, weak=[], resist=[], exp=0, init=0, skillpts=0, perkpts=0,effects={},
     equip={
     "Weapon":None,
     "Armor":None,
@@ -241,6 +303,8 @@ party = [drav,dan,mars,eck]
 party_money = 100
 
 cancelterms = ["no","back","cancel","return","quit"]
+
+
 
 def checkLevel(char):
 
@@ -366,8 +430,6 @@ def createCharacter():
         print(f"  STR: {n.str} (Dmg: {n.dmg}) / TEC: {n.tec} / VIT: {n.vit} / AGI: {n.agi} / LCK: {n.lck}")
         print(f"  {n.lore}")
 
-    
-
     choice_class = input ("What class will the new character have? (type 'no' to cancel)  \n")
 
     if choice_class in cancelterms:
@@ -391,14 +453,15 @@ def createCharacter():
         name = choice_name, char_class = character_classes[choice_class], race = character_races[choice_race],
         maxhp = character_classes[choice_class].hp * 10, hp = character_classes[choice_class].hp * 10 , maxtp = character_classes[choice_class].tp * 10, tp = character_classes[choice_class].tp * 10,
         str = character_classes[choice_class].str, dmg = character_classes[choice_class].dmg, tec = character_classes[choice_class].tec, vit = character_classes[choice_class].vit, agi = character_classes[choice_class].agi, lck = character_classes[choice_class].lck,
-        slist = [], acted = False, defending = False, weak = [], resist= [], level = 1, exp = 0, init = 0,
+        acted = False, defending = False, weak = [], resist= [], level = 1, exp = 0, init = 0, skillpts=0, perkpts=0,
         equip = {
             "Weapon":weapon1,
             "Armor":armor1,
             "Accessory 1":None,
-            "Accessory 2":None})
+            "Accessory 2":None},
+        slist = {})
     
-    if newchar is not None:
+    if newchar is not None: # Extra Stats per Race
         if newchar.race == r_human:
             randomstat = random.choice(["str","tec","vit","agi","lck"])
             if randomstat == "str":
@@ -432,9 +495,118 @@ def createCharacter():
         elif newchar.race == r_tiefling:
             newchar.tec += 1
             
-    
+    if newchar is not None: # Extra Skills per Class
+
+        if newchar.char_class == arcanist:
+            choosingskill = True
+            while choosingskill:
+                os.system("cls")
+                print (f"\nElements: Fire, Ice, Wind, Earth, Thunder, Toxic")
+                choice = input(f"What element is {newchar.name} attuned to?  ").lower()
+
+                if choice == "fire":
+                    newchar.slist.update({"firo": 1})
+                    choosingskill = False
+
+                if choice == "ice":
+                    newchar.slist.update({"gelo": 1})
+                    choosingskill = False
+
+                if choice == "wind":
+                    newchar.slist.update({"gale": 1})
+                    choosingskill = False
+
+                if choice == "earth":
+                    newchar.slist.update({"tera": 1})
+                    choosingskill = False
+
+                if choice == "thunder":
+                    newchar.slist.update({"volt": 1})
+                    choosingskill = False
+
+                if choice == "toxic":
+                    newchar.slist.update({"veno": 1})
+                    choosingskill = False
+
+            newchar.slist.update({"enhate": 1})
+            newchar.slist.update({"enfete": 1})
+            
+        if newchar.char_class == thaumaturge:
+            
+            choosingskill = True
+            while choosingskill:
+                os.system("cls")
+                print (f"\nElements: Wind, Earth, Thunder")
+                choice = input(f"What element is {newchar.name} attuned to?  ").lower()
+
+                if choice == "wind":
+                    newchar.slist.update({"gale": 1})
+                    choosingskill = False
+
+                if choice == "earth":
+                    newchar.slist.update({"tera": 1})
+                    choosingskill = False
+
+                if choice == "thunder":
+                    newchar.slist.update({"volt": 1})
+                    choosingskill = False
+
+            newchar.slist.update({"cura": 1})
+            newchar.slist.update({"revita": 1})
+            
+        if newchar.char_class == herald:
+            choosingskill = True
+            while choosingskill:
+                os.system("cls")
+                print (f"\nElements: Fire, Ice, Wind, Thunder")
+                choice = input(f"What element is {newchar.name} attuned to?  ").lower()
+
+                if choice == "fire":
+                    newchar.slist.update({"firo": 1})
+                    choosingskill = False
+
+                if choice == "ice":
+                    newchar.slist.update({"gelo": 1})
+                    choosingskill = False
+
+                if choice == "wind":
+                    newchar.slist.update({"gale": 1})
+                    choosingskill = False
+
+                if choice == "earth":
+                    newchar.slist.update({"tera": 1})
+                    choosingskill = False
+
+                if choice == "thunder":
+                    newchar.slist.update({"volt": 1})
+                    choosingskill = False
+
+            newchar.slist.update({"cura": 1})
+            newchar.slist.update({"enhast": 1})         
+
+        if newchar.char_class == knight:
+
+            newchar.slist.update({"charge": 1})
+            newchar.slist.update({"cleave": 1})
+            newchar.slist.update({"protect": 1})
+
+        if newchar.char_class == scout:
+            newchar.slist.update({"sneak": 1})
+            newchar.slist.update({"hunt": 1})
+            newchar.slist.update({"decoy": 1})
+
+        if newchar.char_class == quartermaster:
+            newchar.slist.update({"coating": 1})
+            newchar.slist.update({"appraise": 1})
+            newchar.slist.update({"bomb": 1})
+
+        pass
+
     print (f"\n{newchar.name}, {newchar.race.name} {newchar.char_class.name}")
     print (f"  HP : {newchar.hp} / TP : {newchar.tp}\n  STR: {newchar.str} (DMG: {newchar.dmg}) / TEC: {newchar.tec} / VIT: {newchar.vit} / AGI: {newchar.agi} / LCK: {newchar.lck}")
+    print ("Skills:")
+    for n in newchar.slist:
+        print (f" {n.upper()}, Skill Level {newchar.slist[n]}")
 
     choice_final = input ("\nIs this the character you want? (type 'no' to cancel)")
 
@@ -462,7 +634,10 @@ def checkRoster():
 
         choice = input("\nDo you want to (I)nspect a character, (D)ismiss a Vagranteer, (A)dd or (R)emove from party, (T)rain Perks, or (Q)uit?").lower()
 
-        if choice in ("d"):
+        if choice == "":
+            pass
+
+        elif choice in ("d"):
             choice_roster = input("What character do you want to permanently remove from the Roster?")
 
             try:
@@ -484,7 +659,7 @@ def checkRoster():
 
                         character_roster.remove(character_roster[choice_roster])
 
-        if choice in ("i"):
+        elif choice in ("i"):
 
             choice_type = input("(R)oster or (P)arty?  ").lower()
 
@@ -526,7 +701,7 @@ def checkRoster():
                         fetchSkills(char)
                         input ("Press anything to continue.")
 
-        if choice in ("a"):
+        elif choice in ("a"):
             choice_roster = None
             if len(party) >= 4:
                 print("The party is full already. Please remove vagranteers before adding more.")
@@ -544,7 +719,7 @@ def checkRoster():
                     party.append(character_roster[choice_roster])
                     character_roster.remove(character_roster[choice_roster])
 
-        if choice in ("r"):
+        elif choice in ("r"):
             choice_party = None
             if len(party) < 1:
                 print("The party is empty.")
@@ -563,11 +738,11 @@ def checkRoster():
                     party.remove(party[choice_party])
 
 
-        if choice in ("t"):
+        elif choice in ("t"):
             
             managePerks()
 
-        if choice in ("q"):
+        elif choice in ("q"):
             if len(party) <= 0:
                 input ("Party can't be empty. Press anything to continue.")
             elif len(party) >= 1:
@@ -619,11 +794,14 @@ def managePerks():
 
             choice = input("Manage (S)kills or (P)erks?").lower()
 
-            if choice in ("s"):
+            if choice == "":
+                pass
+
+            elif choice in ("s"):
                 if char is not None:
                     print (f"{char.name} has {char.skillpts} skill points and {char.perkpts} perk points.\n")
                     for n in char.slist:
-                        print (f"{n.upper()}, Skill Level {char.slist[n]}")
+                        print (f"{n.upper()}, Skill Level {char.slist[n][0]} // {char.slist[n][1]}")
 
                     keys = char.slist.keys()
                     choice = input("What skill you want to inspect and improve? Type the name of skill or (Q) to quit.  ").lower()
@@ -637,7 +815,7 @@ def managePerks():
                         pass
 
                     elif choice is not None and choice in keys:
-                        skill_level = char.slist[choice]
+                        skill_level = char.slist[choice][0]
 
                         if choice in ("firo","tera","gelo","gale","veno","volt","nuke"):
                             
@@ -767,7 +945,7 @@ def managePerks():
 
                         # if skill in ("enha","enfe","revita"):
 
-            if choice in ("p"):
+            elif choice in ("p"):
                 if char.perkpts <= 0:
                     input ("You have no Perk points to spend. Type anything to continue. ")
         

@@ -200,7 +200,7 @@ def getInventory():
 
     print("Consumables:")
     for n in consumables:
-        print (f"    ({consumables.index(n)}) {n.name} // Type: {n.type} // Effect: {n.effect} // Value: {n.value} Cr")
+        print (f"    ({consumables.index(n)}) {n.name} // Type: {n.type} // Effect: {n.lore} // Value: {n.value} Cr")
 
     print("\nEquipment:")
     for n in inventory:
@@ -227,7 +227,7 @@ def useItem(item):
     from CharacterSystem import party as party
 
     if item.type == "Healing":
-        iname, ipower, ieffect = item.effect.split()
+        iname, ipower, ieffect = item.lore.split()
         ipower = int(ipower)
         
         if ieffect == "HP":
@@ -255,6 +255,7 @@ def useItem(item):
             choice.hp += ipower
             consumables.remove(item)
             print(f"{choice.name} recovered {ipower} HP.")
+            return True
 
         elif ieffect == "TP":
 
@@ -277,9 +278,10 @@ def useItem(item):
             choice.tp += ipower
             consumables.remove(item)
             print(f"{choice.name} recovered {ipower} tp.")
+            return True
 
     if item.type == "Reviving":
-        ieffect, i1, ipower, i2 = item.effect.split()
+        ieffect, i1, ipower, i2 = item.lore.split()
 
         print("Party:")
         for char in party:
@@ -308,6 +310,7 @@ def useItem(item):
 
         consumables.remove(item)
         print(f"{choice.name} was revived with {ipower} HP.")
+        return True
 
 def changeEquip():
     

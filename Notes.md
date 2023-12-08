@@ -26,11 +26,11 @@
 
 # COMBAT & SKILLS
     # Rename Skills (DONE)
-    # Use items in combat
+    # Use items in combat (DONE)
     # Escape combat
-    # create buff, debuff skills
+    # create buff, debuff skills (DONE)
 
-    # Enemy Generator? (DONE)
+    # Enemy Generator? (DONE) (REVIEW)
     # Fix formulas (DONE)
 
 # CLASS SKILLS
@@ -58,7 +58,7 @@
         # SKILLS # FP cost reduced / lvl
             # ELEMENTAL damage weak lvl 1 / multi lvl 2 / med lvl 3 / heavy lvl 4 (lvl 1/10)
             # BOOST TEC %/lvl (lvl 1/10)
-            # BOOST LCK (lvl 1/10)
+            # ENFEEBLE TEC (lvl 1/10)
         # PERKS
             # Restore FP per enemy you kill lvl1 / at end of combat lvl 3 / per turn lvl 5 (lvl 1/5)
             # Reflect damage to enemies (lvl 1/5)
@@ -86,7 +86,8 @@
 
     # QUARTERMASTER
         # SKILLS
-            # MONEY SHOOT Attack with money, increasing STR and LCK the more money is spent (lvl 1/10)
+            #      (?) MONEY SHOOT Attack with money, increasing STR and LCK the more money is spent (lvl 1/10)
+            # BOMB Throws a makeshift bomb that deals elemental damage to all enemies per level (lvl 1/10) (phys/fire/ice/thunder/toxic)
             # COATING grants elemental resistance for a few turns / for party (lvl 1/10)
             # APPRAISE increases EXP gain / high TP cost (lvl 1/10)
         # PERKS
