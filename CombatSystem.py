@@ -232,7 +232,7 @@ def command(char):
     global opposition
     global charcommand
 
-    availablecommands = "(A)ttack, (D)efend, (I)tem, (S)kills, (U)pdate list"
+    availablecommands = "(A)ttack, (D)efend, (I)tem, (S)kills, (U)pdate list, (E)scape"
 
     if char.char_class.name == "Knight":
         availablecommands += ", (C)harge, Cleave, Hunt"
@@ -294,7 +294,6 @@ def command(char):
 
 
 # PHYS SKILLS
-
     elif charcommand == "charge" or charcommand == "c":
         if char.char_class.name == "Knight" and char.hp > round(char.maxhp*0.15):
             chartarget = targetenemy()
@@ -335,19 +334,18 @@ def command(char):
             print (f"{char.name} can't use this skill.")
 
     elif charcommand == "hunt":
-        if char.char_class.name == "Knight" and char.hp > round(char.maxhp*0.15) and char.tp >= 3:
+        if char.char_class.name == "Scout" and char.tp >= 5:
             chartarget = targetenemy()
 
             if chartarget is not None:
 
-                char.hp -= round(char.maxhp*0.15)
-                char.tp -= 3
+                char.tp -= 5
 
-                char.str += 3
-                char.lck += 20
+                strbonus = ((math.sqrt(chartarget.hp)/10+1) * char.str) - char.str
+
+                char.str += strbonus
                 attackfunc(char,chartarget)
-                char.str -= 3
-                char.lck -= 20
+                char.str -= strbonus
 
                 char.acted = True
         
@@ -371,6 +369,7 @@ def command(char):
                 char.lck -= 20
 
                 char.acted = True
+
 
 # ELEM SKILLS
     elif "firo" in charcommand:
@@ -414,6 +413,7 @@ def command(char):
             print(f"{char.name} can't use this skill.")
         else:
             spellversion(char,charcommand,"chaos")
+
 
 # SUPPORT SKILLS
     elif "cura" in charcommand:
@@ -501,8 +501,20 @@ def command(char):
     elif "rush" in charcommand: # FINISH
         rushcount = int(input("How many turns to rush? (0 to cancel) "))
 
-    elif "escape" in charcommand: # FINISH
-        pass
+    elif "escape" in charcommand or charcommand == "e": # FINISH
+        chance = 30 + char.agi
+        escaped100 = random.randint(1,100)
+
+        if escaped100 <= chance:
+            opposition.clear()
+            
+            input (f"The group escapes!")
+            char.acted = True
+
+        else:
+            input (f"Failed to escape.")
+            char.acted = True
+            pass
 
     elif "die" in charcommand:
         char.hp = 0
@@ -1393,12 +1405,7 @@ def runCombat():
                         tickEffect(n)
 
                 enemyTurn(n)
-                # enemytarget = None
-                # while enemytarget == None or enemytarget.hp == 0:
-                #     enemytarget = random.choice(party)
-                # attackfunc(n,enemytarget)
 
-                #game over function
                 if gameover(party):
                     print ("")
                     print ("All heroes have been defeated.")

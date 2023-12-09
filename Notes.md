@@ -40,8 +40,10 @@
             # CLEAVE attack random opps up to 5 times (mininum increases by 1 per 2 levels)(lvl 1/10)
             # PROTECT reduce damage to all by 10%/lvl (lvl 1/10)
         # PERKS
-            # STR boost for one lv1 / party lv3 for lvl turns (lvl 1/5)
-            # VIT boost for one lv1 / party lv3 for lvl turns (lvl 1/5)
+            #   STR boost for one lv1 / party lv3 for lvl turns (lvl 1/5)
+            #   VIT boost for one lv1 / party lv3 for lvl turns (lvl 1/5)
+            # 
+            # 
             # Chance to resist death 10%/lvl (lvl 1/5)
 
     # THAUMATURGE

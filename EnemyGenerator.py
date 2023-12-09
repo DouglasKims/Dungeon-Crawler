@@ -48,19 +48,19 @@ def generateEnemy(type, leveltogen):
                 name = "Malla",
                 hp = round (100 * (random.random()/2 + 0.75)),
                 imphp = round((100 * (random.random()/2 + 0.75)) * 0.25),
-                tp = 10,
-                imptp = 10,
-                str = random.randint(2,12),
+                tp = 5,
+                imptp = 2,
+                str = random.randint(4,9),
                 impstr = random.randint(1,6),
-                tec = random.randint(1,4),
+                tec = random.randint(2,6),
                 imptec = random.randint(1,4),
                 dmg = 1,
                 impdmg = 1/3,
-                vit = random.randint(3,12),
+                vit = random.randint(5,9),
                 impvit = random.randint(1,6),
-                agi = random.randint(3,9),
+                agi = random.randint(5,7),
                 impagi = random.randint(1,6),
-                lck = random.randint(3,9),
+                lck = random.randint(5,7),
                 implck = random.randint(1,6),
                 )
         money = random.randint(2,8)
@@ -284,6 +284,6 @@ def runGenerator():
 
 
 #TEST
-# runGenerator()
+runGenerator()
 
 ###

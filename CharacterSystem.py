@@ -22,7 +22,11 @@ global_skill_list = {
     "grungelomatha": (1, "Causes heavy ice damage to all enemies.", 22),
 
     "gale": (1, "Causes weak wind damage to one enemy.", 4),
-
+    "grungale": (1, "Causes weak wind damage to all enemies.", 10),
+    "galemor": (1, "Causes moderate wind damage to one enemy.", 8),
+    "grungalemor": (1, "Causes moderate wind damage to all enemies.", 16),
+    "galematha": (1, "Causes heavy wind damage to one enemy.", 12),
+    "grungalematha": (1, "Causes heavy wind damage to all enemies.", 22),
 
     "tera": (1, "Causes weak earth damage to one enemy.", 4),
     "gruntera": (1, "Causes weak earth damage to all enemies.", 10),
@@ -33,7 +37,18 @@ global_skill_list = {
 
 
     "volt": (1, "Causes weak thunder damage to one enemy.", 4),
+    "grunvolt": (1, "Causes weak thunder damage to all enemies.", 10),
+    "voltmor": (1, "Causes moderate thunder damage to one enemy.", 8),
+    "grunvoltmor": (1, "Causes moderate thunder damage to all enemies.", 16),
+    "voltmatha": (1, "Causes heavy thunder damage to one enemy.", 12),
+    "grunvoltmatha": (1, "Causes heavy thunder damage to all enemies.", 22),
+
     "veno": (1, "Causes weak toxic damage to one enemy.", 4),
+    "grunveno": (1, "Causes weak toxic damage to all enemies.", 10),
+    "venomor": (1, "Causes moderate toxic damage to one enemy.", 8),
+    "grunvenomor": (1, "Causes moderate toxic damage to all enemies.", 16),
+    "venomatha": (1, "Causes heavy toxic damage to one enemy.", 12),
+    "grunvenomatha": (1, "Causes heavy toxic damage to all enemies.", 22),
     
     "cura": (1, "Restores small amount of health to one ally.", 3, "S"),
     "gruncura": (1, "Restores small amount of health to all allies.", 7, "S"),
@@ -51,6 +66,12 @@ global_skill_list = {
     "enhavi": (1, "Enhances VIT for one ally.", 3, "S"),
     "enhagi": (1, "Enhances AGI for one ally.", 3, "S"),
     "enhalk": (1, "Enhances LCK for one ally.", 3, "S"),
+
+    "enfest": (1, "Enhances STR for one ally.", 3, "S"),
+    "enfete": (1, "Enhances TEC for one ally.", 3, "S"),
+    "enfevi": (1, "Enhances VIT for one ally.", 3, "S"),
+    "enfegi": (1, "Enhances AGI for one ally.", 3, "S"),
+    "enfelk": (1, "Enhances LCK for one ally.", 3, "S"),
 
     ### PHYS SKILLS
 
