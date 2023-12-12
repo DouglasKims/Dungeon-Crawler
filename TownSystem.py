@@ -42,6 +42,66 @@ def tavern():
 
     pass
 
+def merchant():
+    os.system("cls")
+
+    in_merchant = True
+
+    while in_merchant:
+
+        os.system("cls")
+        print (f"Party Funds: {CharacterSystem.party_money} // It is currently {DungeonCrawl.hour_names[DungeonCrawl.hour]}\n")
+        command = ""
+        command = input(f"MERCHANT: What (C)onsumables are yer buyin'?\nJust (Q)uit when yer' done.  ").lower()
+
+        if command == "":
+            pass
+
+        elif command in ("c"):
+            list_offer = []
+            for n in shop_stock:
+                if n.type in ("Healing","Reviving","Rest","Return"):
+                    list_offer.append(n)
+
+            if list_offer != []:
+                print (f"MERCHANT: What'ryer havin'?")
+                for n in list_offer:
+                    itemstats = ""
+                    itemstats += f"({list_offer.index(n)}) {n.name} // Description: {n.lore}"
+                    itemstats += f" // Cost: {n.value*5}"
+
+                    print (itemstats)
+
+                try:
+                    item = int(input())
+                except ValueError:
+                    item = None
+
+                if item in range(0,len(list_offer)):
+                    item = list_offer[item]
+
+                    if CharacterSystem.party_money >= item.value:
+                        command = input(f"Buy {item.name} for {item.value*5}? Y/N  ").lower()
+
+                        if command in ("y"):
+                            print ("SYLAS: Thanks for the purchase!")
+                            EquipmentSystem.consumables.append(item)
+                            CharacterSystem.party_money -= item.value*5
+
+                    else:
+                        print ("SYLAS: Ah, you don't have the money for that...")
+
+        elif command in ("s","sell"):
+            
+            print(f"I'm not looking to buy, mate. 'sides, I can just loot yer' corpses when you die in there. \n")
+            
+            pass
+
+        elif command in ("q"):
+            in_merchant = False
+
+        pass
+
 def shop():
     os.system("cls")
 
@@ -395,10 +455,13 @@ def runTown():
 
         elif command in ("d","dungeon"):
             running_town = False
-            DungeonCrawl.exploreDungeon()
+            os.system('cls')
+            input ("Travelling to the Dungeon. Press anything to continue.")
+            from DungeonCrawl import exploreDungeon
+            exploreDungeon()
 
 
 ## TESTING
-runTown()
+# runTown()
 
 ##

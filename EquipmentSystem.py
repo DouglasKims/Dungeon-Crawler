@@ -2,7 +2,6 @@ import math
 import os
 import copy
 
-
 BLACK = "\033[30m"
 RED = "\033[31m"
 GREEN = "\033[32m"
@@ -225,6 +224,7 @@ def getInventory():
 
 def useItem(item):
     from CharacterSystem import party as party
+    global testing_equip
 
     if item.type == "Healing":
         iname, ipower, ieffect = item.lore.split()
@@ -301,6 +301,7 @@ def useItem(item):
 
         if choice.hp > 0:
             print("Can't be used on a living character.")
+
             return
 
         if ipower == "50%":
@@ -311,6 +312,50 @@ def useItem(item):
         consumables.remove(item)
         print(f"{choice.name} was revived with {ipower} HP.")
         return True
+
+    if item.type == "Rest":
+        from DungeonCrawl import restAreaCheck
+        from DungeonCrawl import checkExploring
+        from DungeonCrawl import checkHour
+
+        if checkExploring(None) == True:
+            if restAreaCheck() == True:
+                for char in party:
+                    if char.hp > 0:
+                        char.hp += int(char.maxhp * 0.25)
+                        if char.hp > char.maxhp:
+                            char.hp = char.maxhp
+                        char.tp += int(char.maxtp * 0.25)
+                        if char.tp > char.maxtp:
+                            char.tp = char.maxtp
+
+                checkHour(1)
+
+                print ("Time has passed and party has restored some HP and TP.")
+                consumables.remove(item)
+                return True
+            else:
+                print ("Can't use this outside of a safe area.")
+                return False
+        pass
+
+    if item.type == "Return":
+        from DungeonCrawl import checkExploring
+        if checkExploring(None) == True:
+            choice = input("Do you want to return to town? Y/N  ").lower()
+
+            if choice == "y":
+                os.system("cls")
+                input ("Returning to town. Press anything to continue.  ")
+                consumables.remove(item)
+                testing_equip = False
+                checkExploring(False)
+                from TownSystem import runTown
+                runTown()
+
+        else:
+            print("You can only use this item while exploring.")
+
 
 def changeEquip():
     

@@ -57,9 +57,6 @@ cclasses = CharacterSystem.character_classes
 elem = ["phys","fire","wind","earth","ice","thunder","toxic","decay","chaos","death"]
 
 
-enemies_1 = EnemyList.enemies_1
-enemies_bosses = EnemyList.enemies_bosses
-
 party = CharacterSystem.party
 opposition = []
 
@@ -168,6 +165,10 @@ def attackfunc(attacker,target):
         else:
             print (f"{attacker.name} attacks {target.name} for {finaldamage} damage.")
 
+        if "protect" in target.effects:
+            finaldamage = int (finaldamage * ( 1 - target.effects["protect"][0] * 0.05 ) )
+            print (f"But! {target.name} was protected and suffered only {finaldamage} damage.")
+
         target.hp -= finaldamage
         if target.hp <= 0 and target in party:
             print (f"{target.name} has been downed!")
@@ -235,12 +236,12 @@ def command(char):
     availablecommands = "(A)ttack, (D)efend, (I)tem, (S)kills, (U)pdate list, (E)scape"
 
     if char.char_class.name == "Knight":
-        availablecommands += ", (C)harge, Cleave, Hunt"
+        availablecommands += ", Charge, Cleave, Protect"
 
     if char.char_class.name == "Scout":
-        availablecommands += ", Sneak"
+        availablecommands += ", Sneak, Hunt, Decoy"
 
-    availablecommands += ", (or type a combination of skills to use them)"
+    availablecommands += ", (or type a combination of elemental skills to use them)"
 
     charcommand = ""
     charcommand = input(f"What is {char.name} doing?\n {availablecommands}\n").lower()
@@ -294,7 +295,7 @@ def command(char):
 
 
 # PHYS SKILLS
-    elif charcommand == "charge" or charcommand == "c":
+    elif charcommand == "charge":
         if char.char_class.name == "Knight" and char.hp > round(char.maxhp*0.15):
             chartarget = targetenemy()
 
@@ -316,7 +317,7 @@ def command(char):
         else:
             print (f"{char.name} can't use this skill.")
 
-    elif charcommand == "cleave" or charcommand == "f":
+    elif charcommand == "cleave":
         if char.char_class.name == "Knight" and char.hp > round(char.maxhp*0.25):
             
             attacktimes = random.randint(1,5)
@@ -414,6 +415,29 @@ def command(char):
         else:
             spellversion(char,charcommand,"chaos")
 
+    elif "bomb" in charcommand:
+        if "bomb" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            if usetp(char,char.slist["bomb"][2]) == True:
+                global opptoremove
+                defeatedopp = []
+                bombdamage = int( char.slist["bomb"][0] * (math.sqrt(char.lck)/10+1) * 15 ) # Bomb power = 15
+
+                for enemy in opposition:
+                    enemy.hp -= bombdamage
+                    print (f"{enemy.name} suffered {bombdamage} explosion damage.")
+                    if enemy.hp <= 0:
+                            defeatedopp.append(enemy)
+
+                print (" ")
+                for n in defeatedopp:
+                    print (f"{char.name} defeated {enemy.name}!")
+                    opposition.remove(enemy)
+                    opptoremove.append(enemy)
+
+                char.acted = True
+
 
 # SUPPORT SKILLS
     elif "cura" in charcommand:
@@ -427,6 +451,19 @@ def command(char):
             print(f"{char.name} can't use this skill.")
         else:
             spellversion(char,charcommand,None)
+
+    elif charcommand == "protect":
+        from CombatEffects import applyEffect
+
+        if "protect" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            if usetp(char,char.slist[charcommand][2]) == True:
+                    for n in party:
+                        applyEffect(char,charcommand,n)
+
+            char.acted = True
+            pass
 
     elif "decoy" in charcommand:
 
@@ -465,8 +502,8 @@ def command(char):
         if charcommand in char.slist:
             if "grun" in charcommand:
                 if usetp(char,char.slist[charcommand][2]) == True:
-                    for char in party:
-                        applyEffect(charcommand,char)
+                    for n in party:
+                        applyEffect(char, charcommand, n)
                     char.acted = True
             else:
                 if usetp(char,char.slist[charcommand][2]) == True:
@@ -482,18 +519,43 @@ def command(char):
         if charcommand in char.slist:
             if "grun" in charcommand:
                 if usetp(char,char.slist[charcommand][2]) == True:
-                    for char in opposition:
-                        applyEffect(charcommand,char)
+                    for enemy in opposition:
+                        applyEffect(char, charcommand, enemy)
                     char.acted = True
             else:
                 if usetp(char,char.slist[charcommand][2]) == True:
                     target = targetenemy()
-                    applyEffect(charcommand, target)
+                    applyEffect(char, charcommand, target)
                     char.acted = True
         else:
             print (f"{n.name} can't use this skill.")
 
+    elif charcommand == "coating":
+        from CombatEffects import applyEffect
 
+        if "coating" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            if usetp(char,char.slist[charcommand][2]) == True:
+                for n in party:
+                    applyEffect(char,charcommand,n)
+
+                char.acted = True
+            pass
+
+    elif charcommand == "appraise":
+        from CombatEffects import applyEffect
+
+        if "appraise" not in char.slist:
+            print(f"{char.name} can't use this skill.")
+        else:
+            if usetp(char,char.slist[charcommand][2]) == True:
+                enemy = targetenemy()
+
+                enemy.exp += 0.25 * char.slist["appraise"][0]
+
+                char.acted = True
+            pass
 
     elif "update" in charcommand or "u" in charcommand:
         updatecombatlist()
@@ -917,6 +979,8 @@ def targetenemy():
             stargetindex = int(stargetindex)
         except ValueError:
             continue
+        except:
+            continue
 
         if stargetindex in range(0,len(opposition)):
             starget = opposition[int(stargetindex)]
@@ -924,11 +988,11 @@ def targetenemy():
             print("Invalid target.")
             stargetindex = None    
 
-    target = starget
-    return target
+    return starget
 
 def targetally():
     stargetindex = None
+    starget = None
 
     for n in party:
         if n.hp <= 0 and n.char_class != "Decoy":
@@ -950,22 +1014,34 @@ def targetally():
             stargetindex = int(stargetindex)
         except ValueError:
             continue
+        except:
+            continue
 
         if stargetindex in range(0,len(party)) and party[stargetindex].hp > 0:
             starget = party[int(stargetindex)]
         else:
             print("Invalid target.")
             stargetindex = None
-    target = starget
-    return target
+    
+    return starget
 
 def targetdeadally():
     stargetindex = None
+    starget = None
+
+    for n in party:
+        if n.hp <= 0 and n.char_class != "Decoy":
+            print (f"({party.index(n)}) {BG_RED}{n.name}{RESET}'s HP: DEAD/{math.floor(n.maxhp)} // TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
+        elif n.char_class == "Decoy":
+            print (f"({party.index(n)}) {CYAN}{n.name}{RESET}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} // TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
+        else:
+            print (f"({party.index(n)}) {n.name}'s HP: {math.floor(n.hp)}/{math.floor(n.maxhp)} // TP: {math.floor(n.tp)}/{math.floor(n.maxtp)}")
+
     while stargetindex == None:
 
         stargetindex = input("Who are you targeting? ")
 
-        if stargetindex in cancelterms  or stargetindex == "":
+        if stargetindex in cancelterms or stargetindex == "":
             print("")
             return None
 
@@ -973,14 +1049,16 @@ def targetdeadally():
             stargetindex = int(stargetindex)
         except ValueError:
             continue
+        except:
+            continue
 
         if stargetindex in range(0,len(party)) and party[stargetindex].hp <= 0:
             starget = party[int(stargetindex)]
         else:
             print("Invalid target.")
             stargetindex = None
-    target = starget
-    return target
+
+    return starget
 
 def healally(char, n, heal):
     if n.hp > 0:
@@ -1060,24 +1138,37 @@ def dealspelldamage(char,starget,dmgtype,spelldamage):
     # LCK to evade spell
     sd100 = random.randint(1,100)
     
+    spelldamage = round(spelldamage * (math.sqrt(char.tec)/10+1))
+    
+
     if sd100 <= math.sqrt(starget.lck)/100:
         print (f"{starget.name} managed to avoid the attack!")
 
     else:
         if dmgtype in starget.weak:
-            spelldamage = round(spelldamage * (1.5 + math.sqrt(char.tec)/10+1))
+            spelldamage = int (spelldamage * 1.5)
             print (f"{starget.name} is weak to {dmgtype} and suffered {spelldamage} {dmgtype} damage!")
-        
+
         elif starget.defending == True:
-            spelldamage = round(spelldamage * (math.sqrt(char.tec)/10+1))//2
+            spelldamage = spelldamage // 2
             print (f"{starget.name} was defending and suffered only {spelldamage} {dmgtype} damage.")
 
         elif dmgtype in starget.resist:
-            spelldamage = round(spelldamage * (math.sqrt(char.tec)/10+1)//1.5)
+            spelldamage = spelldamage // 1.5
             print (f"{starget.name} is resistant to {dmgtype} and suffers only {spelldamage} {dmgtype} damage.")
 
         else:
             print (f"{starget.name} suffered {spelldamage} {dmgtype} damage.")
+
+        if "protect" in starget.effects:
+            spelldamage = int (spelldamage * ( 1 - starget.effects["protect"][0] * 0.05 ) )
+            print (f"But! {starget.name} was protected and suffered only {spelldamage} {dmgtype} damage.")
+
+        if "coating" in starget.effects:
+            if dmgtype in ("fire","wind","earth","ice","thunder","toxic","decay","chaos"):
+                spelldamage = int (spelldamage - ( spelldamage * math.sqrt(starget.effects["protect"][0])/10) )
+                print (f"But! {starget.name} was coated and suffered only {spelldamage} {dmgtype} damage.")
+
         starget.hp -= spelldamage
 
     if starget in party and starget.hp <= 0:
@@ -1106,9 +1197,9 @@ def calcenemyexp(enemy):
     plevel = partyLevel()
 
     if "Làidir" in enemy.name:
-        combat_exp += round(round(40*enemy.level/plevel) * 10)
+        combat_exp += round(round(40*enemy.level/plevel) * 10) * enemy.exp
     else:
-        combat_exp += round(40*enemy.level/plevel)
+        combat_exp += round(40*enemy.level/plevel) * enemy.exp
 
 def endofturncleanup():
     global initiative
@@ -1250,7 +1341,7 @@ def randomenemies():
     
     else:
         print("A Làidir has appeared!")
-        opposition.append(copy.deepcopy(random.choice(enemies_bosses)))
+        opposition.append(EnemyGenerator.generateEnemy("Laidir",partyLevel()))
 
     bossbattle = False
 
@@ -1348,8 +1439,6 @@ def enemyTurn(enemy):
     pass
 
 
-plevel_exp = [0,500,1000,1500,2000,5000,12000]
-
         
 # GAME
 def runCombat():
@@ -1372,7 +1461,7 @@ def runCombat():
         if not opposition:
             testing_combat = False
             calcRewards()
-            print(f"You won the combat in {rounds} rounds!\nThe party gains {combat_money} Cr and each living party member receives {combat_exp} experience.")
+            print(f"You won the combat in {rounds} rounds!\nThe party gains {combat_money} Cr and each living party member receives {int(combat_exp)} experience.")
             combat_money = 0
             combat_exp = 0
             input("Type anything to continue: ")
@@ -1398,13 +1487,15 @@ def runCombat():
                 print ("")
 
             if n in opposition and n.hp > 0:
-                
+
                 if len(n.effects) > 0:
                     for effect in n.effects:
                         from CombatEffects import tickEffect
                         tickEffect(n)
 
+
                 enemyTurn(n)
+
 
                 if gameover(party):
                     print ("")
@@ -1422,19 +1513,27 @@ def runCombat():
                 elif n.hp <= 0:
                     pass
                 else:
+
+                    if len(n.effects) > 0:
+                        effect_keys = list(n.effects.keys())
+                        for effect in effect_keys:
+                            from CombatEffects import tickEffect
+                            tickEffect(n)
+
                     while n.acted == False:
-                        if len(n.effects) > 0:
-                            for effect in n.effects:
-                                from CombatEffects import tickEffect
-                                tickEffect(n)
-                                
+                        
                         if len(n.effects) > 0:
                             print("Active Effects:")
-                            for effect in n.effects:
+                            effect_keys = list(n.effects.keys())
+                            for effect in effect_keys:
                                 print(f"{effect.upper()}: boost: {int(n.effects[effect][0])} / turns left: {n.effects[effect][1]}")
+
                         command(n)
 
                     print ("")
+                    
+                    
+
                     time.sleep(0.8)
 
         if gameover(party):

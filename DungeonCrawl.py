@@ -95,7 +95,7 @@ dungeon11 = [
     [1, 0,1,1,0,1, 1,1,0,0,0, 1,0,0,0,0, 0,1,0,0,1, 0,1,0,1,9, 1,0,1,1,0, 1],
     [1, 0,0,1,0,0, 0,1,0,1,1, 1,1,2,1,1, 1,1,0,C,1, 0,1,1,1,0, 1,0,1,1,0, 1],
     [1, 0,1,1,1,1, 0,1,0,1,1, 1,0,0,M,1, 1,1,1,1,1, 0,1,0,1,0, 1,0,W,0,0, 1],
-    [1, 0,0,0,0,1, 0,0,0,0,0, 2,0,R,0,2, 0,0,0,0,0, 0,1,0,0,0, 1,0,1,1,1, 1],
+    [1, 0,0,0,0,1, 0,0,0,0,0, 2,0,0,0,2, 0,0,0,0,0, 0,1,0,0,0, 1,0,1,1,1, 1],
     [1, 1,1,1,0,1, 0,1,0,1,1, 1,0,0,0,1, 1,1,1,1,1, 1,1,0,1,0, 1,0,0,0,0, 1], #10
 #    0  1 2 3 4 5  6 7 8 9 10 1 2 3 4 5  6 7 8 9 20 1 2 3 4 5  6 7 8 9 30 1
     [1, 0,0,0,0,1, 0,1,0,0,0, 1,1,2,1,1, C,1,0,0,0, 1,1,0,1,1, 1,1,1,1,0, 1],
@@ -106,7 +106,7 @@ dungeon11 = [
 #    0  1 2 3 4 5  6 7 8 9 10 1 2 3 4 5  6 7 8 9 20 1 2 3 4 5  6 7 8 9 30 1
     [1, 1,1,1,1,1, S,1,0,0,0, 1,0,1,1,1, 1,1,2,1,2, 1,1,1,0,1, C,0,0,2,0, 1],
     [1, 0,0,0,0,0, 0,1,1,0,1, 1,0,1,0,0, 0,2,0,0,0, 2,0,0,0,1, C,0,0,1,0, 1],
-    [1, 0,1,1,1,1, 0,0,0,0,0, 0,0,1,0,1, 1,1,0,R,0, 1,1,1,0,1, C,0,0,1,2, 1],
+    [1, 0,1,1,1,1, 0,0,0,0,0, 0,0,1,0,1, 1,1,0,0,0, 1,1,1,0,1, C,0,0,1,2, 1],
     [1, 0,0,0,0,1, 1,1,1,0,1, 1,0,1,0,1, 0,2,0,0,0, 2,0,1,0,1, 1,1,1,1,0, 1],
     [1, 0,1,1,0,0, 0,0,1,2,1, 0,0,1,C,1, 0,1,2,1,2, 1,0,1,0,0, 0,0,0,1,0, 1], #20
 #    0  1 2 3 4 5  6 7 8 9 10 1 2 3 4 5  6 7 8 9 20 1 2 3 4 5  6 7 8 9 30 1
@@ -117,7 +117,7 @@ dungeon11 = [
     [1, 0,0,1,1,1, 1,1,S,1,1, 1,0,1,0,1, 1,S,1,1,0, 0,0,1,C,1, 1,0,1,1,0, 1], #25
 #    0  1 2 3 4 5  6 7 8 9 10 1 2 3 4 5  6 7 8 9 20 1 2 3 4 5  6 7 8 9 30 1
     [1, 0,0,1,C,1, 0,0,0,0,0, 1,0,1,0,1, M,0,0,1,1, 1,0,1,1,1, 0,0,1,0,0, 1],
-    [1, 0,1,1,0,1, 0,1,0,1,0, 1,0,1,0,1, 0,R,0,2,0, 1,0,1,0,0, 0,1,1,2,1, 1],
+    [1, 0,1,1,0,1, 0,1,0,1,0, 1,0,1,0,1, 0,0,0,2,0, 1,0,1,0,0, 0,1,1,2,1, 1],
     [1, 0,1,0,0,1, 0,1,C,1,0, 1,0,0,0,1, 0,0,0,1,0, 1,0,0,0,1, 1,1,0,0,0, 1],
     [1, 0,1,0,0,1, 0,1,1,1,0, 1,1,1,1,1, 1,2,1,1,0, 1,1,1,1,1, 0,2,0,0,0, 1],
     [1, 0,0,0,0,1, 0,0,0,0,0, 2,0,0,0,0, 0,0,1,1,0, 0,0,0,0,0, 0,1,0,0,D, 1], #30
@@ -138,7 +138,7 @@ dungeon11loot = {
     "1,6": (item1, 1,6),
     "2,8": (item1 ,2,8),
     "13,2": (item2 ,13,2),
-    "26,4": (armor1 ,26,4),
+    "26,4": (armor2 ,26,4),
     "14,9": (armor2 ,14,9),
     "28,8": (weapon2 ,28,8),
     "14,14": (item3 ,14,14),
@@ -165,6 +165,12 @@ dungeon11_laid1 = {
 }
 
 dungeon_bosses = [dungeon11_laid1]
+dungeon11_entry = [1,1]
+dungeon11_rest = [
+    lambda y, x: 8 <= y <= 10 and 12 <= x <= 14,
+    lambda y, x: 17 <= y <= 19 and 18 <= x <= 20,
+]
+
 
 def tileLookup(tiley, tilex, dungeon_bp):
 
@@ -292,8 +298,9 @@ def update_coord(x,y):
     
     update_time()    
     update_seen()
-    update_danger()
     update_laid()
+    if restAreaCheck() == False:
+        update_danger()
 
 def update_laid():
 
@@ -334,6 +341,13 @@ def update_laid():
             # add to "local map"
                 # make local map be shared between party and boss
 
+def checkHour(int):
+    global hour
+    
+    if int == 1:
+        hour += 1
+    if int == 0:
+        return hour
 
 def update_time():
     global steps
@@ -870,6 +884,13 @@ def getMap():
     for n in range(len(localmap)):
         print(f' '.join(localmap[n]))
 
+def restAreaCheck():
+    in_rest_area = any(area(*party_coord) for area in dungeon11_rest)
+
+    if in_rest_area:
+        return True
+    else:
+        return False
 
 def debugDungeonMap():
     dungeonmap = ''
@@ -1099,7 +1120,7 @@ def interact():
         if choice in ("y"):
             if dungeon_level == 1:
                 input("Returning to city. Press anything to continue.")
-                exploring = False
+                checkExploring(False)
                 from TownSystem import runTown
                 runTown()
                 
@@ -1115,6 +1136,10 @@ def interact():
 
     if objecttype == "O":
         print("There's nothing else here.")
+
+    if objecttype == M:
+        from TownSystem import merchant
+        merchant()
 
 def getLoot(looty,lootx):
 
@@ -1154,14 +1179,49 @@ directions = {
 
 #Game Loop
 
-def exploreDungeon():
-    global danger
-    global party_facing
+def initializeDungeon():
     global steps
-    exploring = True
+    global danger
+    global danger_level
+    global party_facing
+    global party_coord
+    global dungeon11_entry
+    steps = 0
+    danger = 0
+    danger_level = f"None"
+    party_coord[0] = dungeon11_entry[0]
+    party_coord[1] = dungeon11_entry[1]
+    party_facing = 2
     update_coord(0,0)
 
-    while exploring == True:
+exploring = True
+def checkExploring(option):
+    global exploring
+    if option == True:
+        exploring = True
+    if option == False:
+        exploring = False
+    if option == None:
+        return exploring
+
+def exploreDungeon():
+    global danger
+    global danger_level
+    global party_facing
+    global steps
+    global party_coord
+    
+    steps = 0
+    danger = 0
+    danger_level = f"None"
+    party_coord[0] = dungeon11_entry[0]
+    party_coord[1] = dungeon11_entry[1]
+    party_facing = 2
+    update_coord(0,0)
+
+    checkExploring(True)
+
+    while checkExploring(None) == True:
 
         if CombatSystem.gameover(CombatSystem.party):
             exploring = False
@@ -1177,11 +1237,10 @@ def exploreDungeon():
             print("Enemies have appeared!")
             input("Time to fight! (Press anything to begin)")
             danger = 0
+            danger_level = f"None"
             CombatSystem.runCombat()
             steps += CombatSystem.rounds
             os.system("cls")
-
-        # if exploring == True:
 
         print ("Party:") #spacer
         for n in party:
@@ -1189,11 +1248,7 @@ def exploreDungeon():
         print ("") #spacer
         
         getMap()
-        # print(party_coord)
-        # update_picture()
-        # update_vision()
 
-        # updateText(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]} ({steps})")
         print(f"Danger level is: {danger_level} // It is currently : {hour_names[hour]}")
         command = input(f"\nType W/8 to go Forwards, Q/7 to turn left, and E/9 to turn right:\nYou can also check the (M)ap, (I)nteract (or F), or (O)pen party menu.\n").lower()
         

@@ -9,46 +9,59 @@ def applyEffect (caster, effect, char):
         effectvalue = (math.sqrt(caster.tec)/10+1) * 5 * caster.slist[effect][0]
     elif "enfe" in effect:
         effectvalue = ((math.sqrt(caster.tec)/10+1) * 5 * caster.slist[effect][0]) * -1
-    
-    
-    char.effects.update({effect: [effectvalue, 3]})
+
 
     # ENHA
-    if effect == "enhast":
-        char.str += effectvalue
+    if "enha" in effect:
+        char.effects.update({effect: [effectvalue, 4]})
+        if effect == "enhast":
+            char.str += effectvalue
+            
+        elif effect == "enhate":
+            char.tec += effectvalue
         
-    elif effect == "enhate":
-        char.tec += effectvalue
-    
-    elif effect == "enhavi":
-        char.vit += effectvalue
+        elif effect == "enhavi":
+            char.vit += effectvalue
 
-    elif effect == "enhagi":
-        char.agi += effectvalue
+        elif effect == "enhagi":
+            char.agi += effectvalue
 
-    elif effect == "enhalk":
-        char.lck += effectvalue
+        elif effect == "enhalk":
+            char.lck += effectvalue
 
     # ENFE
-    elif effect == "enfest":
-        char.str += effectvalue
+    if "enfe" in effect:
+        char.effects.update({effect: [effectvalue, 4]})
+        if effect == "enfest":
+            char.str += effectvalue
+            
+        elif effect == "enfete":
+            char.tec += effectvalue
         
-    elif effect == "enfete":
-        char.tec += effectvalue
-    
-    elif effect == "enfevi":
-        char.vit += effectvalue
+        elif effect == "enfevi":
+            char.vit += effectvalue
 
-    elif effect == "enfegi":
-        char.agi += effectvalue
+        elif effect == "enfegi":
+            char.agi += effectvalue
 
-    elif effect == "enfelk":
-        char.lck += effectvalue
+        elif effect == "enfelk":
+            char.lck += effectvalue
+
+    # PROTECT
+    if "protect" in effect:
+        char.effects.update({effect: [caster.slist[effect][0], math.ceil(caster.slist[effect][0]/3)+1]})
+        pass
+
+    if "coating" in effect:
+        char.effects.update({effect: [caster.slist[effect][0], math.ceil(caster.slist[effect][0]/3)+1]})
+        pass
 
 
 def tickEffect (char):
 
-    for n in char.effects:
+    effect_keys = list(char.effects.keys())
+
+    for n in effect_keys:
         char.effects[n][1] -= 1
         
         if char.effects[n][1] == 0:

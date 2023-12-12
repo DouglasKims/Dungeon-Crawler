@@ -15,22 +15,22 @@
     # Implement Stairs down
         # Implement more floors
         # Implement enemy difficulty by floor (as well as party level)
-    # Implement Rest Area
-    # Implement Merchant (?)
+    # Implement Rest Area (DONE)
+    # Implement Merchant (DONE)
 
 
 # IMPLEMENT CITY (& QUESTS?)
     # City Tavern (DONE)
-    # City Shop (DONE) // Missing Sell items
+    # City Shop (DONE)
     # City Trainer (DONE) // Missing Perks 
 
 # COMBAT & SKILLS
     # Rename Skills (DONE)
     # Use items in combat (DONE)
-    # Escape combat
+    # Escape combat (DONE)
     # create buff, debuff skills (DONE)
 
-    # Enemy Generator? (DONE) (REVIEW)
+    # Enemy Generator? (DONE)
     # Fix formulas (DONE)
 
 # CLASS SKILLS
@@ -89,9 +89,9 @@
     # QUARTERMASTER
         # SKILLS
             #      (?) MONEY SHOOT Attack with money, increasing STR and LCK the more money is spent (lvl 1/10)
+            # APPRAISE increases EXP gain / high TP cost (lvl 1/10)
             # BOMB Throws a makeshift bomb that deals elemental damage to all enemies per level (lvl 1/10) (phys/fire/ice/thunder/toxic)
             # COATING grants elemental resistance for a few turns / for party (lvl 1/10)
-            # APPRAISE increases EXP gain / high TP cost (lvl 1/10)
         # PERKS
             # Increase loot drop rate (lvl 1/5)
             # Freely produces a consumable after X amount of steps (lvl 1/5)
